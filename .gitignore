@@ -1,0 +1,7 @@
+#Node bits
+node_modules/
+.env
+package-lock.json
+
+#Apple backup files
+.DS_Store
