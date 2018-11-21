@@ -1,7 +1,7 @@
 {
-  "name": "node-handlebars-boilerplate",
+  "name": "leftorwrite",
   "version": "1.0.0",
-  "description": "Project 2 Starter",
+  "description": "A fullstack choose your own adventure novel creator",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -25,5 +25,17 @@
     "eslint-plugin-prettier": "^2.6.2",
     "mocha": "^5.2.0",
     "prettier": "^1.13.7"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kmtenhouse/leftorwrite.git"
+  },
+  "author": "Jover, Theresa, Tassa",
+  "bugs": {
+    "url": "https://github.com/kmtenhouse/leftorwrite/issues"
+  },
+  "homepage": "https://github.com/kmtenhouse/leftorwrite#readme"
 }
