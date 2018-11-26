@@ -5,3 +5,9 @@ package-lock.json
 
 #Apple backup files
 .DS_Store
+
+#Environment Variables
+.env
+
+#Test Directories
+archive/
