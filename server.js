@@ -1,8 +1,12 @@
 require("dotenv").config();
 var express = require("express");
 var exphbs = require("express-handlebars");
+var passport = require("passport");
+var cookieParser = require("cookie-parser");
+var cookieSession = require("cookie-session");
 
 var db = require("./models");
+var auth = require("./config/auth");
 
 var app = express();
 var PORT = process.env.PORT || 3000;
@@ -21,9 +25,21 @@ app.engine(
 );
 app.set("view engine", "handlebars");
 
+// Passport
+auth(passport);
+app.use(passport.initialize());
+
+// Cookies
+app.use(cookieSession({
+    name: "session", 
+    keys: [process.env.SESSION_KEY]
+}));
+app.use(cookieParser());
+
 // Routes
 require("./routes/apiRoutes")(app);
 require("./routes/htmlRoutes")(app);
+require("./routes/authRoutes")(app);
 
 var syncOptions = { force: false };
 
