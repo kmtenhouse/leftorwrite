@@ -38,8 +38,8 @@ app.use(cookieParser());
 
 // Routes
 require("./routes/apiRoutes")(app);
-require("./routes/htmlRoutes")(app);
 require("./routes/authRoutes")(app);
+require("./routes/htmlRoutes")(app);
 
 var syncOptions = { force: false };
 
