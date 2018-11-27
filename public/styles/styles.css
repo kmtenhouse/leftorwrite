@@ -1,3 +1,74 @@
-.list-group-item {
-  line-height: 2.5;
+/* Header and nav colors */
+.header {
+  background-color: #36723f;
+}
+
+.custom-nav { 
+  color: #272727;
+}
+
+.custom-nav-link {
+  color: white;
+}
+
+.custom-nav-link:hover {
+  color: white;
+}
+
+.custom-toggler {
+  color: white;
+  border: 1px solid white;
+}
+
+/* Classes defining the sections on our main page */
+
+/* Separate each section with a border */
+section {
+  border-bottom: 5px solid #44BBA4;
+}
+
+/* Implement a splash image for the main section */
+.splash {
+  background-image: url('../images/open-notebook-xs.jpg');
+  background-size: cover;
+  min-height: 90vh;
+}
+
+/* Provide a neutral background for other sections */
+.neutral {
+  background-color: #E7E5DF;
+  min-height: 60vh;
+}
+
+/* Icons for the main page */
+.large-icon-img {
+  width: 100px;
+  height: auto;
+}
+
+.dot-btn {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background-color: white;
+  border: none;
+}
+
+/* Footer colors */
+footer {
+  background-color: #272727;
+  color: white;
+}
+
+/* Media query changes for when our screen grows above a mobile size */
+@media only screen and (min-width: 760px) {
+  .splash { 
+    background-image: url('../images/open-notebook-med.jpeg');
+  }
+
+  .headline {
+    font-size: 3.5rem;
+    font-weight: 300;
+    line-height: 1.2;
+  }
 }
