@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
     var Page = sequelize.define("Page", {
         title: {
             type: DataTypes.STRING,
@@ -15,6 +15,10 @@ module.exports = function(sequelize, DataTypes) {
             validtate: {
                 len: [1, 5000]
             }
+        },
+        isStart: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         },
         isTBC: {
             type: DataTypes.BOOLEAN,
@@ -37,9 +41,9 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: false
         }
     });
-    Page.associate = function(models) {
-        Page.belongsTo(models.User, {as: "Author"});
-        Page.belongsTo(models.Story, {as: "Story"});
+    Page.associate = function (models) {
+        Page.belongsTo(models.User, { as: "Author" });
+        Page.belongsTo(models.Story, { as: "Story" });
     };
     return Page;
 };

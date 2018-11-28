@@ -1,6 +1,7 @@
 var db = require("../models");
 
 module.exports = function (app) {
+    //Commenting out this boilerplate for now so we can test the static routes
     // Load index page
     app.get("/", function (req, res) {
         db.Example.findAll({}).then(function (dbExamples) {
