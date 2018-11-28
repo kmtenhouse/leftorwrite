@@ -2,10 +2,10 @@ var db = require("../models");
 
 module.exports = function(app) {
     // Added test comment
-  //Commenting out this boilerplate for now so we can test the static routes
-  // Load index page
+    //Commenting out this boilerplate for now so we can test the static routes
+    // Load index page
   
-/*   app.get("/", function(req, res) {
+    /*   app.get("/", function(req, res) {
 
      db.Example.findAll({}).then(function(dbExamples) {
       res.render("index", {
