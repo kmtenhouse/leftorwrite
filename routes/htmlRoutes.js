@@ -1,18 +1,7 @@
 var db = require("../models");
 
-<<<<<<< HEAD
-module.exports = function (app) {
-    // Load index page
-    app.get("/", function (req, res) {
-        db.Example.findAll({}).then(function (dbExamples) {
-            res.render("index", {
-                msg: "Welcome!",
-                examples: dbExamples
-            });
-        });
-    });
-=======
 module.exports = function(app) {
+    // Added test comment
   //Commenting out this boilerplate for now so we can test the static routes
   // Load index page
   
@@ -25,7 +14,6 @@ module.exports = function(app) {
       });
     }); 
   }); */
->>>>>>> bea2c967fb38c1bd654c6ba3a784c1f6980b571c
 
     // Load example page and pass in an example by id
     app.get("/example/:id", function (req, res) {
