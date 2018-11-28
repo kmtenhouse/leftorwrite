@@ -7,7 +7,7 @@
     "start": "node server.js",
     "lint": "eslint **/*.js --quiet",
     "fix": "eslint --fix .",
-    "test": "npm run lint && NODE_ENV=test mocha -u tdd --reporter spec --exit"
+    "test": "npm run lint"
   },
   "license": "ISC",
   "dependencies": {
@@ -23,7 +23,7 @@
     "sequelize": "^4.38.0"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
+    "chai": "^4.2.0",
     "chai-http": "^4.0.0",
     "eslint": "^5.9.0",
     "eslint-config-google": "^0.11.0",
