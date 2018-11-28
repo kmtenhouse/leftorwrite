@@ -1,4 +1,4 @@
-models/
 node_modules/
-test/
 archive/
+test/
+models/
