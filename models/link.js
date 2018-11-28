@@ -11,10 +11,10 @@ module.exports = function(sequelize, DataTypes) {
         }
     });
     Link.associate = function(models) {
-        models.Link.belongsTo(models.User, {as: "Author"});
-        models.Link.belongsTo(models.Story, {as: "Story"});
-        models.Link.belongsTo(models.Page, {as: "FromPage"});
-        models.Link.belongsTo(models.Page, {as: "ToPage"});
+        Link.belongsTo(models.User, {as: "Author"});
+        Link.belongsTo(models.Story, {as: "Story"});
+        Link.belongsTo(models.Page, {as: "FromPage"});
+        Link.belongsTo(models.Page, {as: "ToPage"});
     };
     return Link;
 };
