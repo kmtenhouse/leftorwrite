@@ -11,17 +11,17 @@ module.exports = function(app){
     app.get("/auth/google/callback", 
         passport.authenticate("google", {failureRedirect: "/login"}),
         function(req, res) {
-            req.session.token = req.user.token;
-            var user = req.user.profile;
+            var profile = req.user.profile;
             // Finds or creates a new user with the user token id
             db.User.findOrCreate({
                 where: {
-                    oAuthKey: user.id
+                    oAuthKey: profile.id
                 },
                 defaults: {
-                    displayName: user.displayName
+                    displayName: profile.displayName
                 }
             }).spread(function(user, created){
+                req.session.token = user.id;
                 // If a new user was created, should redirect to a create user's page
                 if(created){
                     res.send("User Created");
