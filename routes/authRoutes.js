@@ -43,7 +43,7 @@ module.exports = function(app){
                 }
                 // If user already exists, redirect to their page
                 else{
-                    res.redirect("/");
+                    res.redirect("/dashboard");
                 }
             });
         }

@@ -1,4 +1,5 @@
 var db = require("../models");
+var path = require("path");
 
 module.exports = function (app) {
     //Commenting out this boilerplate for now so we can test the static routes
@@ -19,6 +20,10 @@ module.exports = function (app) {
                 example: dbExample
             });
         });
+    });
+
+    app.get("/dashboard", function (req, res) {
+        res.sendFile(path.join(__dirname, "../public/dashboard.html"));
     });
 
     // Render 404 page for any unmatched routes
