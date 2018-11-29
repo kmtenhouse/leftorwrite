@@ -79,7 +79,15 @@ footer {
   max-width: 10rem;
 }
 
+.custom-card:hover {
+  cursor: pointer;
+}
+
 .story-img {
   height: 100px;
   width: auto;
+}
+
+.custom-btn {
+  border-radius: 12px;
 }
