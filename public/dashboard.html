@@ -1,0 +1,152 @@
+<!Doctype html>
+<html lang="en">
+
+<head>
+  <title>User Dashboard</title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles/styles.css">
+</head>
+
+<body>
+    <!-- Header (will appear on every page) -->
+    <header class="header">
+        <div class="container-fluid px-3">
+    <!-- Nav (will eventually have logic to render differently depending on when the user is logged in) -->
+            <nav class="navbar navbar-expand-lg custom-nav">
+                <a class="navbar-brand text-white" href="#"><i class="fas fa-feather-alt fa-lg"></i></a>
+                <button class="navbar-toggler navbar-dark" type="button" data-toggle="collapse"data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle custom-nav-link" href="#" id="navbarDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Browse
+                            </a>
+                            <div class="dropdown-menu custom-nav-dropdown" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#">By Author</a>
+                                <a class="dropdown-item" href="#">By Genre</a>
+                                <div class="dropdown-divider"></div>
+
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <form class="nav-link">
+                                <input type="text" placeholder="Search...">
+                            </form>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item"><a href="/logout" class="custom-nav-link">Logout</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <!-- Recently Edited Section -->
+    <section>
+        <div class="container border m-5 mx-auto">
+            <nav class="navbar pt-4 border-bottom">
+                <span class="navbar-brand"><h3>Recently Edited</h3></span>
+                <button type="button" class="btn btn-danger">Create New Story</button>
+            </nav>
+            <div class="card-deck p-5 justify-content-around">
+                <div class="card border-success m-1 custom-card">
+                    <h5 class="card-header border-bottom-0 bg-transparent">Story Title</h5>
+                    <div class="card-body mx-auto d-none d-sm-block">
+                        <img class="card-img-top img-fluid story-img" src="images/script.svg" alt="Story">
+                    </div>
+                    <div class="card-footer border-top-0 bg-transparent text-right"><small class="text-muted">Last update time</small></div>
+                </div>
+                <div class="card border-success m-1 custom-card">
+                    <h5 class="card-header border-bottom-0 bg-transparent">Story Title</h5>
+                    <div class="card-body mx-auto">
+                        <img class="card-img-top img-fluid story-img" src="images/script.svg" alt="Story">
+                    </div>
+                    <div class="card-footer border-top-0 bg-transparent text-right"><small class="text-muted">Last updated time</small></div>
+                </div>
+                <div class="w-100 d-none d-sm-block d-md-none"><!-- wrap every 2 on sm--></div>
+                <div class="card border-success m-1 custom-card">
+                    <h5 class="card-header border-bottom-0 bg-transparent">Story Title</h5>
+                    <div class="card-body mx-auto">
+                        <img class="card-img-top img-fluid story-img" src="images/script.svg" alt="Story">
+                    </div>
+                    <div class="card-footer border-top-0 bg-transparent text-right"><small class="text-muted">Last updated time</small></div>
+                </div>
+                <div class="w-100 d-none d-md-block d-lg-none"><!-- wrap every 3 on md--></div>
+                <div class="card border-success m-1 custom-card">
+                    <h5 class="card-header border-bottom-0 bg-transparent">Story Title</h5>
+                    <div class="card-body mx-auto">
+                        <img class="card-img-top img-fluid story-img" src="images/script.svg" alt="Story">
+                    </div>
+                    <div class="card-footer border-top-0 bg-transparent text-right"><small class="text-muted">Last updated time</small></div>
+                </div>
+                <div class="w-100 d-none d-sm-block d-md-none"><!-- wrap every 2 on sm--></div>
+                <div class="w-100 d-none d-lg-block d-xl-none"><!-- wrap every 4 on lg--></div>
+                <div class="card border-success m-1 custom-card">
+                        <h5 class="card-header border-bottom-0 bg-transparent">Story Title</h5>
+                        <div class="card-body mx-auto">
+                            <img class="card-img-top img-fluid story-img" src="images/script.svg" alt="Story">
+                        </div>
+                        <div class="card-footer border-top-0 bg-transparent text-right"><small class="text-muted">Last updated time</small></div>
+                </div>
+                <div class="w-100 d-none d-xl-block"><!-- wrap every 5 on xl--></div>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <div class="row pt-3">
+                <div class="col-12 col-md-4 mr-auto">
+                    <aside>
+                        <h5>About Us</h5>
+                        <ul class="list-unstyled">
+                            <li>
+                                Jover Lee
+                            </li>
+                            <li>
+                                Theresa Bankman
+                            </li>
+                            <li>
+                                Tassa Tenhouse
+                            </li>
+                        </ul>
+                    </aside>
+                </div>
+
+                <div class="col-12 col-md-4 ml-auto">
+                    <aside>
+                        <h5>Credits</h5>
+                        <ul class="list-unstyled">
+                            <li>Icons made by <a href="https://www.freepik.com/" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+                            </li>
+                        </ul>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </footer>
+                            </li>
+                        </ul>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </footer>
+  
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</body>
+
+</html>

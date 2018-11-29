@@ -72,3 +72,14 @@ footer {
     line-height: 1.2;
   }
 }
+
+/* Dashboard Classes */
+
+.custom-card {
+  max-width: 10rem;
+}
+
+.story-img {
+  height: 100px;
+  width: auto;
+}
