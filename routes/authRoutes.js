@@ -2,21 +2,6 @@ var passport = require("passport");
 var db = require("../models");
 
 module.exports = function(app){
-    // Loads cookie session status
-    app.get("/cookies", function(req, res){
-        if(req.session.token){
-            res.cookie("token", req.session.token);
-            res.json({
-                status: "session cookie set"
-            });
-        }
-        else{
-            res.cookie("token", "");
-            res.json({
-                status: "session cookie not set"
-            });
-        }
-    });
 
     // Redirects to Google Sign in Page
     app.get("/auth/google", 
@@ -43,7 +28,7 @@ module.exports = function(app){
                 }
                 // If user already exists, redirect to their page
                 else{
-                    res.redirect("/dashboard");
+                    res.redirect("/");
                 }
             });
         }
