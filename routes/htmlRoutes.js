@@ -1,14 +1,24 @@
 var db = require("../models");
 
 module.exports = function (app) {
-    //Commenting out this boilerplate for now so we can test the static routes
     // Load index page
     app.get("/", function (req, res) {
         if(req.session.token){
             res.cookie("token", req.session.token);
-            res.render("index", {
-                loggedIn: true
-            });
+            db.Story.findAll({
+                where: {
+                    AuthorId: req.session.token
+                },
+                limit: 5,
+                order: [
+                    ["updatedAt", "DESC"]
+                ]
+            }).then(function(dbStory){
+                res.render("index", {
+                    loggedIn: true,
+                    stories: dbStory
+                });
+            }); 
         }
         else{
             res.cookie("token", "");

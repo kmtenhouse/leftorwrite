@@ -3,52 +3,18 @@
         <!-- Section Header -->
         <nav class="navbar pt-4 border-bottom">
             <span class="navbar-brand"><h3>Recently Edited</h3></span>
-            <button type="button" class="btn btn-danger">Create New Story</button>
+            <a href="#" class="btn btn-danger">Create New Story</a>
         </nav>
         <!-- Recently Edited Stories -->
         <div class="card-deck p-5 justify-content-around">
-            <div class="card border-success m-1 custom-card">
-                <!-- Story Title -->
-                <h5 class="card-header border-bottom-0 bg-transparent">Story Title</h5>
-                <div class="card-body mx-auto d-none d-sm-block">
-                    <!-- Card Image -->
-                    <img class="card-img-top img-fluid story-img" src="images/script.svg" alt="Story">
-                </div>
-                <!-- When story was last updated -->
-                <div class="card-footer border-top-0 bg-transparent text-right"><small class="text-muted">Last updatetime</small></div>
-            </div>
-            <div class="card border-success m-1 custom-card">
-                    <h5 class="card-header border-bottom-0 bg-transparent">Story Title</h5>
-                    <div class="card-body mx-auto">
-                        <img class="card-img-top img-fluid story-img" src="images/script.svg" alt="Story">
-                    </div>
-                    <div class="card-footer border-top-0 bg-transparent text-right"><small class="text-muted">Last updated time</small></div>
-            </div>
-            <div class="w-100 d-none d-sm-block d-md-none"><!-- wrap every 2 on sm--></div>
-            <div class="card border-success m-1 custom-card">
-                    <h5 class="card-header border-bottom-0 bg-transparent">Story Title</h5>
-                    <div class="card-body mx-auto">
-                        <img class="card-img-top img-fluid story-img" src="images/script.svg" alt="Story">
-                    </div>
-                    <div class="card-footer border-top-0 bg-transparent text-right"><small class="text-muted">Last updated time</small></div>
-            </div>
-            <div class="w-100 d-none d-md-block d-lg-none"><!-- wrap every 3 on md--></div>
-            <div class="card border-success m-1 custom-card">
-                    <h5 class="card-header border-bottom-0 bg-transparent">Story Title</h5>
-                    <div class="card-body mx-auto">
-                        <img class="card-img-top img-fluid story-img" src="images/script.svg" alt="Story">
-                    </div>
-                    <div class="card-footer border-top-0 bg-transparent text-right"><small class="text-muted">Last updated time</small></div>
-            </div>
-            <div class="w-100 d-none d-sm-block d-md-none"><!-- wrap every 2 on sm--></div>
-            <div class="w-100 d-none d-lg-block d-xl-none"><!-- wrap every 4 on lg--></div>
-            <div class="card border-success m-1 custom-card">
-                        <h5 class="card-header border-bottom-0 bg-transparent">Story Title</h5>
-                        <div class="card-body mx-auto">
-                            <img class="card-img-top img-fluid story-img" src="images/script.svg" alt="Story">
-                        </div>
-                        <div class="card-footer border-top-0 bg-transparent text-right"><small class="text-muted">Last updated time</small></div>
-            </div>
+            {{#each stories}}
+                {{> content/dashboard-story}}
+                {{#if (equals @index 1 3)}} 
+                    <div class="w-100 d-none d-sm-block d-md-none"><!-- wrap every 2 on sm--></div>
+                {{else if (equals @index 2)}}
+                    <div class="w-100 d-none d-md-block d-lg-none"><!-- wrap every 3 on md--></div>
+                {{/if}}
+            {{/each}}
         </div>
     </div>
     <div class="container border m-5 mx-auto">
