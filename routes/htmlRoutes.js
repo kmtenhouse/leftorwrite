@@ -3,8 +3,10 @@ var db = require("../models");
 module.exports = function (app) {
     // Load index page
     app.get("/", function (req, res) {
+        // Renders the dashboard if a user is signed in
         if(req.session.token){
             res.cookie("token", req.session.token);
+            // Finds the most recently updated stories of the User
             db.Story.findAll({
                 where: {
                     AuthorId: req.session.token
@@ -14,6 +16,7 @@ module.exports = function (app) {
                     ["updatedAt", "DESC"]
                 ]
             }).then(function(dbStory){
+                // Finds the top 5 tags 
                 db.Tag.findAll({
                     attributes: ["TagName", "id", [db.sequelize.fn("COUNT", "stories.id"), "NumStories"]],
                     includeIgnoreAttributes:false,
@@ -34,6 +37,7 @@ module.exports = function (app) {
                 });
             }); 
         }
+        // Renders homepage if not signed in
         else{
             res.cookie("token", "");
             res.render("index", {
