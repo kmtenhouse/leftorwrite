@@ -3,12 +3,17 @@ var db = require("../models");
 module.exports = function (app) {
     //Commenting out this boilerplate for now so we can test the static routes
     // Load index page
-    app.get("/", function (req, res) {
-        db.Example.findAll({}).then(function (dbExamples) {
-            res.render("index", {
-                msg: "Welcome!",
-                examples: dbExamples
-            });
+    app.get("/test", function (req, res) {
+        db.Tag.findAll({
+            attributes: ["TagName", [db.sequelize.fn("COUNT", "stories.id"), "Story Count"]],
+            group: "TagName",
+            include: [{
+                model: db.Story, 
+                attributes: []
+            }],
+            order: [[db.sequelize.fn("COUNT", "stories.id"), 'DESC']]    
+        }).then(function (dbExamples) {
+            res.send(dbExamples);
         });
     }); 
 

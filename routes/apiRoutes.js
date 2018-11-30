@@ -21,4 +21,21 @@ module.exports = function (app) {
             res.json(dbExample);
         });
     });
+
+    //TAGS API
+    //GET ALL TAGS
+    app.get("/api/tags", function (req, res) {
+        db.Tag.findAll({
+            attributes: ["TagName", [db.sequelize.fn("COUNT", "stories.id"), "Story Count"]],
+            group: "TagName",
+            include: [{
+                model: db.Story, 
+                attributes: []
+            }],
+            order: [[db.sequelize.fn("COUNT", "stories.id"), 'DESC']]    
+        }).then(function (dbExamples) {
+            res.send(dbExamples);
+        });
+    }); 
+
 };
