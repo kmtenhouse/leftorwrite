@@ -26,13 +26,31 @@ module.exports = function (app) {
     //GET ALL TAGS
     app.get("/api/tags", function (req, res) {
         db.Tag.findAll({
-            attributes: ["TagName", [db.sequelize.fn("COUNT", "stories.id"), "Story Count"]],
-            group: "TagName",
+            attributes: ["TagName", [db.sequelize.fn("COUNT", "stories.id"), 'DESC']],
             include: [{
                 model: db.Story, 
-                attributes: []
+                attributes: [], 
+                duplicating: false
             }],
-            order: [[db.sequelize.fn("COUNT", "stories.id"), 'DESC']]    
+            group: ['id'],
+            order: [[db.sequelize.fn("COUNT", "stories.id"), 'DESC']], 
+        }).then(function (dbExamples) {
+            res.send(dbExamples);
+        });
+    }); 
+
+    //Limit tags (TEST)
+    app.get("/api/toptags", function (req, res) {
+        db.Tag.findAll({
+            attributes: ["TagName", [db.sequelize.fn("COUNT", "stories.id"), 'DESC']],
+            include: [{
+                model: db.Story, 
+                attributes: [], 
+                duplicating: false
+            }],
+            group: ['id'],
+            order: [[db.sequelize.fn("COUNT", "stories.id"), 'DESC']], 
+            limit: 5   
         }).then(function (dbExamples) {
             res.send(dbExamples);
         });
