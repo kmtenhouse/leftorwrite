@@ -10,13 +10,40 @@ module.exports = function (app) {
                 examples: dbExamples
             });
         });
-    }); 
+    });
 
     // Load example page and pass in an example by id
     app.get("/example/:id", function (req, res) {
         db.Example.findOne({ where: { id: req.params.id } }).then(function (dbExample) {
             res.render("example", {
                 example: dbExample
+            });
+        });
+    });
+
+    // Load story making/editing page
+    app.get("/story/edit/:id", function (req, res) {
+        db.Story.findOne({
+            where: { id: req.params.id },
+            attributes: ["title"]
+        }).then(function (dbStory) {
+            // dbStory.getTags();
+            db.Tag.findAll({
+                attributes: ["id", "tagName"],
+                include: [{
+                    model: db.Story,
+                    attributes: ["id"],
+                    through: {
+                        attributes: ["StoryId", "TagId"]
+                    }
+                }]
+            }).then(function (dbTags) {
+                console.log("dbStory = ", dbStory);
+                console.log("dbTags = ", dbTags);
+                res.render("story", {
+                    story: dbStory,
+                    tags: dbTags
+                });
             });
         });
     });

@@ -60,6 +60,11 @@ footer {
   color: white;
 }
 
+#tagList {
+  max-height: 16em;
+  overflow-y: scroll;
+}
+
 /* Media query changes for when our screen grows above a mobile size */
 @media only screen and (min-width: 760px) {
   .splash { 

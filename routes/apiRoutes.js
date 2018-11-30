@@ -11,7 +11,14 @@ module.exports = function (app) {
     // Create a new example
     app.post("/api/examples", function (req, res) {
         db.Example.create(req.body).then(function (dbExample) {
-            res.json(dbExample);
+            console.log(req.body);
+            // res.json(dbExample);
+        });
+    });
+
+    app.post("/story/edit/newtag", function (req, res) {
+        db.Tags.create(req.body).then(function(dbTags) {
+            res.json(dbTags);
         });
     });
 
