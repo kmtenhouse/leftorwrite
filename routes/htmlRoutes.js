@@ -14,9 +14,23 @@ module.exports = function (app) {
                     ["updatedAt", "DESC"]
                 ]
             }).then(function(dbStory){
-                res.render("index", {
-                    loggedIn: true,
-                    stories: dbStory
+                db.Tag.findAll({
+                    attributes: ["TagName", "id", [db.sequelize.fn("COUNT", "stories.id"), "NumStories"]],
+                    includeIgnoreAttributes:false,
+                    include: [{
+                        model: db.Story, 
+                        attributes: [[db.sequelize.fn("COUNT", "stories.id"), "NumStories"]], 
+                        duplicating: false
+                    }],
+                    group: ["id"],
+                    order: [[db.sequelize.fn("COUNT", "stories.id"), "DESC"]], 
+                    limit: 5
+                }).then(function (dbTags) {
+                    res.render("index", {
+                        loggedIn: true,
+                        stories: dbStory,
+                        tags: dbTags
+                    });
                 });
             }); 
         }
