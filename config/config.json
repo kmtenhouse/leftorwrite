@@ -1,8 +1,8 @@
 {
     "development": {
       "username": "root",
-      "password": "$F62B6Pu4rpMNCXH",
-      "database": "leftorwrite",
+      "password": null,
+      "database": "exampledb",
       "host": "localhost",
       "dialect": "mysql"
     },

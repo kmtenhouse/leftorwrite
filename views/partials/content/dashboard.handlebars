@@ -22,20 +22,8 @@
             <span class="navbar-brand"><h3>Popular Tags</h3></span>
         </nav>
         <div class="row m-3">
-            <div class="col">
-                <button class="btn btn-primary custom-btn">Tag <span class="badge badge-light">#</span></button>
-            </div>
-            <div class="col">
-                <button class="btn btn-primary custom-btn">Tag <span class="badge badge-light">#</span></button>
-            </div>
-            <div class="col">
-                <button class="btn btn-primary custom-btn">Tag <span class="badge badge-light">#</span></button>
-            </div>
-            <div class="col">
-                <button class="btn btn-primary custom-btn">Tag <span class="badge badge-light">#</span></button>
-            </div>
-            <div class="col">
-                <button class="btn btn-primary custom-btn">Tag <span class="badge badge-light">#</span></button>
-            </div>
+            {{#each tags}}
+                {{> content/dashboard-tags}}
+            {{/each}}
         </div>
     </div>

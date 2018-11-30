@@ -23,6 +23,23 @@ module.exports = function (app) {
     });
 
     //TAGS API
+    //GET ALL TAGS
+    app.get("/api/tags", function (req, res) {
+        db.Tag.findAll({
+            attributes: ["TagName", [db.sequelize.fn("COUNT", "stories.id"), "NumStories"]],
+            includeIgnoreAttributes:false,
+            include: [{
+                model: db.Story, 
+                attributes: [[db.sequelize.fn("COUNT", "stories.id"), "NumStories"]], 
+                duplicating: false
+            }],
+            group: ["id"],
+            order: [[db.sequelize.fn("COUNT", "stories.id"), "DESC"]], 
+        }).then(function (dbExamples) {
+            res.send(dbExamples);
+        });
+    }); 
+
     //Limit tags (TEST)
     app.get("/api/sequelizetags", function (req, res) {
         db.Tag.findAll({
