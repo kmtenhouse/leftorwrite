@@ -1,0 +1,282 @@
+<!-- Header (will appear on every page) -->
+<header class="header">
+    <div class="container-fluid px-3">
+        {{!-- navbar --}}
+        <!-- Nav (will eventually have logic to render differently depending on when the user is logged in) -->
+        <nav class="navbar navbar-expand-lg custom-nav">
+            <a class="navbar-brand text-white" href="#"><i class="fas fa-feather-alt fa-lg"></i></a>
+            <button class="navbar-toggler navbar-dark" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle custom-nav-link" href="#" id="navbarDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Browse
+                        </a>
+                        <div class="dropdown-menu custom-nav-dropdown" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#">View All Stories</a>
+                            <a class="dropdown-item" href="#">View Story Flow</a>
+                            <div class="dropdown-divider"></div>
+
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <form class="nav-link">
+                            <input type="text" placeholder="Search...">
+                        </form>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a href="/logout" class="custom-nav-link">Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+
+    </div>
+</header>
+{{!-- story tags --}}
+<!-- Followup section with more explanation -->
+<section class="neutral">
+    <div class="container py-3">
+        <div class="row">
+            <div class="col-12 d-flex flex-column">
+                <h3 class="pb-2">Story edit page</h3>
+                <form>
+                    <div class="form-group">
+                        {{!-- story title --}}
+                        <input type="title" class="form-control form-control-lg" id="storyTitle" aria-describedby="titleHelp"
+                            placeholder="Story Title">
+                        <small id="titleHelp" class="form-text text-muted">Your title should be unique among your
+                            stories, but don't worry about getting the perfect title right now. You can edit it at any time.</small>
+                    </div>
+                    <div class="form row">
+                        {{!-- warnings check list --}}
+                        <div class="form-group col-md-3">
+                            <p>
+                                If your story qualifies for an R rating, please use the warnings below to restrict
+                                access and prepare your readers.
+                            </p>
+                            <div class="btn-group-vertical btn-group-toggle w-100" data-toggle="buttons" role="group" aria-label="content warnings buttons">
+                                <label class="btn btn-warning">
+                                    <input type="checkbox" id="cntw" autocomplete="off"> Choose Not To Warn
+                                </label>
+                                <label class="btn btn-warning">
+                                    <input type="checkbox" id="violence" autocomplete="off"> Violence/Gore
+                                </label>
+                                <label class="btn btn-warning">
+                                    <input type="checkbox" id="death" autocomplete="off"> Character Death
+                                </label>
+                                <label class="btn btn-warning">
+                                    <input type="checkbox" id="nsfw" autocomplete="off"> Not Safe For Work
+                                </label>
+                                <label class="btn btn-warning">
+                                    <input type="checkbox" id="nonc" autocomplete="off"> NonConsent
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-9">
+                            <input class="form-control" id="chosenTags" type="text" placeholder="Your chosen tags will appear here"
+                                readonly>
+                            <div class="form row">
+                                <div class="form-group col-md-4 mt-3">
+                                    <input type="text" class="form-control" id="tagSearch" placeholder="Search for tags..">
+                                    <p class="mt-3">
+                                        Check all relevant tags in the box on the right. You can use the searchbar above to
+                                        filter the list. If you don't find what you are looking for, you can create your
+                                        own tag.
+                                    </p>
+                                </div>
+                                <div class="form-group col-md-8 mt-3">
+                                    <ul class="list-group" id="tagList">
+                                        <li class="list-group-item">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input tag" id="comedy"
+                                                    data-tag-name="comedy">
+                                                <label class="form-check-label" for="comedy">comedy</label>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input tag" id="tragedy"
+                                                    data-tag-name="tragedy">
+                                                <label class="form-check-label" for="tragedy">tragedy</label>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input tag" id="horror"
+                                                    data-tag-name="horror">
+                                                <label class="form-check-label" for="horror">horror</label>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input tag" id="hogwash"
+                                                    data-tag-name="hogwash">
+                                                <label class="form-check-label" for="hogwash">hogwash</label>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input tag" id="werewolf"
+                                                    data-tag-name="werewolf">
+                                                <label class="form-check-label" for="werewolf">werewolf</label>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <button type="button" class="btn btn-success" id="tagModalButton"
+                                                data-toggle="modal" data-target="#createTagModal">Create New Tag</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{!-- save changes button --}}
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                    {{!-- view story button --}}
+                    <button type="submit" class="btn btn-success">View Story</button>
+                    {{!-- new page button --}}
+                    <button type="submit" class="btn btn-success">Create New Page</button>
+                    {{!-- is finished toggle --}}
+                    <button type="submit" class="btn btn-success">Mark Story as Finished</button>
+                    {{!-- publish button --}}
+                    <button type="submit" class="btn btn-success">Publish Your Story</button>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="doneByDefault">
+                        <label class="form-check-label" for="doneByDefault">When checked, pages in this story will
+                            automatically be marked as finished when you press the save button.</label>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{!-- MODALS --}}
+    {{!-- modal for tag creation --}}
+    <div class="modal fade" id="createTagModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="newTagInput" aria-describedby="tagHelp"
+                                placeholder="Enter your tag">
+                            <small id="tagHelp" class="form-text text-muted">Info about tags.</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="saveTag">Save Tag</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer containing credits (will eventually be on every page) -->
+<footer>
+    <div class="container">
+        <div class="row pt-3">
+            <div class="col-12 col-md-4 mr-auto">
+                <aside>
+                    <h5>About Us</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            Jover Lee
+                        </li>
+                        <li>
+                            Theresa Bankman
+                        </li>
+                        <li>
+                            Tassa Tenhouse
+                        </li>
+                    </ul>
+                </aside>
+            </div>
+
+            <div class="col-12 col-md-4 ml-auto">
+                <aside>
+                    <h5>Credits</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            Background images by Pexels
+                        </li>
+                        <li>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a>
+                            from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is
+                            licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0"
+                                target="_blank">CC 3.0 BY</a>
+                        </li>
+                    </ul>
+                </aside>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+<script>
+    function filterTags() {
+        // VARIABLES
+        var input = document.getElementById("tagSearch");
+        var filter = input.value.toUpperCase();
+        var ul = document.getElementById("tagList");
+        var li = ul.getElementsByTagName("li");
+
+        // Loop through list items (except button at end), 
+        // and hide those that don't match the search query
+        for (i = 0; i < li.length - 1; i++) {
+            txtValue = li[i].textContent || li[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    }
+    $(document).on("keyup", "#tagSearch", filterTags);
+    var tagsArr = [];
+    $(document).on("click", ".tag", function () {
+        var tag = $(this).data("tag-name");
+        var retVal = "";
+        if ($(this).prop("checked") === true) {
+            tagsArr.push(tag);
+            tagsArr.sort();
+            retVal = tagsArr.join(", ");
+        }
+        else if ($(this).prop("checked") === false) {
+            for (i = 0; i < tagsArr.length; i++) {
+                if (tagsArr[i] === tag) {
+                    tagsArr.splice(i, 1);
+                    retVal = tagsArr.join(", ");
+                }
+            }
+        }
+        $("#chosenTags").val(retVal);
+    });
+    $(document).on("click", "#tagModalButton", function () {
+        $("#newTagInput").val($("#tagSearch").val());
+    });
+    $(document).on("click", "#saveTag", function () {
+        $("#tagSearch").val($("#newTagInput").val())
+        filterTags();
+    })
+</script>
