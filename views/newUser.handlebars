@@ -1,0 +1,35 @@
+<div class="newUserPage">
+    <div class="container text-white py-5">
+        <div class="jumbotron jumbotron-fluid bg-transparent">
+            <h1 class="display-3 text-white">Welcome to Left or Write!</h1>
+        </div>
+        <div class="row my-5 py-3">
+            <div class="col">
+                <h3>You're current username is: {{user.displayName}}</h3>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col">
+                <a class="btn btn-danger" href="/">Keep Username</a>
+            </div>
+        </div>
+        <div class="row my-4">
+            <div class="col ml-3">
+                <h3>OR</h3>
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col">
+                <h5>Create New Username: </h5>
+                <form class="form-inline">
+                    <div class="form-group mr-3">
+                        <label for="username-input" class="sr-only">Username</label>
+                        <input type="text" class="form-control" id="username-input">
+                    </div>
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </form>
+            </div>
+        </div>
+       
+    </div>
+</div>

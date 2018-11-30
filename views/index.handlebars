@@ -5,6 +5,8 @@
         <nav class="navbar navbar-expand-lg custom-nav">
             {{#if loggedIn}}
                 {{> navbar/logged-in}}
+            {{else if newUser}}
+                <li></li>
             {{else}}
                {{> navbar/logged-out}}
             {{/if}}
@@ -14,6 +16,8 @@
 
 {{#if loggedIn}}
     {{> content/dashboard}}
+{{else if newUser}}
+    {{> content/newUser}}
 {{else}}
     {{> content/intro}}
 {{/if}}
