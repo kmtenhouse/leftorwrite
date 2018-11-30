@@ -64,6 +64,16 @@ module.exports = function (app) {
         });
     }); 
 
+    app.get("/api/user/:username", function(req, res){
+        db.User.findAll({
+            where: {
+                displayName: req.params.username
+            }
+        }).then(function(dbUser){
+            res.json(dbUser);
+        });
+    });
+
     app.put("/api/user", function(req, res){
         db.User.update({
             displayName: req.body.username

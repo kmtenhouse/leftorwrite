@@ -36,15 +36,20 @@ module.exports = function (app) {
     }); 
 
     app.get("/newUser", function(req,res){
-        db.User.findOne({
-            where: {
-                id: req.session.token
-            }
-        }).then(function(dbUser){
-            res.render("newUser", {
-                user: dbUser
+        if(req.session.token){
+            db.User.findOne({
+                where: {
+                    id: req.session.token
+                }
+            }).then(function(dbUser){
+                res.render("newUser", {
+                    user: dbUser
+                });
             });
-        });
+        }
+        else{
+            res.redirect("/");
+        }
     });
 
     // Load example page and pass in an example by id
