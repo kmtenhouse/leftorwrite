@@ -8,6 +8,8 @@ $("#newUsernameForm").on("submit", function(event){
         type: "PUT",
         data: newUser
     }).then(function(){
+        $("#newUsername").html(newUsername);
+        $("#updateUsernameModal").modal("show");
         console.log("changed username!");
     });
 });
