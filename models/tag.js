@@ -11,7 +11,7 @@ module.exports = function(sequelize, DataTypes) {
         }
     });
     Tag.associate = function(models) {
-        Tag.belongsToMany(models.Story, {through: "StoryTag", as: "stories"});
+        Tag.belongsToMany(models.Story, {through: "StoryTag"});
     };
     return Tag;
 };

@@ -44,21 +44,40 @@ module.exports = function (app) {
             attributes: ["title"]
         }).then(function (dbStory) {
             // dbStory.getTags();
+            // db.Tag.findAll({
+            //     attributes: ["id", "tagName"],
+            //     include: [{
+            //         model: db.Story,
+            //         as: "stories",
+            //         through: {
+            //             attributes: ["StoryId", "TagId"]
+            //         }
+            //     }]
+            // }).then(function (dbTags) {
+            //     console.log("dbStory = ", dbStory.dataValues);
+            //     console.log("dbTags = ", dbTags[0].dataValues.stories.length);
+            //     res.render("story", {
+            //         story: dbStory,
+            //         tags: dbTags
+            //     });
+            // });
             db.Tag.findAll({
-                attributes: ["id", "tagName"],
+                attributes: ["tagName"],
                 include: [{
                     model: db.Story,
-                    as: "stories",
+                    attributes: ["id"],
                     through: {
-                        attributes: ["StoryId", "TagId"]
+                        attributes: ["StoryTag.TagId", [db.sequelize.fn("COUNT", db.sequelize.col("StoryTag.TagId")), "tag_count"]],
+                        order: ["tag_count"]
                     }
                 }]
             }).then(function (dbTags) {
-                console.log("dbStory = ", dbStory.dataValues);
-                console.log("dbTags = ", dbTags[0].dataValues.stories.length);
-                res.render("story", {
+                // console.log(dbTags[0].stories[0].StoryTag._options.attributes);
+                // console.log(dbTags.get("tag_count"));
+                // var dbCount = dbTags.getTag_count();
+                res.send({
                     story: dbStory,
-                    tags: dbTags
+                    tags: dbTags,
                 });
             });
         });

@@ -44,7 +44,7 @@ module.exports = function (sequelize, DataTypes) {
     });
     Story.associate = function(models) {
         Story.belongsTo(models.User, {as: "Author"});
-        Story.belongsToMany(models.Tag, {through: "StoryTag", as: "tags"});
+        Story.belongsToMany(models.Tag, {through: "StoryTag"});
     };
     return Story;
 };
