@@ -40,42 +40,22 @@ module.exports = function (app) {
     // Load story making/editing page
     app.get("/story/edit/:id", function (req, res) {
         db.Story.findOne({
-            where: { id: req.params.id },
-            attributes: ["title"]
+            where: { id: req.params.id }
         }).then(function (dbStory) {
-            // dbStory.getTags();
-            // db.Tag.findAll({
-            //     attributes: ["id", "tagName"],
-            //     include: [{
-            //         model: db.Story,
-            //         as: "stories",
-            //         through: {
-            //             attributes: ["StoryId", "TagId"]
-            //         }
-            //     }]
-            // }).then(function (dbTags) {
-            //     console.log("dbStory = ", dbStory.dataValues);
-            //     console.log("dbTags = ", dbTags[0].dataValues.stories.length);
-            //     res.render("story", {
-            //         story: dbStory,
-            //         tags: dbTags
-            //     });
-            // });
             db.Tag.findAll({
-                attributes: ["tagName"],
+                attributes: ["tagName", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
+                includeIgnoreAttributes:false,
                 include: [{
-                    model: db.Story,
-                    attributes: ["id"],
-                    through: {
-                        attributes: ["StoryTag.TagId", [db.sequelize.fn("COUNT", db.sequelize.col("StoryTag.TagId")), "tag_count"]],
-                        order: ["tag_count"]
-                    }
-                }]
+                    model: db.Story, 
+                    attributes: ["Stories.id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]], 
+                    duplicating: false
+                }],
+                group: ["id"],
+                order: [[db.sequelize.fn("COUNT", "Stories.id"), "DESC"]]
             }).then(function (dbTags) {
-                // console.log(dbTags[0].stories[0].StoryTag._options.attributes);
-                // console.log(dbTags.get("tag_count"));
-                // var dbCount = dbTags.getTag_count();
-                res.send({
+                console.log(dbTags[0].dataValues);
+                console.log(dbStory.dataValues)
+                res.render("story", {
                     story: dbStory,
                     tags: dbTags,
                 });

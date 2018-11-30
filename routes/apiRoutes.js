@@ -33,15 +33,15 @@ module.exports = function (app) {
     //GET ALL TAGS
     app.get("/api/tags", function (req, res) {
         db.Tag.findAll({
-            attributes: ["TagName", [db.sequelize.fn("COUNT", "stories.id"), 'NumStories']],
+            attributes: ["TagName", [db.sequelize.fn("COUNT", "stories.id"), "NumStories"]],
             includeIgnoreAttributes:false,
             include: [{
                 model: db.Story, 
-                attributes: [[db.sequelize.fn("COUNT", "stories.id"), 'NumStories']], 
+                attributes: [[db.sequelize.fn("COUNT", "stories.id"), "NumStories"]], 
                 duplicating: false
             }],
-            group: ['id'],
-            order: [[db.sequelize.fn("COUNT", "stories.id"), 'DESC']], 
+            group: ["id"],
+            order: [[db.sequelize.fn("COUNT", "stories.id"), "DESC"]], 
         }).then(function (dbExamples) {
             res.send(dbExamples);
         });
@@ -50,14 +50,14 @@ module.exports = function (app) {
     //Limit tags (TEST)
     app.get("/api/toptags", function (req, res) {
         db.Tag.findAll({
-            attributes: ["TagName", [db.sequelize.fn("COUNT", "stories.id"), 'DESC']],
+            attributes: ["TagName", [db.sequelize.fn("COUNT", "stories.id"), "DESC"]],
             include: [{
                 model: db.Story, 
                 attributes: [], 
                 duplicating: false,
             }],
-            group: ['id'],
-            order: [[db.sequelize.fn("COUNT", "stories.id"), 'DESC']], 
+            group: ["id"],
+            order: [[db.sequelize.fn("COUNT", "stories.id"), "DESC"]], 
             limit: 5   
         }).then(function (dbExamples) {
             res.send(dbExamples);

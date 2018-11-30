@@ -78,6 +78,9 @@
                                 <label class="btn btn-warning">
                                     <input type="checkbox" id="nonc" autocomplete="off"> NonConsent
                                 </label>
+                                <label class="btn btn-warning">
+                                    <input type="checkbox" id="profanity" autocomplete="off"> Profanity
+                                </label>
                             </div>
                         </div>
                         <div class="form-group col-md-9">
@@ -164,7 +167,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Add a brand new tag!</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -174,7 +177,7 @@
                         <div class="form-group">
                             <input type="text" class="form-control" id="newTagInput" aria-describedby="tagHelp"
                                 placeholder="Enter your tag">
-                            <small id="tagHelp" class="form-text text-muted">Info about tags.</small>
+                            <small id="tagHelp" class="form-text text-muted">Tags must be unique. Tags should be genres and general themes, like comedy or horror. Tags should not include profanity. We recommend plurals of things that can be pluralized, like werewolves vs. werewolf. We recommend NOT using character names or other exremely specific tags.</small>
                         </div>
                     </form>
                 </div>
@@ -278,5 +281,5 @@
     $(document).on("click", "#saveTag", function () {
         $("#tagSearch").val($("#newTagInput").val())
         filterTags();
-    })
+    });
 </script>
