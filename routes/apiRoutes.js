@@ -23,35 +23,18 @@ module.exports = function (app) {
     });
 
     //TAGS API
-    //GET ALL TAGS
-    app.get("/api/tags", function (req, res) {
+    //Limit tags (TEST)
+    app.get("/api/sequelizetags", function (req, res) {
         db.Tag.findAll({
-            attributes: ["TagName", [db.sequelize.fn("COUNT", "stories.id"), 'NumStories']],
-            includeIgnoreAttributes:false,
+            attributes: ["id","TagName"],
             include: [{
                 model: db.Story, 
-                attributes: [[db.sequelize.fn("COUNT", "stories.id"), 'NumStories']], 
+                attributes: [[db.sequelize.fn("COUNT", "stories.id"), "Count_Of_Stories"]],
                 duplicating: false
             }],
-            group: ['id'],
+            group: ["id"]/* ,
             order: [[db.sequelize.fn("COUNT", "stories.id"), 'DESC']], 
-        }).then(function (dbExamples) {
-            res.send(dbExamples);
-        });
-    }); 
-
-    //Limit tags (TEST)
-    app.get("/api/toptags", function (req, res) {
-        db.Tag.findAll({
-            attributes: ["TagName", [db.sequelize.fn("COUNT", "stories.id"), 'DESC']],
-            include: [{
-                model: db.Story, 
-                attributes: [], 
-                duplicating: false,
-            }],
-            group: ['id'],
-            order: [[db.sequelize.fn("COUNT", "stories.id"), 'DESC']], 
-            limit: 5   
+            limit: 5    */
         }).then(function (dbExamples) {
             res.send(dbExamples);
         });
@@ -59,7 +42,7 @@ module.exports = function (app) {
 
     //DIRECT QUERY METHOD (TEST)
     app.get("/api/directags", function (req, res) {
-        db.sequelize.query("select tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id group by tags.id order by num_stories desc;", { type: db.Sequelize.QueryTypes.SELECT}).then(function(result) {
+        db.sequelize.query("select tags.id, tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id group by tags.id order by num_stories desc;", { type: db.Sequelize.QueryTypes.SELECT}).then(function(result) {
             res.send(result);
         });
     }); 
