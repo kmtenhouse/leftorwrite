@@ -2,21 +2,6 @@ var passport = require("passport");
 var db = require("../models");
 
 module.exports = function(app){
-    // Loads cookie session status
-    app.get("/cookies", function(req, res){
-        if(req.session.token){
-            res.cookie("token", req.session.token);
-            res.json({
-                status: "session cookie set"
-            });
-        }
-        else{
-            res.cookie("token", "");
-            res.json({
-                status: "session cookie not set"
-            });
-        }
-    });
 
     // Redirects to Google Sign in Page
     app.get("/auth/google", 
@@ -26,17 +11,17 @@ module.exports = function(app){
     app.get("/auth/google/callback", 
         passport.authenticate("google", {failureRedirect: "/login"}),
         function(req, res) {
-            req.session.token = req.user.token;
-            var user = req.user.profile;
+            var profile = req.user.profile;
             // Finds or creates a new user with the user token id
             db.User.findOrCreate({
                 where: {
-                    oAuthKey: user.id
+                    oAuthKey: profile.id
                 },
                 defaults: {
-                    displayName: user.displayName
+                    displayName: profile.displayName
                 }
             }).spread(function(user, created){
+                req.session.token = user.id;
                 // If a new user was created, should redirect to a create user's page
                 if(created){
                     res.send("User Created");

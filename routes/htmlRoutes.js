@@ -1,15 +1,31 @@
 var db = require("../models");
 
 module.exports = function (app) {
-    //Commenting out this boilerplate for now so we can test the static routes
     // Load index page
     app.get("/", function (req, res) {
-        db.Example.findAll({}).then(function (dbExamples) {
+        if(req.session.token){
+            res.cookie("token", req.session.token);
+            db.Story.findAll({
+                where: {
+                    AuthorId: req.session.token
+                },
+                limit: 5,
+                order: [
+                    ["updatedAt", "DESC"]
+                ]
+            }).then(function(dbStory){
+                res.render("index", {
+                    loggedIn: true,
+                    stories: dbStory
+                });
+            }); 
+        }
+        else{
+            res.cookie("token", "");
             res.render("index", {
-                msg: "Welcome!",
-                examples: dbExamples
+                loggedIn: false
             });
-        });
+        }
     }); 
 
     // Load example page and pass in an example by id

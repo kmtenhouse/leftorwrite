@@ -20,7 +20,17 @@ app.use(express.static("public"));
 app.engine(
     "handlebars",
     exphbs({
-        defaultLayout: "main"
+        defaultLayout: "main",
+        helpers: {
+            equals : function(a, b, c){
+                if(a === b){
+                    return true;
+                }
+                else if(a === c){
+                    return true;
+                }
+            }
+        }
     })
 );
 app.set("view engine", "handlebars");

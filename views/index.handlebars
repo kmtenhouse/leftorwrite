@@ -1,33 +1,59 @@
-<div id="home">
-  <div class="container">
-    <div class="row">
-      <div class="col-8 offset-2">
-        <h1>{{msg}}</h1>
-        <h2>This is our Home Page!</h2>
-        <form class="clearfix mb-4" action="POST">
-          <div class="form-group">
-            <label for="example-text">Example Text</label>
-            <input type="text" id="example-text" class="form-control" aria-describedby="example-text" placeholder="Enter Example Text">
-          </div>
-          <div class="form-group">
-            <label for="example-description">Example Description</label>
-            <textarea class="form-control" id="example-description" aria-describedby="example-description" placeholder="Enter Example Description"></textarea>
-          </div>
-          <button id="submit" class="btn btn-primary float-right">Submit</button>
-        </form>
-        <h3>Examples:</h3>
-        <ul id="example-list" class="list-group">
-          {{#each examples}}
-          <li data-id="{{this.id}}" class="list-group-item">
-            <a href="example/{{this.id}}">{{this.text}}</a>
-            <button class="btn btn-danger float-right delete">ｘ</button>
-          </li>
-          {{/each}}
-        </ul>
-      </div>
+<!-- Header will appear on every page-->
+<header class="header">
+    <div class="container-fluid px-3">
+        <!-- Nav will eventually have logic to render differently depending on when the user is logged in -->
+        <nav class="navbar navbar-expand-lg custom-nav">
+            {{#if loggedIn}}
+                {{> navbar/logged-in}}
+            {{else}}
+               {{> navbar/logged-out}}
+            {{/if}}
+        </nav>
     </div>
-  </div>
-</div>
+</header>
 
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="/js/index.js"></script>
+{{#if loggedIn}}
+    {{> content/dashboard}}
+{{else}}
+    {{> content/intro}}
+{{/if}}
+
+<!-- Footer containing credits on every page -->
+<footer>
+    <div class="container">
+        <div class="row pt-3">
+            <div class="col-12 col-md-4 mr-auto">
+                <aside>
+                    <h5>About Us</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            Jover Lee
+                        </li>
+                        <li>
+                            Theresa Bankman
+                        </li>
+                        <li>
+                            Tassa Tenhouse
+                        </li>
+                    </ul>
+                </aside>
+            </div>
+            <div class="col-12 col-md-4 ml-auto">
+                <aside>
+                    <h5>Credits</h5>
+                    <ul class="list-unstyled">
+                        {{#if loggedIn}}
+                            {{> footer/dashboard-footer}}
+                        {{else}}
+                            {{> footer/intro-footer}}
+                        {{/if}}
+                    </ul>
+                </aside>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
