@@ -49,7 +49,7 @@ module.exports = function (app) {
                 attributes: [], 
                 duplicating: false,
             }],
-            group: ['id'],
+            group: ['TagName'],
             order: [[db.sequelize.fn("COUNT", "stories.id"), 'DESC']], 
             limit: 5   
         }).then(function (dbExamples) {
@@ -64,4 +64,20 @@ module.exports = function (app) {
         });
     }); 
 
+    app.put("/api/user", function(req, res){
+        db.User.update({
+            displayName: req.body.username
+        }, {
+            where: {
+                id: req.session.token
+            }
+        }).then(function(dbUser){
+            if(dbUser === 0){
+                return res.status(404).end();
+            }
+            else{
+                return res.status(200).end();
+            }
+        });
+    });
 };

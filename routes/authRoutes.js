@@ -24,9 +24,7 @@ module.exports = function(app){
                 req.session.token = user.id;
                 // If a new user was created, should redirect to a create user's page
                 if(created){
-                    res.render("newUser", {
-                        user: user
-                    });
+                    res.redirect("/newUser");
                 }
                 // If user already exists, redirect to their page
                 else{
