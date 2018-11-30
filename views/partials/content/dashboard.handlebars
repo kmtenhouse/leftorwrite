@@ -1,0 +1,41 @@
+<!-- Recently Edited Section -->
+    <div class="container border m-5 mx-auto">
+        <!-- Section Header -->
+        <nav class="navbar pt-4 border-bottom">
+            <span class="navbar-brand"><h3>Recently Edited</h3></span>
+            <a href="#" class="btn btn-danger">Create New Story</a>
+        </nav>
+        <!-- Recently Edited Stories -->
+        <div class="card-deck p-5 justify-content-around">
+            {{#each stories}}
+                {{> content/dashboard-story}}
+                {{#if (equals @index 1 3)}} 
+                    <div class="w-100 d-none d-sm-block d-md-none"><!-- wrap every 2 on sm--></div>
+                {{else if (equals @index 2)}}
+                    <div class="w-100 d-none d-md-block d-lg-none"><!-- wrap every 3 on md--></div>
+                {{/if}}
+            {{/each}}
+        </div>
+    </div>
+    <div class="container border m-5 mx-auto">
+        <nav class="navbar justify-content-start">
+            <span class="navbar-brand"><h3>Popular Tags</h3></span>
+        </nav>
+        <div class="row m-3">
+            <div class="col">
+                <button class="btn btn-primary custom-btn">Tag <span class="badge badge-light">#</span></button>
+            </div>
+            <div class="col">
+                <button class="btn btn-primary custom-btn">Tag <span class="badge badge-light">#</span></button>
+            </div>
+            <div class="col">
+                <button class="btn btn-primary custom-btn">Tag <span class="badge badge-light">#</span></button>
+            </div>
+            <div class="col">
+                <button class="btn btn-primary custom-btn">Tag <span class="badge badge-light">#</span></button>
+            </div>
+            <div class="col">
+                <button class="btn btn-primary custom-btn">Tag <span class="badge badge-light">#</span></button>
+            </div>
+        </div>
+    </div>
