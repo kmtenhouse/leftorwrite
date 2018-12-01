@@ -41,17 +41,16 @@
     </div>
 </header>
 {{!-- story tags --}}
-<!-- Followup section with more explanation -->
 <section class="neutral">
     <div class="container py-3">
         <div class="row">
             <div class="col-12 d-flex flex-column">
-                <h3 class="pb-2">Story edit page</h3>
+                <h3 class="pb-2">Story Edit Page</h3>
                 <form>
                     <div class="form-group">
                         {{!-- story title --}}
                         <input type="title" class="form-control form-control-lg" id="storyTitle" aria-describedby="titleHelp"
-                            placeholder="Story Title">
+                            placeholder="Story Title" value="{{story.title}}">
                         <small id="titleHelp" class="form-text text-muted">Your title should be unique among your
                             stories, but don't worry about getting the perfect title right now. You can edit it at any time.</small>
                     </div>
@@ -96,47 +95,7 @@
                                     </p>
                                 </div>
                                 <div class="form-group col-md-8 mt-3">
-                                    <ul class="list-group" id="tagList">
-                                        <li class="list-group-item">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input tag" id="comedy"
-                                                    data-tag-name="comedy">
-                                                <label class="form-check-label" for="comedy">comedy</label>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input tag" id="tragedy"
-                                                    data-tag-name="tragedy">
-                                                <label class="form-check-label" for="tragedy">tragedy</label>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input tag" id="horror"
-                                                    data-tag-name="horror">
-                                                <label class="form-check-label" for="horror">horror</label>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input tag" id="hogwash"
-                                                    data-tag-name="hogwash">
-                                                <label class="form-check-label" for="hogwash">hogwash</label>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input tag" id="werewolf"
-                                                    data-tag-name="werewolf">
-                                                <label class="form-check-label" for="werewolf">werewolf</label>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item">
-                                            <button type="button" class="btn btn-success" id="tagModalButton"
-                                                data-toggle="modal" data-target="#createTagModal">Create New Tag</button>
-                                        </li>
-                                    </ul>
+                                    {{> content/storysettings/tagslist}}
                                 </div>
                             </div>
                         </div>
@@ -177,7 +136,7 @@
                         <div class="form-group">
                             <input type="text" class="form-control" id="newTagInput" aria-describedby="tagHelp"
                                 placeholder="Enter your tag">
-                            <small id="tagHelp" class="form-text text-muted">Tags must be unique. Tags should be genres and general themes, like comedy or horror. Tags should not include profanity. We recommend plurals of things that can be pluralized, like werewolves vs. werewolf. We recommend NOT using character names or other exremely specific tags.</small>
+                            <small id="tagHelp" class="form-text text-muted">Tags must be unique. Tags should be genres and general themes, like comedy or horror.</small>
                         </div>
                     </form>
                 </div>
@@ -255,16 +214,22 @@
             }
         }
     }
+    // Call filterTags function when anything is typed in the tag searchbar
     $(document).on("keyup", "#tagSearch", filterTags);
+
+    // Declare tags array variable for sorting purposes.
     var tagsArr = [];
+    // Display checked tags in chosen tags field.
     $(document).on("click", ".tag", function () {
         var tag = $(this).data("tag-name");
         var retVal = "";
+        // if tag is checked
         if ($(this).prop("checked") === true) {
             tagsArr.push(tag);
             tagsArr.sort();
             retVal = tagsArr.join(", ");
         }
+        // if tag is not checked
         else if ($(this).prop("checked") === false) {
             for (i = 0; i < tagsArr.length; i++) {
                 if (tagsArr[i] === tag) {
@@ -273,11 +238,15 @@
                 }
             }
         }
+        // Populate to chosen tags field
         $("#chosenTags").val(retVal);
     });
+    // Populate searchbar input to input field on tag creation modal
     $(document).on("click", "#tagModalButton", function () {
         $("#newTagInput").val($("#tagSearch").val());
     });
+    // Populate modal input field value back to searchbar on save, 
+    // and call filter function again
     $(document).on("click", "#saveTag", function () {
         $("#tagSearch").val($("#newTagInput").val())
         filterTags();

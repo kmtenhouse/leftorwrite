@@ -1,0 +1,13 @@
+<ul class="list-group" id="tagList">
+    {{#each tags}}
+    <li class="list-group-item">
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input tag" id="tag{{dataValues.id}}" data-tag-name="{{dataValues.tagName}}" data-tag-id="{{dataValues.id}}">
+            <label class="form-check-label" for="tag{{dataValues.id}}">{{dataValues.tagName}}</label>
+        </div>
+    </li>
+    {{/each}}
+    <li class="list-group-item">
+        <button type="button" class="btn btn-success" id="tagModalButton" data-toggle="modal" data-target="#createTagModal">Create New Tag</button>
+    </li>
+</ul>

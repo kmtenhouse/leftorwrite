@@ -38,12 +38,13 @@ module.exports = function (app) {
     });
 
     // Load story making/editing page
-    app.get("/story/edit/:id", function (req, res) {
+    app.get("/story/settings/:id", function (req, res) {
         db.Story.findOne({
-            where: { id: req.params.id }
+            where: { id: req.params.id },
+            attributes: ["id", "title"]
         }).then(function (dbStory) {
             db.Tag.findAll({
-                attributes: ["tagName", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
+                attributes: ["tagName", "id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
                 includeIgnoreAttributes:false,
                 include: [{
                     model: db.Story, 
@@ -53,8 +54,6 @@ module.exports = function (app) {
                 group: ["id"],
                 order: [[db.sequelize.fn("COUNT", "Stories.id"), "DESC"]]
             }).then(function (dbTags) {
-                console.log(dbTags[0].dataValues);
-                console.log(dbStory.dataValues)
                 res.render("story", {
                     story: dbStory,
                     tags: dbTags,
