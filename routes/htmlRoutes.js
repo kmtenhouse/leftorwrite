@@ -1,6 +1,10 @@
 var db = require("../models");
 var check = require("../helpers/routevalidators.js");
 
+// VARIABLES 
+// list helper object
+var helpList = require("../public/js/helperlists");
+
 module.exports = function (app) {
     // Load index page
     app.get("/", function (req, res) {
@@ -34,7 +38,7 @@ module.exports = function (app) {
                 loggedIn: false
             });
         }
-    }); 
+    });
 
     app.get("/newUser", function(req,res){
         if(req.session.token){
@@ -105,8 +109,24 @@ module.exports = function (app) {
     //When a writer first creates a new story, we will show them a blank form for their
     //story's settings. Once they 'save' it, we'll create a new db entry if everything is valid :)
     app.get("/story/create", function(req, res){
-        res.send("Creating a new page"); //Theresa's form will go here instead :)
-    })
+        db.Tag.findAll({
+            attributes: ["tagName", "id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
+            includeIgnoreAttributes:false,
+            include: [{
+                model: db.Story, 
+                attributes: ["Stories.id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]], 
+                duplicating: false
+            }],
+            group: ["id"],
+            order: [[db.sequelize.fn("COUNT", "Stories.id"), "DESC"]]
+        }).then(function (dbTags) {
+            res.render("story", {
+                tags: dbTags,
+                warn: helpList.warnings,
+                storybuttons: helpList.storybuttons
+            });
+        });
+    });
 
     //EDIT STORY (SETTINGS)
     app.get("/story/settings/:storyid", function (req, res) {
@@ -117,7 +137,36 @@ module.exports = function (app) {
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
         //THERESA'S PAGE GOES HERE
-        res.send("Edit the title and tags and such for the existing story " + storyId);
+        db.Story.findOne({
+            where: { id: storyId },
+            include: {
+                model: db.Tag,
+                attributes: ["id", "tagName"]
+            }
+        }).then(function (dbStory) {
+            db.Tag.findAll({
+                attributes: ["id", "tagName", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
+                includeIgnoreAttributes:false,
+                include: [{
+                    model: db.Story, 
+                    attributes: ["Stories.id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]], 
+                    duplicating: false
+                }],
+                group: ["id"],
+                order: [[db.sequelize.fn("COUNT", "Stories.id"), "DESC"]]
+            }).then(function (dbTags) {
+                // console.log(dbStory.Tags[1].dataValues.tagName);
+                // console.log(dbTags);
+                helpList.warningsMatch(dbStory.dataValues);
+                // console.log(helpList.warnings);
+                res.render("story", {
+                    story: dbStory,
+                    tags: dbTags,
+                    warn: helpList.warnings,
+                    storybuttons: helpList.storybuttons
+                });
+            });
+        });
     });
 
     //STORY AND PAGE OVERVIEWS
@@ -159,8 +208,10 @@ module.exports = function (app) {
         var hbsObj = {
             storytitle: "My Story Title",
             pages: 
-                [{title: "Title 1", content: "Content goes here"}, 
-                {title: "Title 2", content: "Content goes here"}]
+                [
+                    {title: "Title 1", content: "Content goes here"}, 
+                    {title: "Title 2", content: "Content goes here"}
+                ]
         };
         res.render("pagelibrary", hbsObj);
     });

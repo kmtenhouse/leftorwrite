@@ -1,0 +1,21 @@
+{{!-- warn.all is true if choose not to warn is true on story return --}}
+{{#if warn.all}}
+    {{#each warn}}
+        <label class="btn btn-warning content-warning active">
+            <input type="checkbox" id="{{id}}" autocomplete="off" checked> {{text}}
+        </label>
+    {{/each}}
+{{else}}
+    {{!-- This block sorts which warnings are true and should be shown as active --}}
+    {{#each warn}}
+        {{#if yes}}
+            <label class="btn btn-warning content-warning active">
+                <input type="checkbox" id="{{id}}" autocomplete="off"checked> {{text}}
+            </label>
+        {{else}}
+            <label class="btn btn-warning content-warning">
+                <input type="checkbox" id="{{id}}" autocomplete="off"> {{text}}
+            </label>
+        {{/if}}
+    {{/each}}
+{{/if}}
