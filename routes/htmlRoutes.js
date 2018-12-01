@@ -1,6 +1,10 @@
 var db = require("../models");
 var check = require("../helpers/routevalidators.js");
 
+// VARIABLES 
+// list helper object
+var helpList = require("../public/js/helperlists");
+
 module.exports = function (app) {
     // Load index page
     app.get("/", function (req, res) {
@@ -97,10 +101,10 @@ module.exports = function (app) {
             order: [[db.sequelize.fn("COUNT", "Stories.id"), "DESC"]]
         }).then(function (dbTags) {
             res.render("story", {
-                tags: dbTags
+                tags: dbTags,
+                warn: warnings
             });
         });
-        res.send("Creating a new page"); //Theresa's form will go here instead :)
     });
 
     //EDIT STORY (SETTINGS)
@@ -112,30 +116,36 @@ module.exports = function (app) {
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
         //THERESA'S PAGE GOES HERE
-        // app.get("/story/settings/:id", function (req, res) {
-        //     db.Story.findOne({
-        //         where: { id: req.params.id },
-        //         attributes: ["id", "title"]
-        //     }).then(function (dbStory) {
-        //         db.Tag.findAll({
-        //             attributes: ["tagName", "id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
-        //             includeIgnoreAttributes:false,
-        //             include: [{
-        //                 model: db.Story, 
-        //                 attributes: ["Stories.id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]], 
-        //                 duplicating: false
-        //             }],
-        //             group: ["id"],
-        //             order: [[db.sequelize.fn("COUNT", "Stories.id"), "DESC"]]
-        //         }).then(function (dbTags) {
-        //             res.render("story", {
-        //                 story: dbStory,
-        //                 tags: dbTags,
-        //             });
-        //         });
-        //     });
-        // });
-        res.send("Edit the title and tags and such for the existing story " + storyId);
+        db.Story.findOne({
+            where: { id: storyId },
+            include: {
+                model: db.Tag,
+                attributes: ["id", "tagName"]
+            }
+        }).then(function (dbStory) {
+            db.Tag.findAll({
+                attributes: ["id", "tagName", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
+                includeIgnoreAttributes:false,
+                include: [{
+                    model: db.Story, 
+                    attributes: ["Stories.id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]], 
+                    duplicating: false
+                }],
+                group: ["id"],
+                order: [[db.sequelize.fn("COUNT", "Stories.id"), "DESC"]]
+            }).then(function (dbTags) {
+                // console.log(dbStory.Tags[1].dataValues.tagName);
+                // console.log(dbTags);
+                helpList.warningsMatch(dbStory.dataValues);
+                // console.log(helpList.warnings);
+                res.render("story", {
+                    story: dbStory,
+                    tags: dbTags,
+                    warn: helpList.warnings,
+                    storybuttons: helpList.storybuttons
+                });
+            });
+        });
     });
 
     //STORY AND PAGE OVERVIEWS
@@ -148,31 +158,6 @@ module.exports = function (app) {
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
         res.send("View the story's full overview for story " + storyId);
-    });
-
-    // Load story making/editing page
-    app.get("/story/settings/:id", function (req, res) {
-        db.Story.findOne({
-            where: { id: req.params.id },
-            attributes: ["id", "title"]
-        }).then(function (dbStory) {
-            db.Tag.findAll({
-                attributes: ["tagName", "id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
-                includeIgnoreAttributes:false,
-                include: [{
-                    model: db.Story, 
-                    attributes: ["Stories.id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]], 
-                    duplicating: false
-                }],
-                group: ["id"],
-                order: [[db.sequelize.fn("COUNT", "Stories.id"), "DESC"]]
-            }).then(function (dbTags) {
-                res.render("story", {
-                    story: dbStory,
-                    tags: dbTags,
-                });
-            });
-        });
     });
 
     //For consistency's sake, let's redirect the user to the overview page

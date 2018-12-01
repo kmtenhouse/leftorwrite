@@ -40,6 +40,10 @@ module.exports = function (sequelize, DataTypes) {
         characterDeath: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
+        },
+        profanity: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
     });
     Story.associate = function(models) {
