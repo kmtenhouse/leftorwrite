@@ -24,41 +24,8 @@ module.exports = function (app) {
 
     //TAGS API
     //GET ALL TAGS
+    //Will deliver all existing tags -- including their id, name, and the # of stories that use them - ordered by how many stories use them
     app.get("/api/tags", function (req, res) {
-        db.Tag.findAll({
-            attributes: ["TagName", [db.sequelize.fn("COUNT", "stories.id"), "NumStories"]],
-            includeIgnoreAttributes:false,
-            include: [{
-                model: db.Story, 
-                attributes: [[db.sequelize.fn("COUNT", "stories.id"), "NumStories"]], 
-                duplicating: false
-            }],
-            group: ["id"],
-            order: [[db.sequelize.fn("COUNT", "stories.id"), "DESC"]], 
-        }).then(function (dbExamples) {
-            res.send(dbExamples);
-        });
-    }); 
-
-    //Sequelize count tags 
-    //Known issues: will not order by the count
-    //Includes a random 'storytag' many-to-many table row for some reason
-    app.get("/api/sequelizetags", function (req, res) {
-        db.Tag.findAll({
-            attributes: ["id","TagName"],
-            include: [{
-                model: db.Story, 
-                attributes: [[db.sequelize.fn("COUNT", "stories.id"), "Count_Of_Stories"]],
-                duplicating: false
-            }],
-            group: ["id"]
-        }).then(function (dbExamples) {
-            res.send(dbExamples);
-        });
-    }); 
-
-    //DIRECT QUERY METHOD (TEST)
-    app.get("/api/directags", function (req, res) {
         db.sequelize.query("select tags.id, tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id group by tags.id order by num_stories desc;", { type: db.Sequelize.QueryTypes.SELECT}).then(function(result) {
             res.send(result);
         });
