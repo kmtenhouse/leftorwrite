@@ -40,7 +40,9 @@ module.exports = function (app) {
         });
     }); 
 
-    //Limit tags (TEST)
+    //Sequelize count tags 
+    //Known issues: will not order by the count
+    //Includes a random 'storytag' many-to-many table row for some reason
     app.get("/api/sequelizetags", function (req, res) {
         db.Tag.findAll({
             attributes: ["id","TagName"],
@@ -49,9 +51,7 @@ module.exports = function (app) {
                 attributes: [[db.sequelize.fn("COUNT", "stories.id"), "Count_Of_Stories"]],
                 duplicating: false
             }],
-            group: ["id"]/* ,
-            order: [[db.sequelize.fn("COUNT", "stories.id"), 'DESC']], 
-            limit: 5    */
+            group: ["id"]
         }).then(function (dbExamples) {
             res.send(dbExamples);
         });
