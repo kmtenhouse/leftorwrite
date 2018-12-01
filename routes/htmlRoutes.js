@@ -18,7 +18,7 @@ module.exports = function (app) {
                 ]
             }).then(function(dbStory){
                 // Finds the top 5 tags 
-                db.sequelize.query("select tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id group by tags.id order by num_stories desc;", { type: db.Sequelize.QueryTypes.SELECT}).then(function(dbTags) {
+                db.sequelize.query("select tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id group by tags.id order by num_stories desc limit 5;", { type: db.Sequelize.QueryTypes.SELECT}).then(function(dbTags) {
                     res.render("index", {
                         loggedIn: true,
                         stories: dbStory,
@@ -53,13 +53,6 @@ module.exports = function (app) {
         }
     });
 
-    // Load example page and pass in an example by id
-    app.get("/example/:id", function (req, res) {
-        db.Example.findOne({ where: { id: req.params.id } }).then(function (dbExample) {
-            res.render("example", {
-                example: dbExample
-            });
-        });
     //STORY ROUTES 
     //READ routes 
     //Read a story (by storyid)
@@ -75,6 +68,20 @@ module.exports = function (app) {
         var storyId = parseInt(req.params.storyid);
         res.send("Reading story " + storyId);
     });
+
+    app.get("/tags/", function (req, res) {
+        res.send("Displaying all tags!");
+    });  
+
+    app.get("/tags/:tagid", function (req, res) {
+        if(!check.isvalidid(req.params.tagid)) {
+            //if this is not a valid story id, return an error that we can't read the story
+            return res.render("tagnotfound");
+        }
+        //otherwise, go ahead and parse the id and proceed!
+        var tagId = parseInt(req.params.tagid);
+        res.send("Displaying all stories with tag #" + tagId);
+    });  
 
     //Read a page (by storyid and pageid)
     //If the story is public and published, and the page is finished and not orphaned,
