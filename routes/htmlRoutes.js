@@ -40,6 +40,7 @@ module.exports = function (app) {
         }
     });
 
+    // Loads new user page that allows user to change username
     app.get("/newUser", function(req,res){
         if(req.session.token){
             db.User.findOne({
@@ -79,26 +80,26 @@ module.exports = function (app) {
                 id: storyId
             }
         }).then(function(dbStory){
-            db.User.findOne({
-                where: {
-                    id: dbStory.AuthorId
-                }
-            }).then(function(author){
-                db.Page.findOne({
+            if(dbStory.isPublic && dbStory.isFinished){
+                db.User.findOne({
                     where: {
-                        AuthorId: author.id,
-                        StoryId: dbStory.id,
-                        isStart: true
+                        id: dbStory.AuthorId
                     }
-                }).then(function(firstPage){
-                    db.Link.findAll({
+                }).then(function(author){
+                    db.Page.findOne({
                         where: {
                             AuthorId: author.id,
                             StoryId: dbStory.id,
-                            FromPageId: firstPage.id
+                            isStart: true
                         }
-                    }).then(function(dbLinks){
-                        if(dbStory.isPublic && dbStory.isFinished){
+                    }).then(function(firstPage){
+                        db.Link.findAll({
+                            where: {
+                                AuthorId: author.id,
+                                StoryId: dbStory.id,
+                                FromPageId: firstPage.id
+                            }
+                        }).then(function(dbLinks){                        
                             res.render("index", {
                                 loggedIn: false,
                                 readStory: true,
@@ -107,30 +108,19 @@ module.exports = function (app) {
                                 firstPage,
                                 links: dbLinks
                             });
-                        }
+                        });
                     });
                 });
-            });
+            }
+            else{
+                res.render("404", {
+                    errorMessage: "Sorry, this story is private or not finished yet!",
+                    url: "/",
+                    linkDisplay: "← Back To Home"
+                });
+            }
         });
     });
-
-    app.get("/tags/", function (req, res) {
-        res.send("Displaying all tags!");
-    });  
-
-    app.get("/tags/:tagid", function (req, res) {
-        if(!check.isvalidid(req.params.tagid)) {
-            //if this is not a valid story id, return an error that we can't read the story
-            return res.render("404", {
-                errorMessage: "You've wandered too far afield!!",
-                url: "/tags",
-                linkDisplay: "← View all tags"
-            });
-        }
-        //otherwise, go ahead and parse the id and proceed!
-        var tagId = parseInt(req.params.tagid);
-        res.send("Displaying all stories with tag #" + tagId);
-    });  
 
     //Read a page (by storyid and pageid)
     //If the story is public and published, and the page is finished and not orphaned,
@@ -150,8 +140,78 @@ module.exports = function (app) {
         //otherwise, go ahead and parse the id(s) and proceed!
         var storyId = parseInt(req.params.storyid);
         var pageId = parseInt(req.params.pageid);
-        res.send("Reading page " + pageId + " in story " + storyId);
+        db.Story.findOne({
+            where: {
+                id: storyId
+            }
+        }).then(function(dbStory){
+            if(dbStory.isPublic && dbStory.isFinished){
+                db.Page.findOne({
+                    where: {
+                        id: pageId,
+                        StoryId: dbStory.id
+                    }
+                }).then(function(page){
+                    if(page.contentFinished && !page.isOrphaned && page.isLinked){
+                        db.User.findOne({
+                            where: {
+                                id: dbStory.AuthorId
+                            }
+                        }).then(function(author){
+                            db.Link.findAll({
+                                where: {
+                                    AuthorId: author.id,
+                                    StoryId: dbStory.id,
+                                    FromPageId: page.id
+                                }
+                            }).then(function(dbLinks){
+                                res.render("index", {
+                                    loggedIn: false,
+                                    readPage: true,
+                                    dbStory,
+                                    author,
+                                    page,
+                                    links: dbLinks
+                                });
+                            });
+                        });
+                    }
+                    else{
+                        return res.render("404", {
+                            errorMessage: "Sorry, we can't load that page!",
+                            url: "/",
+                            linkDisplay: "← Back To Home"
+                        });
+                    }
+                });
+            }
+            else {
+                return res.render("404", {
+                    errorMessage: "Sorry, this story is private or not finished yet!",
+                    url: "/",
+                    linkDisplay: "← Back To Home"
+                });
+            }
+        })
     });
+
+    app.get("/tags/", function (req, res) {
+        res.send("Displaying all tags!");
+    });  
+
+    app.get("/tags/:tagid", function (req, res) {
+        if(!check.isvalidid(req.params.tagid)) {
+            //if this is not a valid story id, return an error that we can't read the story
+            return res.render("404", {
+                errorMessage: "You've wandered too far afield!!",
+                url: "/tags",
+                linkDisplay: "← View all tags"
+            });
+        }
+        //otherwise, go ahead and parse the id and proceed!
+        var tagId = parseInt(req.params.tagid);
+        res.send("Displaying all stories with tag #" + tagId);
+    });  
 
     //WRITER ROUTES
     //CREATE NEW STORY (SETTINGS)
