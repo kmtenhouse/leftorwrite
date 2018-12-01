@@ -64,6 +64,7 @@ module.exports = function (app) {
                 example: dbExample
             });
         });
+    });
     //STORY ROUTES 
     //READ routes 
     //Read a story (by storyid)
@@ -115,7 +116,8 @@ module.exports = function (app) {
         }).then(function (dbTags) {
             res.render("story", {
                 tags: dbTags,
-                warn: warnings
+                warn: helpList.warnings,
+                storybuttons: helpList.storybuttons
             });
         });
     });
@@ -200,8 +202,10 @@ module.exports = function (app) {
         var hbsObj = {
             storytitle: "My Story Title",
             pages: 
-                [{title: "Title 1", content: "Content goes here"}, 
-                {title: "Title 2", content: "Content goes here"}]
+                [
+                    {title: "Title 1", content: "Content goes here"}, 
+                    {title: "Title 2", content: "Content goes here"}
+                ]
         };
         res.render("pagelibrary", hbsObj);
     });
