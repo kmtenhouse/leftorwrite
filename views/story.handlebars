@@ -1,0 +1,97 @@
+<!-- Header (will appear on every page) -->
+<header class="header">
+    <div class="container-fluid px-3">
+        {{!-- navbar --}}
+        <!-- Nav (will eventually have logic to render differently depending on when the user is logged in) -->
+        <nav class="navbar navbar-expand-lg custom-nav">
+            {{> navbar/logged-in}}
+        </nav>
+
+    </div>
+</header>
+{{!-- story tags --}}
+<section class="neutral">
+    <div class="container py-3">
+        <div class="row">
+            <div class="col-12 d-flex flex-column">
+                <h3 class="pb-2">Story Edit Page</h3>
+                <form>
+                    <div class="form-group">
+                        {{!-- story title --}}
+                        <input type="title" class="form-control form-control-lg" id="storyTitle" aria-describedby="titleHelp"
+                            placeholder="Story Title" value="{{story.title}}">
+                        <small id="titleHelp" class="form-text text-muted">Your title should be unique among your
+                            stories, but don't worry about getting the perfect title right now. You can edit it at any time.</small>
+                    </div>
+                    <div class="form row">
+                        {{!-- warnings check list --}}
+                        <div class="form-group col-sm-6 col-md-4">
+                            <div class="btn-group-vertical btn-group-toggle w-100" data-toggle="buttons" role="group" aria-label="content warnings buttons">
+                                {{>content/storysettings/warningbuttons}}
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-8">
+                            <p>
+                                If your story qualifies for an R rating, please use these warnings (the yellow buttons) to restrict access and prepare your readers. <br><br>
+                                Choose Not To Warn: If you want to warn appropriately, but don't want to give away too much of your plot, you can use this button to let readers know that at least one of the other warnings is relevant. <br><br>
+                                Character Death: Like writing in the second person, killing off the main character on multiple story paths is a tradional part of choose your own adventure novels, even in those intended for children. Therefore Character Death is not age restricted. If the death is graphically described, however we encourage you to also use the Violence/Gore warning.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-12">
+                            <textarea class="form-control" id="chosenTags" type="text" placeholder="Your chosen tags will appear here"
+                                value="" readonly></textarea>
+                            <div class="form row">
+                                <div class="form-group col-md-5 mt-3">
+                                    <input type="text" class="form-control" id="tagSearch" placeholder="Search for tags..">
+                                    <p class="mt-3">
+                                        Scroll through the list and select all relevant tags. You can use the searchbar above to filter the list. If you don't find what you are looking for, you can create your own tag.
+                                    </p>
+                                </div>
+                                <div class="form-group col-md-7 mt-3">
+                                    {{> content/storysettings/tagslist}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{!-- buttons for saving, overall settings and navigating to page views --}}
+                    {{>content/storysettings/storybuttons}}
+                </form>
+            </div>
+        </div>
+    </div>
+    {{!-- MODALS --}}
+    {{!-- modal for tag creation --}}
+    <div class="modal fade" id="createTagModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add a brand new tag!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="newTagInput" aria-describedby="tagHelp"
+                                placeholder="Enter your tag">
+                            <small id="tagHelp" class="form-text text-muted">Tags must be unique. Tags should be genres and general themes, like comedy or horror.</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="saveTag">Save Tag</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer containing credits (will eventually be on every page) -->
+<footer>
+    {{>footer/storysettings}}
+</footer>

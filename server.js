@@ -22,11 +22,11 @@ app.engine(
     exphbs({
         defaultLayout: "main",
         helpers: {
-            equals : function(a, b, c){
-                if(a === b){
+            equals: function (a, b, c) {
+                if (a === b) {
                     return true;
                 }
-                else if(a === c){
+                else if (a === c) {
                     return true;
                 }
             }
@@ -41,7 +41,7 @@ app.use(passport.initialize());
 
 // Cookies
 app.use(cookieSession({
-    name: "session", 
+    name: "session",
     keys: [process.env.SESSION_KEY]
 }));
 app.use(cookieParser());
@@ -71,3 +71,5 @@ db.sequelize.sync(syncOptions).then(function () {
 });
 
 module.exports = app;
+
+
