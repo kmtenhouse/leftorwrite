@@ -81,6 +81,13 @@ module.exports = function (app) {
     });
 
     //WRITER ROUTES
+    //CREATE NEW STORY (SETTINGS)
+    //When a writer first creates a new story, we will show them a blank form for their
+    //story's settings. Once they 'save' it, we'll create a new db entry if everything is valid :)
+    app.get("/story/create", function(req, res){
+        res.send("Creating a new page"); //Theresa's form will go here instead :)
+    })
+
     //EDIT STORY (SETTINGS)
     app.get("/story/settings/:storyid", function (req, res) {
         if(!check.isvalidid(req.params.storyid)) {
@@ -89,6 +96,7 @@ module.exports = function (app) {
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
+        //THERESA'S PAGE GOES HERE
         res.send("Edit the title and tags and such for the existing story " + storyId);
     });
 
