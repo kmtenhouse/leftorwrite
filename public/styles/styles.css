@@ -105,3 +105,10 @@ footer {
 /* Ending is a half moon (round part facing bottom) */
 
 /* TBC is a star */
+/* New User Page */
+
+.newUserPage {
+  background-image: url("../images/new-user.jpeg");
+  background-size: cover;
+  height: 100vh;
+}
