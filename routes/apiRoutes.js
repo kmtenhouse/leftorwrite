@@ -70,4 +70,30 @@ module.exports = function (app) {
         });
     }); 
 
+    app.get("/api/user/:username", function(req, res){
+        db.User.findAll({
+            where: {
+                displayName: req.params.username
+            }
+        }).then(function(dbUser){
+            res.json(dbUser);
+        });
+    });
+
+    app.put("/api/user", function(req, res){
+        db.User.update({
+            displayName: req.body.username
+        }, {
+            where: {
+                id: req.session.token
+            }
+        }).then(function(dbUser){
+            if(dbUser === 0){
+                return res.status(404).end();
+            }
+            else{
+                return res.status(200).end();
+            }
+        });
+    });
 };

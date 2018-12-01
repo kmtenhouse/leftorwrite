@@ -22,18 +22,7 @@ module.exports = function (app) {
                 ]
             }).then(function(dbStory){
                 // Finds the top 5 tags 
-                db.Tag.findAll({
-                    attributes: ["TagName", "id", [db.sequelize.fn("COUNT", "stories.id"), "NumStories"]],
-                    includeIgnoreAttributes:false,
-                    include: [{
-                        model: db.Story, 
-                        attributes: [[db.sequelize.fn("COUNT", "stories.id"), "NumStories"]], 
-                        duplicating: false
-                    }],
-                    group: ["id"],
-                    order: [[db.sequelize.fn("COUNT", "stories.id"), "DESC"]], 
-                    limit: 5
-                }).then(function (dbTags) {
+                db.sequelize.query("select tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id group by tags.id order by num_stories desc;", { type: db.Sequelize.QueryTypes.SELECT}).then(function(dbTags) {
                     res.render("index", {
                         loggedIn: true,
                         stories: dbStory,
@@ -51,6 +40,30 @@ module.exports = function (app) {
         }
     });
 
+    app.get("/newUser", function(req,res){
+        if(req.session.token){
+            db.User.findOne({
+                where: {
+                    id: req.session.token
+                }
+            }).then(function(dbUser){
+                res.render("newUser", {
+                    user: dbUser
+                });
+            });
+        }
+        else{
+            res.redirect("/");
+        }
+    });
+
+    // Load example page and pass in an example by id
+    app.get("/example/:id", function (req, res) {
+        db.Example.findOne({ where: { id: req.params.id } }).then(function (dbExample) {
+            res.render("example", {
+                example: dbExample
+            });
+        });
     //STORY ROUTES 
     //READ routes 
     //Read a story (by storyid)
@@ -179,7 +192,18 @@ module.exports = function (app) {
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
-        res.send("View the library of pages for a particular story - story " + storyId);
+        //(TO-DO) check if this story exists 
+        
+        //(TO-DO) check if we have privs to it
+
+        //Then render the page
+        var hbsObj = {
+            storytitle: "My Story Title",
+            pages: 
+                [{title: "Title 1", content: "Content goes here"}, 
+                {title: "Title 2", content: "Content goes here"}]
+        };
+        res.render("pagelibrary", hbsObj);
     });
 
     //WRITE PAGES
