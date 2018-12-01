@@ -9,7 +9,7 @@ module.exports = function(app){
     
     // Callback URL after sign-in 
     app.get("/auth/google/callback", 
-        passport.authenticate("google", {failureRedirect: "/login"}),
+        passport.authenticate("google", {failureRedirect: "/"}),
         function(req, res) {
             var profile = req.user.profile;
             // Finds or creates a new user with the user token id
@@ -24,7 +24,7 @@ module.exports = function(app){
                 req.session.token = user.id;
                 // If a new user was created, should redirect to a create user's page
                 if(created){
-                    res.send("User Created");
+                    res.redirect("/newUser");
                 }
                 // If user already exists, redirect to their page
                 else{

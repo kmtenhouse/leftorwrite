@@ -96,3 +96,11 @@ footer {
 .custom-btn {
   border-radius: 12px;
 }
+
+/* New User Page */
+
+.newUserPage {
+  background-image: url("../images/new-user.jpeg");
+  background-size: cover;
+  height: 100vh;
+}
