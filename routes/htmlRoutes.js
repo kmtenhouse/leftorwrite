@@ -74,7 +74,44 @@ module.exports = function (app) {
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
-        res.send("Reading story " + storyId);
+        db.Story.findOne({
+            where: {
+                id: storyId
+            }
+        }).then(function(dbStory){
+            db.User.findOne({
+                where: {
+                    id: dbStory.AuthorId
+                }
+            }).then(function(author){
+                db.Page.findOne({
+                    where: {
+                        AuthorId: author.id,
+                        StoryId: dbStory.id,
+                        isStart: true
+                    }
+                }).then(function(firstPage){
+                    db.Link.findAll({
+                        where: {
+                            AuthorId: author.id,
+                            StoryId: dbStory.id,
+                            FromPageId: firstPage.id
+                        }
+                    }).then(function(dbLinks){
+                        if(dbStory.isPublic && dbStory.isFinished){
+                            res.render("index", {
+                                loggedIn: false,
+                                readStory: true,
+                                dbStory,
+                                author,
+                                firstPage,
+                                links: dbLinks
+                            });
+                        }
+                    });
+                });
+            });
+        });
     });
 
     app.get("/tags/", function (req, res) {

@@ -1,0 +1,22 @@
+<div class="container my-5">
+    <div class="jumbotron jumbotron-fluid text-center bg-white">
+        <h1 class="display-4">{{dbStory.title}}</h1>
+        <p class="lead">Written By: {{author.displayName}}</p>
+        <hr class="my-4">
+        <p>Display Warnings Here</p>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <p>{{firstPage.content}}</p>
+                </div>
+                <div class="card-footer">
+                    {{#each links}}
+                        {{> content/readStory/pageLinks}}
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
