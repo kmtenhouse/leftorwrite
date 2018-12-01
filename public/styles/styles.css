@@ -1,3 +1,8 @@
+/* Body background color (default) */
+body {
+  background-color: #E7E5DF;
+}
+
 /* Header and nav colors */
 .header {
   background-color: #36723f;
