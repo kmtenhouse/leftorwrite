@@ -144,7 +144,18 @@ module.exports = function (app) {
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
-        res.send("View the library of pages for a particular story - story " + storyId);
+        //(TO-DO) check if this story exists 
+        
+        //(TO-DO) check if we have privs to it
+
+        //Then render the page
+        var hbsObj = {
+            storytitle: "My Story Title",
+            pages: 
+                [{title: "Title 1", content: "Content goes here"}, 
+                {title: "Title 2", content: "Content goes here"}]
+        };
+        res.render("pagelibrary", hbsObj);
     });
 
     //WRITE PAGES
