@@ -8,7 +8,7 @@
         <!-- Recently Edited Stories -->
         <div class="card-deck p-5 justify-content-around">
             {{#each stories}}
-                {{> content/dashboard-story}}
+                {{> content/dashboard/dashboard-story}}
                 {{#if (equals @index 1 3)}} 
                     <div class="w-100 d-none d-sm-block d-md-none"><!-- wrap every 2 on sm--></div>
                 {{else if (equals @index 2)}}
@@ -23,7 +23,7 @@
         </nav>
         <div class="row m-3">
             {{#each tags}}
-                {{> content/dashboard-tags}}
+                {{> content/dashboard/dashboard-tags}}
             {{/each}}
         </div>
     </div>
