@@ -57,4 +57,30 @@ module.exports = function (app) {
             }
         });
     });
+
+    app.put("/api/story/update/:id", function(req, res) {
+        db.Story.update({
+            title: req.body.title,
+            chooseNotToWarn: req.body.chooseNotToWarn ,
+            violence: req.body.violence,
+            nsfw: req.body.nsfw,
+            nonConsent: req.body.nsfw,
+            characterDeath: req.body.characterDeath,
+            profanity: req.body.profanity,
+            isPublic: req.body.isPublic,
+            isFinished: req.body.isFinished,
+            doneByDefault: req.body.doneByDefault
+        }, {
+            where: {
+                id: req.params.id
+            }
+        }).then(function(dbStory) {
+            if(dbStory === 0){
+                return res.status(404).end();
+            }
+            else{
+                return res.status(200).end();
+            }
+        });
+    });
 };

@@ -53,6 +53,41 @@ $(document).on("click", "#saveTag", function () {
     $("#tagSearch").val($("#newTagInput").val());
     filterTags();
 });
-$(document).on("click", "chooseNotToWarn", function () {
-    $(".content-warning").toggleClass("active");
+
+// FIXME: This code doesn't work yet, but putting in on the back burner for now
+// $(document).on("click", "#chooseNotToWarn", function () {
+//     $(".content-warning").addClass("active");
+// });
+
+
+// API ROUTES
+
+// CREATE ROUTE
+
+// UPDATE ROUTE
+$(document).on("click", "#saveChanges", function (event) {
+    event.preventDefault();
+    var id = $("#storyTitle").data("id");
+    var storyObj = {
+        title: "new title"
+        // chooseNotToWarn: req.body.chooseNotToWarn ,
+        // violence: req.body.violence,
+        // nsfw: req.body.nsfw,
+        // nonConsent: req.body.nsfw,
+        // characterDeath: req.body.characterDeath,
+        // profanity: req.body.profanity,
+        // isPublic: req.body.isPublic,
+        // isFinished: req.body.isFinished,
+        // doneByDefault: req.body.doneByDefault
+    }; 
+    console.log(storyObj)
+    $.ajax("/api/story/update/" + id, {
+        type: "PUT",
+        data: storyObj
+    }).then(function () {
+        // location.reload();
+        console.log("Updated ", id);
+    });
 });
+
+// DELETE ROUTE
