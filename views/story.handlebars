@@ -4,38 +4,7 @@
         {{!-- navbar --}}
         <!-- Nav (will eventually have logic to render differently depending on when the user is logged in) -->
         <nav class="navbar navbar-expand-lg custom-nav">
-            <a class="navbar-brand text-white" href="#"><i class="fas fa-feather-alt fa-lg"></i></a>
-            <button class="navbar-toggler navbar-dark" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle custom-nav-link" href="#" id="navbarDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Browse
-                        </a>
-                        <div class="dropdown-menu custom-nav-dropdown" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="#">View All Stories</a>
-                            <a class="dropdown-item" href="#">View Story Flow</a>
-                            <div class="dropdown-divider"></div>
-
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <form class="nav-link">
-                            <input type="text" placeholder="Search...">
-                        </form>
-                    </li>
-                </ul>
-
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item"><a href="/logout" class="custom-nav-link">Logout</a></li>
-                </ul>
-            </div>
+            {{> navbar/logged-in}}
         </nav>
 
     </div>
@@ -88,10 +57,6 @@
                     </div>
                     {{!-- buttons for saving, overall settings and navigating to page views --}}
                     {{>content/storysettings/storybuttons}}
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="doneByDefault">
-                        <label class="form-check-label" for="doneByDefault">When checked, pages in this story will automatically be marked as finished when you press the save button.</label>
-                    </div>
                 </form>
             </div>
         </div>
@@ -128,104 +93,5 @@
 
 <!-- Footer containing credits (will eventually be on every page) -->
 <footer>
-    <div class="container">
-        <div class="row pt-3">
-            <div class="col-12 col-md-4 mr-auto">
-                <aside>
-                    <h5>About Us</h5>
-                    <ul class="list-unstyled">
-                        <li>
-                            Jover Lee
-                        </li>
-                        <li>
-                            Theresa Bankman
-                        </li>
-                        <li>
-                            Tassa Tenhouse
-                        </li>
-                    </ul>
-                </aside>
-            </div>
-
-            <div class="col-12 col-md-4 ml-auto">
-                <aside>
-                    <h5>Credits</h5>
-                    <ul class="list-unstyled">
-                        <li>
-                            Background images by Pexels
-                        </li>
-                        <li>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a>
-                            from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is
-                            licensed by <a class="text-success" href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0"
-                                target="_blank">CC 3.0 BY</a>
-                        </li>
-                    </ul>
-                </aside>
-            </div>
-        </div>
-    </div>
+    {{>footer/storysettings}}
 </footer>
-
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-    crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-    crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-    crossorigin="anonymous"></script>
-<script>
-    function filterTags() {
-        // VARIABLES
-        var input = document.getElementById("tagSearch");
-        var filter = input.value.toUpperCase();
-        var ul = document.getElementById("tagList");
-        var li = ul.getElementsByTagName("li");
-
-        // Loop through list items (except button at end), 
-        // and hide those that don't match the search query
-        for (i = 0; i < li.length - 1; i++) {
-            txtValue = li[i].textContent || li[i].innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                li[i].style.display = "";
-            } else {
-                li[i].style.display = "none";
-            }
-        }
-    }
-    // Call filterTags function when anything is typed in the tag searchbar
-    $(document).on("keyup", "#tagSearch", filterTags);
-
-    // Declare tags array variable for sorting purposes.
-    var tagsArr = [];
-    // Display checked tags in chosen tags field.
-    $(document).on("click", ".tag", function () {
-        var tag = $(this).data("tag-name");
-        var retVal = "";
-        // if tag is checked
-        if ($(this).prop("checked") === true) {
-            tagsArr.push(tag);
-            tagsArr.sort();
-            retVal = tagsArr.join(", ");
-        }
-        // if tag is not checked
-        else if ($(this).prop("checked") === false) {
-            for (i = 0; i < tagsArr.length; i++) {
-                if (tagsArr[i] === tag) {
-                    tagsArr.splice(i, 1);
-                    retVal = tagsArr.join(", ");
-                }
-            }
-        }
-        // Populate to chosen tags field
-        $("#chosenTags").val(retVal);
-    });
-    // Populate searchbar input to input field on tag creation modal
-    $(document).on("click", "#tagModalButton", function () {
-        $("#newTagInput").val($("#tagSearch").val());
-    });
-    // Populate modal input field value back to searchbar on save, 
-    // and call filter function again
-    $(document).on("click", "#saveTag", function () {
-        $("#tagSearch").val($("#newTagInput").val())
-        filterTags();
-    });
-</script>
