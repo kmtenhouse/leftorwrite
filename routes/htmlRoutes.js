@@ -3,7 +3,7 @@ var check = require("../helpers/routevalidators.js");
 
 // VARIABLES 
 // list helper object
-var helpList = require("../public/js/helperlists");
+var helpList = require("../helpers/helperlists");
 
 module.exports = function (app) {
     // Load index page
