@@ -106,7 +106,7 @@ module.exports = function (app) {
     //story's settings. Once they 'save' it, we'll create a new db entry if everything is valid :)
     app.get("/story/create", function(req, res){
         res.send("Creating a new page"); //Theresa's form will go here instead :)
-    })
+    });
 
     //EDIT STORY (SETTINGS)
     app.get("/story/settings/:storyid", function (req, res) {
@@ -151,6 +151,7 @@ module.exports = function (app) {
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
+        console.log(storyId);
         //(TO-DO) check if this story exists 
         
         //(TO-DO) check if we have privs to it
@@ -160,7 +161,7 @@ module.exports = function (app) {
             storytitle: "My Story Title",
             pages: 
                 [{title: "Title 1", content: "Content goes here"}, 
-                {title: "Title 2", content: "Content goes here"}]
+                    {title: "Title 2", content: "Content goes here"}]
         };
         res.render("pagelibrary", hbsObj);
     });
