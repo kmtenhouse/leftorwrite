@@ -62,7 +62,11 @@ module.exports = function (app) {
     app.get("/story/read/:storyid", function (req, res) {
         if(!check.isvalidid(req.params.storyid)) {
             //if this is not a valid story id, return an error that we can't read the story
-            return res.render("storynotfound");
+            return res.render("404", {
+                errorMessage: "Sorry, we can't load that story!",
+                url: "/",
+                linkDisplay: "← Back To Home"
+            });
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
@@ -76,7 +80,11 @@ module.exports = function (app) {
     app.get("/tags/:tagid", function (req, res) {
         if(!check.isvalidid(req.params.tagid)) {
             //if this is not a valid story id, return an error that we can't read the story
-            return res.render("tagnotfound");
+            return res.render("404", {
+                errorMessage: "You've wandered too far afield!!",
+                url: "/tags",
+                linkDisplay: "← View all tags"
+            });
         }
         //otherwise, go ahead and parse the id and proceed!
         var tagId = parseInt(req.params.tagid);
@@ -92,7 +100,11 @@ module.exports = function (app) {
         if(!check.isvalidid(req.params.storyid) || !check.isvalidid(req.params.pageid)) {
             //if the story or page id are not valid, 
             //return an error that we can't read the page
-            return res.render("pagenotfound");
+            return res.render("404", {
+                errorMessage: "Sorry, we can't load that page!",
+                url: "/",
+                linkDisplay: "← Back To Home"
+            });
         }
         //otherwise, go ahead and parse the id(s) and proceed!
         var storyId = parseInt(req.params.storyid);
@@ -112,7 +124,11 @@ module.exports = function (app) {
     app.get("/story/settings/:storyid", function (req, res) {
         if(!check.isvalidid(req.params.storyid)) {
             //if this is not a valid story id, return an error that we can't read the story
-            return res.render("storynotfound");
+            return res.render("404", {
+                errorMessage: "Sorry, we can't load that story!",
+                url: "/",
+                linkDisplay: "← Back To Home"
+            });
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
@@ -125,7 +141,11 @@ module.exports = function (app) {
     app.get("/story/overview/:storyid", function (req, res) {
         if(!check.isvalidid(req.params.storyid)) {
             //if this is not a valid story id, return an error that we can't read the story
-            return res.render("storynotfound");
+            return res.render("404", {
+                errorMessage: "Sorry, we can't load that story!",
+                url: "/",
+                linkDisplay: "← Back To Home"
+            });
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
@@ -137,7 +157,11 @@ module.exports = function (app) {
     app.get("/story/write/:storyid", function (req, res) {
         if(!check.isvalidid(req.params.storyid)) {
             //if this is not a valid story id, return an error that we can't read the story
-            return res.render("storynotfound");
+            return res.render("404", {
+                errorMessage: "Sorry, we can't load that story!",
+                url: "/",
+                linkDisplay: "← Back To Home"
+            });
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
@@ -147,7 +171,11 @@ module.exports = function (app) {
     app.get("/story/pagelibrary/:storyid", function (req, res) {
         if(!check.isvalidid(req.params.storyid)) {
             //if this is not a valid story id, return an error that we can't read the story
-            return res.render("storynotfound");
+            return res.render("404", {
+                errorMessage: "Sorry, we can't load that story!",
+                url: "/",
+                linkDisplay: "← Back To Home"
+            });
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
@@ -170,7 +198,11 @@ module.exports = function (app) {
         if(!check.isvalidid(req.params.storyid) || !check.isvalidid(req.params.pageid)) {
             //if the story or page id are not valid, 
             //return an error that we can't read the page
-            return res.render("pagenotfound");
+            return res.render("404", {
+                errorMessage: "Sorry, we can't load that page!",
+                url: "/",
+                linkDisplay: "← Back To Home"
+            });
         }
         //otherwise, go ahead and parse the id(s) and proceed!
         var storyId = parseInt(req.params.storyid);
@@ -183,6 +215,10 @@ module.exports = function (app) {
 
     // Render 404 page for any unmatched routes
     app.get("*", function (req, res) {
-        res.render("404");
+        res.render("404", {
+            errorMessage: "How did you end up here?",
+            url: "/",
+            linkDisplay: "← Back To Home"
+        });
     });
 };
