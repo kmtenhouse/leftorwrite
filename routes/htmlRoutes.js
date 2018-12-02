@@ -1,5 +1,6 @@
 var db = require("../models");
 var check = require("../helpers/routevalidators.js");
+var dbMethods = require("../helpers/databaseMethods");
 
 // VARIABLES 
 // list helper object
@@ -13,17 +14,9 @@ module.exports = function (app) {
             console.log(req.session.token);
             res.cookie("token", req.session.token);
             // Finds the most recently updated stories of the User
-            db.Story.findAll({
-                where: {
-                    AuthorId: req.session.token
-                },
-                limit: 5,
-                order: [
-                    ["updatedAt", "DESC"]
-                ]
-            }).then(function (dbStory) {
+            dbMethods.findAllUserStories(req.session.token).then(function (dbStory) {
                 // Finds the top 5 tags 
-                db.sequelize.query("select tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id group by tags.id order by num_stories desc limit 5;", { type: db.Sequelize.QueryTypes.SELECT }).then(function (dbTags) {
+                dbMethods.topFiveTags().then(function(dbTags){
                     res.render("index", {
                         loggedIn: true,
                         stories: dbStory,
@@ -44,11 +37,7 @@ module.exports = function (app) {
     // Loads new user page that allows user to change username
     app.get("/newUser", function (req, res) {
         if (req.session.token) {
-            db.User.findOne({
-                where: {
-                    id: req.session.token
-                }
-            }).then(function (dbUser) {
+            dbMethods.findUser(req.session.token).then(function(dbUser){
                 res.render("newUser", {
                     user: dbUser
                 });
@@ -66,60 +55,24 @@ module.exports = function (app) {
     //Start page will include title, author name, and the first page of text + links
     //If the story is not accessible yet, will give an error page
     app.get("/story/read/:storyid", function (req, res) {
-        if (!check.isvalidid(req.params.storyid)) {
-            //if this is not a valid story id, return an error that we can't read the story
-            return res.render("404", {
-                errorMessage: "Sorry, we can't load that story!",
-                url: "/",
-                linkDisplay: "← Back To Home"
-            });
-        }
-        //otherwise, go ahead and parse the id and proceed!
-        var storyId = parseInt(req.params.storyid);
-        db.Story.findOne({
-            where: {
-                id: storyId
-            }
-        }).then(function (dbStory) {
-            if (dbStory.isPublic && dbStory.isFinished) {
-                db.User.findOne({
-                    where: {
-                        id: dbStory.AuthorId
-                    }
-                }).then(function (author) {
-                    db.Page.findOne({
-                        where: {
-                            AuthorId: author.id,
-                            StoryId: dbStory.id,
-                            isStart: true
-                        }
-                    }).then(function (firstPage) {
-                        db.Link.findAll({
-                            where: {
-                                AuthorId: author.id,
-                                StoryId: dbStory.id,
-                                FromPageId: firstPage.id
-                            }
-                        }).then(function (dbLinks) {
-                            res.render("index", {
-                                loggedIn: false,
-                                readStory: true,
-                                dbStory,
-                                author,
-                                firstPage,
-                                links: dbLinks
-                            });
+        var storyId = req.params.storyid;
+        check.storyIsReadable(storyId).then(function(dbStory){
+            dbMethods.findUser(dbStory.AuthorId).then(function(author){
+                dbMethods.findFirstPage(author.id, storyId).then(function(firstPage){
+                    dbMethods.findPageLinks(author.id, storyId, firstPage.id).then(function(links){
+                        res.render("index", {
+                            loggedIn: false,
+                            readStory: true,
+                            dbStory,
+                            author,
+                            firstPage,
+                            links: links
                         });
                     });
                 });
-            }
-            else {
-                res.render("404", {
-                    errorMessage: "Sorry, this story is private or not finished yet!",
-                    url: "/",
-                    linkDisplay: "← Back To Home"
-                });
-            }
+            });
+        }, function(err){
+            res.send(err.message);
         });
     });
 
@@ -143,70 +96,23 @@ module.exports = function (app) {
     //If the story is not accessible yet, will give an error page
     //If the page is orphaned or not finished, will give an error page
     app.get("/story/read/:storyid/page/:pageid", function (req, res) {
-        if (!check.isvalidid(req.params.storyid) || !check.isvalidid(req.params.pageid)) {
-            //if the story or page id are not valid, 
-            //return an error that we can't read the page
-            return res.render("404", {
-                errorMessage: "Sorry, we can't load that page!",
-                url: "/",
-                linkDisplay: "← Back To Home"
+        var pageId = req.params.pageid;
+        check.pageIsReadable(pageId).then(function(page){
+            var dbStory = page.Story;
+            dbMethods.findUser(dbStory.AuthorId).then(function(author){
+                dbMethods.findPageLinks(author.id, dbStory.id, page.id).then(function(links){
+                    res.render("index", {
+                        loggedIn: false,
+                        readPage: true,
+                        dbStory,
+                        author,
+                        page,
+                        links: links
+                    });
+                });
             });
-        }
-        //otherwise, go ahead and parse the id(s) and proceed!
-        var storyId = parseInt(req.params.storyid);
-        var pageId = parseInt(req.params.pageid);
-        db.Story.findOne({
-            where: {
-                id: storyId
-            }
-        }).then(function (dbStory) {
-            if (dbStory.isPublic && dbStory.isFinished) {
-                db.Page.findOne({
-                    where: {
-                        id: pageId,
-                        StoryId: dbStory.id
-                    }
-                }).then(function (page) {
-                    if (page.contentFinished && !page.isOrphaned && page.isLinked) {
-                        db.User.findOne({
-                            where: {
-                                id: dbStory.AuthorId
-                            }
-                        }).then(function (author) {
-                            db.Link.findAll({
-                                where: {
-                                    AuthorId: author.id,
-                                    StoryId: dbStory.id,
-                                    FromPageId: page.id
-                                }
-                            }).then(function (dbLinks) {
-                                res.render("index", {
-                                    loggedIn: false,
-                                    readPage: true,
-                                    dbStory,
-                                    author,
-                                    page,
-                                    links: dbLinks
-                                });
-                            });
-                        });
-                    }
-                    else {
-                        return res.render("404", {
-                            errorMessage: "Sorry, we can't load that page!",
-                            url: "/",
-                            linkDisplay: "← Back To Home"
-                        });
-                    }
-                });
-            }
-            else {
-                return res.render("404", {
-                    errorMessage: "Sorry, this story is private or not finished yet!",
-                    url: "/",
-                    linkDisplay: "← Back To Home"
-                });
-            }
+        }, function(err){
+            res.send(err.message);
         });
     });
 
