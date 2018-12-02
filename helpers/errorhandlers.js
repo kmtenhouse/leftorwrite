@@ -90,6 +90,9 @@ module.exports = {
         case "Invalid Page Id": 
             statusNumber = 400;
             break;
+        case "Invalid Tag Id":
+            statusNumber = 400;
+            break;
             //status numbers for 404s (not found)
         case "Story Not Found":
             statusNumber = 404;
