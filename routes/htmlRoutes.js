@@ -10,6 +10,7 @@ module.exports = function (app) {
     app.get("/", function (req, res) {
         // Renders the dashboard if a user is signed in
         if (req.session.token) {
+            console.log(req.session.token);
             res.cookie("token", req.session.token);
             // Finds the most recently updated stories of the User
             db.Story.findAll({
@@ -41,8 +42,8 @@ module.exports = function (app) {
     });
 
     // Loads new user page that allows user to change username
-    app.get("/newUser", function(req,res){
-        if(req.session.token){
+    app.get("/newUser", function (req, res) {
+        if (req.session.token) {
             db.User.findOne({
                 where: {
                     id: req.session.token
@@ -79,27 +80,27 @@ module.exports = function (app) {
             where: {
                 id: storyId
             }
-        }).then(function(dbStory){
-            if(dbStory.isPublic && dbStory.isFinished){
+        }).then(function (dbStory) {
+            if (dbStory.isPublic && dbStory.isFinished) {
                 db.User.findOne({
                     where: {
                         id: dbStory.AuthorId
                     }
-                }).then(function(author){
+                }).then(function (author) {
                     db.Page.findOne({
                         where: {
                             AuthorId: author.id,
                             StoryId: dbStory.id,
                             isStart: true
                         }
-                    }).then(function(firstPage){
+                    }).then(function (firstPage) {
                         db.Link.findAll({
                             where: {
                                 AuthorId: author.id,
                                 StoryId: dbStory.id,
                                 FromPageId: firstPage.id
                             }
-                        }).then(function(dbLinks){                        
+                        }).then(function (dbLinks) {
                             res.render("index", {
                                 loggedIn: false,
                                 readStory: true,
@@ -112,7 +113,7 @@ module.exports = function (app) {
                     });
                 });
             }
-            else{
+            else {
                 res.render("404", {
                     errorMessage: "Sorry, this story is private or not finished yet!",
                     url: "/",
@@ -158,27 +159,27 @@ module.exports = function (app) {
             where: {
                 id: storyId
             }
-        }).then(function(dbStory){
-            if(dbStory.isPublic && dbStory.isFinished){
+        }).then(function (dbStory) {
+            if (dbStory.isPublic && dbStory.isFinished) {
                 db.Page.findOne({
                     where: {
                         id: pageId,
                         StoryId: dbStory.id
                     }
-                }).then(function(page){
-                    if(page.contentFinished && !page.isOrphaned && page.isLinked){
+                }).then(function (page) {
+                    if (page.contentFinished && !page.isOrphaned && page.isLinked) {
                         db.User.findOne({
                             where: {
                                 id: dbStory.AuthorId
                             }
-                        }).then(function(author){
+                        }).then(function (author) {
                             db.Link.findAll({
                                 where: {
                                     AuthorId: author.id,
                                     StoryId: dbStory.id,
                                     FromPageId: page.id
                                 }
-                            }).then(function(dbLinks){
+                            }).then(function (dbLinks) {
                                 res.render("index", {
                                     loggedIn: false,
                                     readPage: true,
@@ -190,7 +191,7 @@ module.exports = function (app) {
                             });
                         });
                     }
-                    else{
+                    else {
                         return res.render("404", {
                             errorMessage: "Sorry, we can't load that page!",
                             url: "/",
@@ -206,15 +207,15 @@ module.exports = function (app) {
                     linkDisplay: "← Back To Home"
                 });
             }
-        })
+        });
     });
 
     app.get("/tags/", function (req, res) {
         res.send("Displaying all tags!");
-    });  
+    });
 
     app.get("/tags/:tagid", function (req, res) {
-        if(!check.isvalidid(req.params.tagid)) {
+        if (!check.isvalidid(req.params.tagid)) {
             //if this is not a valid story id, return an error that we can't read the story
             return res.render("404", {
                 errorMessage: "You've wandered too far afield!!",
@@ -225,19 +226,19 @@ module.exports = function (app) {
         //otherwise, go ahead and parse the id and proceed!
         var tagId = parseInt(req.params.tagid);
         res.send("Displaying all stories with tag #" + tagId);
-    });  
+    });
 
     //WRITER ROUTES
     //CREATE NEW STORY (SETTINGS)
     //When a writer first creates a new story, we will show them a blank form for their
     //story's settings. Once they 'save' it, we'll create a new db entry if everything is valid :)
-    app.get("/story/create", function(req, res){
+    app.get("/story/create", function (req, res) {
         db.Tag.findAll({
             attributes: ["tagName", "id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
-            includeIgnoreAttributes:false,
+            includeIgnoreAttributes: false,
             include: [{
-                model: db.Story, 
-                attributes: ["Stories.id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]], 
+                model: db.Story,
+                attributes: ["Stories.id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
                 duplicating: false
             }],
             group: ["id"],
@@ -273,10 +274,10 @@ module.exports = function (app) {
         }).then(function (dbStory) {
             db.Tag.findAll({
                 attributes: ["id", "tagName", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
-                includeIgnoreAttributes:false,
+                includeIgnoreAttributes: false,
                 include: [{
-                    model: db.Story, 
-                    attributes: ["Stories.id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]], 
+                    model: db.Story,
+                    attributes: ["Stories.id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
                     duplicating: false
                 }],
                 group: ["id"],
@@ -329,47 +330,68 @@ module.exports = function (app) {
     });
 
     app.get("/story/pagelibrary/:storyid", function (req, res) {
-        if (!check.isvalidid(req.params.storyid)) {
-            //if this is not a valid story id, return an error that we can't read the story
-            return res.render("404", {
-                errorMessage: "Sorry, we can't load that story!",
-                url: "/",
-                linkDisplay: "← Back To Home"
+        //first, check if the token & storyid are legit - then go ahead and load the library
+        check.storyIsWriteable(req.params.storyid, req.session.token).
+            then(function (storyResult) {
+            //Hooray!  this story is legit. Run a query to grab its pages
+                var storyToFind = storyResult.id;
+                db.Page.findAll({
+                    where: {
+                        StoryId: storyToFind
+                    }
+                }).then(function(allpages) {
+                    var hbsObj = {
+                        title: storyResult.title,
+                        pages: allpages
+                    };
+                    //Now render the page
+                    res.render("pagelibrary", hbsObj);
+    
+                });
+            },
+            function (err) { //otherwise, if an error occurred: show the right 404 page
+                var errorInfo;
+                console.log(err.message);
+                switch(err.message) {
+                case "Invalid Story Id":
+                    errorInfo = {
+                        errorMessage: "Sorry, we couldn't find that story.",
+                        url: "/",
+                        linkDisplay: "← Return to Dashboard"
+                    };
+                    break;
+                case "Invalid Author Id": 
+                    errorInfo = {
+                        errorMessage: "Please log in first!",
+                        url: "/",
+                        linkDisplay: "← Back To Home"
+                    };
+                    break;
+                case "Story Permission Denied":
+                    errorInfo = {
+                        errorMessage: "That story's too hot to touch!",
+                        url: "/",
+                        linkDisplay: "← Return to Dashboard"
+                    };
+                    break;
+                case "Story Not Found":
+                    errorInfo = {
+                        errorMessage: "Sorry, we couldn't find that story.",
+                        url: "/",
+                        linkDisplay: "← Return to Dashboard"
+                    };
+                    break;
+                default: //if we get a misc error, assume server error
+                    errorInfo = {
+                        errorMessage: "Sorry, something went wrong.",
+                        url: "/",
+                        linkDisplay: "← Return to Dashboard"
+                    };
+                    break;
+                }
+                //render a 404 page with whatever info we customized 
+                return res.render("404", errorInfo);
             });
-        }
-        //otherwise, go ahead and parse the id and proceed!
-        //var storyId = parseInt(req.params.storyid);
-        
-        //(TO-DO) check if this story exists 
-
-        //(TO-DO) check if we have privs to it
-
-        //(TO-DO) run the query to grab all pages for this story
-        //Then render the page
-        var hbsObj = {
-            storytitle: "My Story Title",
-            storyId: 2,
-            pages: [{
-                title: "Unfinished but Linked",
-                contentFinished: 0,
-                isLinked: 1,
-                isTBC: 1,
-                isOrphaned: 0
-            },
-            {
-                title: "Dangling Page",
-                contentFinished: 1,
-                isLinked: 0,
-                isOrphaned: 0
-            },
-            {
-                title: "Orphaned",
-                contentFinished: 1,
-                isLinked: 1, 
-                isOrphaned: 1
-            }]
-        };
-        res.render("pagelibrary", hbsObj);
     });
 
     //WRITE PAGES
@@ -388,9 +410,6 @@ module.exports = function (app) {
         var pageId = parseInt(req.params.pageid);
         res.send("Edit form to edit an individual page (#" + pageId + ") in story " + storyId);
     });
-
-
-
 
     // Render 404 page for any unmatched routes
     app.get("*", function (req, res) {

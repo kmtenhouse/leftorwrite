@@ -24,16 +24,62 @@ module.exports = function (app) {
     });
 
     //STORY API
-    //Simple API to grab one story (if it's publicly available)
+    //Simple API to read one story's details (if it's publicly available)
     app.get("/api/story/:storyid", function (req, res) {
         //check if ONE story is readable
         check.storyIsReadable(req.params.storyid)
             .then(function(result) {
-                res.send(result);
+                res.json(result);
             }, 
             function(err) { 
-                console.log(err.message);
-                res.sendStatus(404);
+                switch(err.message) {
+                case "Invalid Story Id":
+                    res.sendStatus(400);
+                    break;
+                case "Story Not Found":
+                    res.sendStatus(404);
+                    break;
+                case "Story Not Public":
+                    res.sendStatus(403);
+                    break;
+                default: //if we get a misc error, assume server error
+                    res.sendStatus(500);
+                    break;
+                }
+            });
+    });
+
+    //PAGES API
+    //Simple API to get one publicly available page to a story
+    app.get("/api/page/:pageid", function (req, res) {
+        //check if the page is readable
+        check.pageIsReadable(req.params.pageid)
+            .then(function(result) {
+                //if so, send the page as a json object
+                res.json(result);
+            }, 
+            function(err) { 
+                //otherwise, send the right type of status (depending on the error)
+                switch(err.message) {
+                case "Invalid Page Id": 
+                    res.sendStatus(400);
+                    break;
+                case "Story Not Public": 
+                    res.sendStatus(403);
+                    break;
+                case "Orphaned Page":
+                    res.sendStatus(403);
+                    break;
+                case "Page Not Finished":
+                    res.sendStatus(403);
+                    break;
+                case "Page Not Found":
+                    res.sendStatus(404);
+                    break;
+                default: 
+                    res.sendStatus(500);
+                    break;
+                }
             });
     });
 
@@ -54,7 +100,7 @@ module.exports = function (app) {
         }).then(function(dbUser){
             res.json(dbUser);
         });
-    });
+    }); 
 
     app.put("/api/user", function(req, res){
         db.User.update({

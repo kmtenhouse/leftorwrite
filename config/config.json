@@ -1,15 +1,15 @@
 {
     "development": {
       "username": "root",
-      "password": null,
-      "database": "exampledb",
+      "password": "$F62B6Pu4rpMNCXH",
+      "database": "leftorwrite",
       "host": "localhost",
       "dialect": "mysql"
     },
     "test": {
       "username": "root",
-      "password": null,
-      "database": "testdb",
+      "password": "$F62B6Pu4rpMNCXH",
+      "database": "leftorwritetest",
       "host": "localhost",
       "dialect": "mysql",
       "logging": false
@@ -18,4 +18,4 @@
       "use_env_variable": "JAWSDB_URL",
       "dialect": "mysql"
     }
-}
+  }

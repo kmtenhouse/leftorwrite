@@ -16,10 +16,7 @@
             4
         ],
         "no-console": "off",
-        "linebreak-style": [
-            "warn",
-            "unix"
-        ],
+        "linebreak-style": 0,
         "quotes": [
             "error",
             "double"
