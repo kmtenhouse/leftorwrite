@@ -77,7 +77,7 @@ module.exports = function (app) {
                 });
             });
         }, function(err){
-            res.send(err.message);
+            res.render("404", getError.messageTemplate(err));
         });
     });
 
@@ -98,7 +98,10 @@ module.exports = function (app) {
     app.get("/tags/:tagid", function (req, res) {
         if (!check.isvalidid(req.params.tagid)) {
             //if this is not a valid story id, return an error that we can't read the story
-            return res.render("tagnotfound");
+            var err = {
+                message: "Invalid Tag Id"
+            };
+            return res.render("404", getError.messageTemplate(err));
         }
         //otherwise, go ahead and parse the id and proceed!
         var tagId = parseInt(req.params.tagid);
@@ -131,7 +134,7 @@ module.exports = function (app) {
                 });
             });
         }, function(err){
-            res.send(err.message);
+            res.render("404", getError.messageTemplate(err));
         });
     });
 
