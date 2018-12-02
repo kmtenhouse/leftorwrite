@@ -18,12 +18,15 @@
         </div>
     </div>
     <div class="container border m-5 mx-auto">
-        <nav class="navbar justify-content-start">
+        <nav class="navbar justify-content-start mb-5">
             <span class="navbar-brand"><h3>Popular Tags</h3></span>
         </nav>
         <div class="row m-3">
             {{#each tags}}
                 {{> content/dashboard/dashboard-tags}}
             {{/each}}
+        </div>
+        <div class="footer row justify-content-end mt-5">
+            <a class="btn btn-outline-success nav-item" href="/tags">See All Tags</a>
         </div>
     </div>

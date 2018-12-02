@@ -12,12 +12,14 @@
     </div>
 </header>
 
-{{#if loggedIn}}
-    {{> content/dashboard/dashboard}}
-{{else if readStory}}
+{{#if readStory}}
     {{> content/readStory/storyMain}}
 {{else if readPage}}
     {{> content/readStory/page}}
+{{else if seeTags}}
+    {{> content/tags/allTags}}
+{{else if loggedIn}}
+    {{> content/dashboard/dashboard}}
 {{else}}
     {{> content/intro}}
 {{/if}}

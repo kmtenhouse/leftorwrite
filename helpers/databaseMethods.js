@@ -59,6 +59,11 @@ var dbMethods = {
         }).then(function(dbLinks){
             return dbLinks;
         });
+    },
+    findAllTags: function(){
+        return db.Tag.findAll({}).then(function(dbTags){
+            return dbTags;
+        });
     }
 };
 

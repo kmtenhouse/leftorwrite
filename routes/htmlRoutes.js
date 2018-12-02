@@ -56,12 +56,16 @@ module.exports = function (app) {
     //If the story is not accessible yet, will give an error page
     app.get("/story/read/:storyid", function (req, res) {
         var storyId = req.params.storyid;
+        var loggedIn = false;
+        if(req.session.token){
+            loggedIn = true;
+        }
         check.storyIsReadable(storyId).then(function(dbStory){
             dbMethods.findUser(dbStory.AuthorId).then(function(author){
                 dbMethods.findFirstPage(author.id, storyId).then(function(firstPage){
                     dbMethods.findPageLinks(author.id, storyId, firstPage.id).then(function(links){
                         res.render("index", {
-                            loggedIn: false,
+                            loggedIn: loggedIn,
                             readStory: true,
                             dbStory,
                             author,
@@ -76,8 +80,18 @@ module.exports = function (app) {
         });
     });
 
-    app.get("/tags/", function (req, res) {
-        res.send("Displaying all tags!");
+    app.get("/tags", function (req, res) {
+        var loggedIn = false;
+        if(req.session.token){
+            loggedIn = true;
+        }
+        dbMethods.findAllTags().then(function(tags){
+            res.render("index", {
+                loggedIn: loggedIn,
+                seeTags: true,
+                tags: tags
+            });
+        });
     });
 
     app.get("/tags/:tagid", function (req, res) {
@@ -97,12 +111,16 @@ module.exports = function (app) {
     //If the page is orphaned or not finished, will give an error page
     app.get("/story/read/:storyid/page/:pageid", function (req, res) {
         var pageId = req.params.pageid;
+        var loggedIn = false;
+        if(req.session.token){
+            loggedIn = true;
+        }
         check.pageIsReadable(pageId).then(function(page){
             var dbStory = page.Story;
             dbMethods.findUser(dbStory.AuthorId).then(function(author){
                 dbMethods.findPageLinks(author.id, dbStory.id, page.id).then(function(links){
                     res.render("index", {
-                        loggedIn: false,
+                        loggedIn: loggedIn,
                         readPage: true,
                         dbStory,
                         author,
