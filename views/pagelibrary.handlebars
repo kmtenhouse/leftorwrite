@@ -2,11 +2,7 @@
 <header class="header">
     <div class="container-fluid px-3">
         <nav class="navbar navbar-expand-lg custom-nav">
-            {{#if loggedIn}}
             {{> navbar/logged-in}}
-            {{else}}
-            {{> navbar/logged-out}}
-            {{/if}}
         </nav>
     </div>
 </header>
@@ -19,14 +15,10 @@
     </div>
     <div class="row pt-3">
         <div>
-            <ul class="nav nav-pills" id="libraryNav" role="tablist">
+            <ul class="nav nav-pills custom-nav-pills" id="libraryNav" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="inuse-tab" data-toggle="tab" href="#inuse" role="tab" aria-controls="all pages currently in use"
                         aria-selected="true">All Pages Currently In Use</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="orphan-tab" data-toggle="tab" href="#orphanedpages" role="tab"
-                        aria-controls="orphaned pages" aria-selected="false">Orphaned Pages</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="dangling-tab" data-toggle="tab" href="#danglingpages" role="tab"
@@ -37,12 +29,12 @@
                         aria-controls="unfinished pages" aria-selected="false">Unfinished Pages</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="choices-tab" data-toggle="tab" href="#choices" role="tab" aria-controls="choices"
-                        aria-selected="false">Choices</a>
+                    <a class="nav-link" id="endings-tab" data-toggle="tab" href="#endings" role="tab" aria-controls="endings"
+                        aria-selected="false">All Endings</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="endings-tab" data-toggle="tab" href="#endings" role="tab" aria-controls="endings"
-                        aria-selected="false">Endings</a>
+                    <a class="nav-link" id="orphan-tab" data-toggle="tab" href="#orphanedpages" role="tab"
+                        aria-controls="orphaned pages" aria-selected="false">Orphaned Pages</a>
                 </li>
             </ul>
         </div>
@@ -51,23 +43,33 @@
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="inuse" role="tabpanel" aria-labelledby="inuse-tab">
                         <h3>All Pages Currently In Use</h3>
-                        {{>content/pagelibrary/pages inuse=true}}
-                    </div>
-                    <div class="tab-pane fade" id="orphanedpages" role="tabpanel" aria-labelledby="orphan-tab">
-                        <h3>Orphaned Pages</h3>
-                        {{>content/pagelibrary/pages orphaned=true}}
+                        <div class="row py-3">
+                            {{>content/pagelibrary/allpages}}
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="danglingpages" role="tabpanel" aria-labelledby="dangling-tab">
                         <h3>Dangling Pages</h3>
+                        <div class="row py-3">
+                            {{>content/pagelibrary/danglingpages}}
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="unfinishedpages" role="tabpanel" aria-labelledby="unfinished-tab">
                         <h3>Unfinished Pages</h3>
-                    </div>
-                    <div class="tab-pane fade" id="choices" role="tabpanel" aria-labelledby="choices-tab">
-                        <h3>Choices</h3>
+                        <div class="row py-3">
+                            {{>content/pagelibrary/unfinishedpages}}
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="endings" role="tabpanel" aria-labelledby="endings-tab">
                         <h3>Endings</h3>
+                        <div class="row py-3">
+                            {{>content/pagelibrary/endingpages}}
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="orphanedpages" role="tabpanel" aria-labelledby="orphan-tab">
+                        <h3>Orphaned Pages</h3>
+                        <div class="row py-3">
+                            {{>content/pagelibrary/orphanedpages}}
+                        </div>
                     </div>
                 </div>
             </div>

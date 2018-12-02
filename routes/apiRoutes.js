@@ -1,4 +1,5 @@
 var db = require("../models");
+var check = require("../helpers/routevalidators.js");
 
 module.exports = function (app) {
     // Get all examples
@@ -20,6 +21,20 @@ module.exports = function (app) {
         db.Example.destroy({ where: { id: req.params.id } }).then(function (dbExample) {
             res.json(dbExample);
         });
+    });
+
+    //STORY API
+    //Simple API to grab one story (if it's publicly available)
+    app.get("/api/story/:storyid", function (req, res) {
+        //check if ONE story is readable
+        check.storyIsReadable(req.params.storyid)
+            .then(function(result) {
+                res.send(result);
+            }, 
+            function(err) { 
+                console.log(err.message);
+                res.sendStatus(404);
+            });
     });
 
     //TAGS API

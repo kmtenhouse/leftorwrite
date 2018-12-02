@@ -3,6 +3,20 @@ body {
   background-color: #E7E5DF;
 }
 
+/* Link colors */
+a {
+  color: #36723f;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.custom-nav-pills .nav-item a:hover, .custom-nav-pills .nav-item .active {
+  background-color: #798478;
+  color: white;
+}
+
 /* Header and nav colors */
 .header {
   background-color: #36723f;
@@ -58,6 +72,7 @@ section {
   background-color: white;
   border: none;
 }
+
 
 /* Footer colors */
 footer {
