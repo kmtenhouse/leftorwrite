@@ -1,6 +1,10 @@
 var db = require("../models");
 var check = require("../helpers/routevalidators.js");
 
+// VARIABLES 
+// list helper object
+var helpList = require("../public/js/helperlists");
+
 module.exports = function (app) {
     // Load index page
     app.get("/", function (req, res) {
@@ -36,8 +40,9 @@ module.exports = function (app) {
         }
     });
 
-    app.get("/newUser", function (req, res) {
-        if (req.session.token) {
+    // Loads new user page that allows user to change username
+    app.get("/newUser", function(req,res){
+        if(req.session.token){
             db.User.findOne({
                 where: {
                     id: req.session.token
@@ -62,11 +67,59 @@ module.exports = function (app) {
     app.get("/story/read/:storyid", function (req, res) {
         if (!check.isvalidid(req.params.storyid)) {
             //if this is not a valid story id, return an error that we can't read the story
-            return res.render("storynotfound");
+            return res.render("404", {
+                errorMessage: "Sorry, we can't load that story!",
+                url: "/",
+                linkDisplay: "← Back To Home"
+            });
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
-        res.send("Reading story " + storyId);
+        db.Story.findOne({
+            where: {
+                id: storyId
+            }
+        }).then(function(dbStory){
+            if(dbStory.isPublic && dbStory.isFinished){
+                db.User.findOne({
+                    where: {
+                        id: dbStory.AuthorId
+                    }
+                }).then(function(author){
+                    db.Page.findOne({
+                        where: {
+                            AuthorId: author.id,
+                            StoryId: dbStory.id,
+                            isStart: true
+                        }
+                    }).then(function(firstPage){
+                        db.Link.findAll({
+                            where: {
+                                AuthorId: author.id,
+                                StoryId: dbStory.id,
+                                FromPageId: firstPage.id
+                            }
+                        }).then(function(dbLinks){                        
+                            res.render("index", {
+                                loggedIn: false,
+                                readStory: true,
+                                dbStory,
+                                author,
+                                firstPage,
+                                links: dbLinks
+                            });
+                        });
+                    });
+                });
+            }
+            else{
+                res.render("404", {
+                    errorMessage: "Sorry, this story is private or not finished yet!",
+                    url: "/",
+                    linkDisplay: "← Back To Home"
+                });
+            }
+        });
     });
 
     app.get("/tags/", function (req, res) {
@@ -92,32 +145,155 @@ module.exports = function (app) {
         if (!check.isvalidid(req.params.storyid) || !check.isvalidid(req.params.pageid)) {
             //if the story or page id are not valid, 
             //return an error that we can't read the page
-            return res.render("pagenotfound");
+            return res.render("404", {
+                errorMessage: "Sorry, we can't load that page!",
+                url: "/",
+                linkDisplay: "← Back To Home"
+            });
         }
         //otherwise, go ahead and parse the id(s) and proceed!
         var storyId = parseInt(req.params.storyid);
         var pageId = parseInt(req.params.pageid);
-        res.send("Reading page " + pageId + " in story " + storyId);
+        db.Story.findOne({
+            where: {
+                id: storyId
+            }
+        }).then(function(dbStory){
+            if(dbStory.isPublic && dbStory.isFinished){
+                db.Page.findOne({
+                    where: {
+                        id: pageId,
+                        StoryId: dbStory.id
+                    }
+                }).then(function(page){
+                    if(page.contentFinished && !page.isOrphaned && page.isLinked){
+                        db.User.findOne({
+                            where: {
+                                id: dbStory.AuthorId
+                            }
+                        }).then(function(author){
+                            db.Link.findAll({
+                                where: {
+                                    AuthorId: author.id,
+                                    StoryId: dbStory.id,
+                                    FromPageId: page.id
+                                }
+                            }).then(function(dbLinks){
+                                res.render("index", {
+                                    loggedIn: false,
+                                    readPage: true,
+                                    dbStory,
+                                    author,
+                                    page,
+                                    links: dbLinks
+                                });
+                            });
+                        });
+                    }
+                    else{
+                        return res.render("404", {
+                            errorMessage: "Sorry, we can't load that page!",
+                            url: "/",
+                            linkDisplay: "← Back To Home"
+                        });
+                    }
+                });
+            }
+            else {
+                return res.render("404", {
+                    errorMessage: "Sorry, this story is private or not finished yet!",
+                    url: "/",
+                    linkDisplay: "← Back To Home"
+                });
+            }
+        })
     });
+
+    app.get("/tags/", function (req, res) {
+        res.send("Displaying all tags!");
+    });  
+
+    app.get("/tags/:tagid", function (req, res) {
+        if(!check.isvalidid(req.params.tagid)) {
+            //if this is not a valid story id, return an error that we can't read the story
+            return res.render("404", {
+                errorMessage: "You've wandered too far afield!!",
+                url: "/tags",
+                linkDisplay: "← View all tags"
+            });
+        }
+        //otherwise, go ahead and parse the id and proceed!
+        var tagId = parseInt(req.params.tagid);
+        res.send("Displaying all stories with tag #" + tagId);
+    });  
 
     //WRITER ROUTES
     //CREATE NEW STORY (SETTINGS)
     //When a writer first creates a new story, we will show them a blank form for their
     //story's settings. Once they 'save' it, we'll create a new db entry if everything is valid :)
-    app.get("/story/create", function (req, res) {
-        res.send("Creating a new page"); //Theresa's form will go here instead :)
+    app.get("/story/create", function(req, res){
+        db.Tag.findAll({
+            attributes: ["tagName", "id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
+            includeIgnoreAttributes:false,
+            include: [{
+                model: db.Story, 
+                attributes: ["Stories.id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]], 
+                duplicating: false
+            }],
+            group: ["id"],
+            order: [[db.sequelize.fn("COUNT", "Stories.id"), "DESC"]]
+        }).then(function (dbTags) {
+            res.render("story", {
+                tags: dbTags,
+                warn: helpList.warnings,
+                storybuttons: helpList.storybuttons
+            });
+        });
     });
 
     //EDIT STORY (SETTINGS)
     app.get("/story/settings/:storyid", function (req, res) {
         if (!check.isvalidid(req.params.storyid)) {
             //if this is not a valid story id, return an error that we can't read the story
-            return res.render("storynotfound");
+            return res.render("404", {
+                errorMessage: "Sorry, we can't load that story!",
+                url: "/",
+                linkDisplay: "← Back To Home"
+            });
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
         //THERESA'S PAGE GOES HERE
-        res.send("Edit the title and tags and such for the existing story " + storyId);
+        db.Story.findOne({
+            where: { id: storyId },
+            include: {
+                model: db.Tag,
+                attributes: ["id", "tagName"]
+            }
+        }).then(function (dbStory) {
+            db.Tag.findAll({
+                attributes: ["id", "tagName", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
+                includeIgnoreAttributes:false,
+                include: [{
+                    model: db.Story, 
+                    attributes: ["Stories.id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]], 
+                    duplicating: false
+                }],
+                group: ["id"],
+                order: [[db.sequelize.fn("COUNT", "Stories.id"), "DESC"]]
+            }).then(function (dbTags) {
+                // console.log(dbStory.Tags[1].dataValues.tagName);
+                // console.log(dbTags);
+                helpList.warningsMatch(dbStory.dataValues);
+                // console.log(helpList.warnings);
+                res.render("story", {
+                    story: dbStory,
+                    tags: dbTags,
+                    warn: helpList.warnings,
+                    storybuttons: helpList.storybuttons
+                });
+            });
+        });
     });
 
     //STORY AND PAGE OVERVIEWS
@@ -125,7 +301,11 @@ module.exports = function (app) {
     app.get("/story/overview/:storyid", function (req, res) {
         if (!check.isvalidid(req.params.storyid)) {
             //if this is not a valid story id, return an error that we can't read the story
-            return res.render("storynotfound");
+            return res.render("404", {
+                errorMessage: "Sorry, we can't load that story!",
+                url: "/",
+                linkDisplay: "← Back To Home"
+            });
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
@@ -137,7 +317,11 @@ module.exports = function (app) {
     app.get("/story/write/:storyid", function (req, res) {
         if (!check.isvalidid(req.params.storyid)) {
             //if this is not a valid story id, return an error that we can't read the story
-            return res.render("storynotfound");
+            return res.render("404", {
+                errorMessage: "Sorry, we can't load that story!",
+                url: "/",
+                linkDisplay: "← Back To Home"
+            });
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
@@ -147,7 +331,11 @@ module.exports = function (app) {
     app.get("/story/pagelibrary/:storyid", function (req, res) {
         if (!check.isvalidid(req.params.storyid)) {
             //if this is not a valid story id, return an error that we can't read the story
-            return res.render("storynotfound");
+            return res.render("404", {
+                errorMessage: "Sorry, we can't load that story!",
+                url: "/",
+                linkDisplay: "← Back To Home"
+            });
         }
         //otherwise, go ahead and parse the id and proceed!
         //var storyId = parseInt(req.params.storyid);
@@ -189,7 +377,11 @@ module.exports = function (app) {
         if (!check.isvalidid(req.params.storyid) || !check.isvalidid(req.params.pageid)) {
             //if the story or page id are not valid, 
             //return an error that we can't read the page
-            return res.render("pagenotfound");
+            return res.render("404", {
+                errorMessage: "Sorry, we can't load that page!",
+                url: "/",
+                linkDisplay: "← Back To Home"
+            });
         }
         //otherwise, go ahead and parse the id(s) and proceed!
         var storyId = parseInt(req.params.storyid);
@@ -202,6 +394,10 @@ module.exports = function (app) {
 
     // Render 404 page for any unmatched routes
     app.get("*", function (req, res) {
-        res.render("404");
+        res.render("404", {
+            errorMessage: "How did you end up here?",
+            url: "/",
+            linkDisplay: "← Back To Home"
+        });
     });
 };
