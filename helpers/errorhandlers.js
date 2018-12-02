@@ -25,7 +25,11 @@ module.exports = {
             errorInfo.url = "/";
             errorInfo.linkDisplay = "← Return Home";
             break;            
-
+        case "Invalid Tag Id":
+            errorInfo.errorMessage = "How did you get here?";
+            errorInfo.url = "/";
+            errorInfo.linkDisplay = "← Return Home";
+            break;
         case "Story Not Found":
             errorInfo.errorMessage = "Sorry, we couldn't find that story.";
             errorInfo.url = "/";
@@ -84,6 +88,9 @@ module.exports = {
             statusNumber = 400;
             break;
         case "Invalid Page Id": 
+            statusNumber = 400;
+            break;
+        case "Invalid Tag Id":
             statusNumber = 400;
             break;
             //status numbers for 404s (not found)

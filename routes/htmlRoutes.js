@@ -123,12 +123,9 @@ module.exports = function (app) {
 
     app.get("/tags/:tagid", function (req, res) {
         if (!check.isvalidid(req.params.tagid)) {
-            //if this is not a valid story id, return an error that we can't read the story
-            return res.render("404", {
-                errorMessage: "You've wandered too far afield!!",
-                url: "/tags",
-                linkDisplay: "← View all tags"
-            });
+            //if this is not a valid tag id, return an error that we can't read the story
+            var tagError = new Error("Invalid Tag Id");
+            return res.render("404", getError.messageTemplate(tagError));
         }
         //otherwise, go ahead and parse the id and proceed!
         var tagId = parseInt(req.params.tagid);
@@ -163,11 +160,8 @@ module.exports = function (app) {
     app.get("/story/settings/:storyid", function (req, res) {
         if (!check.isvalidid(req.params.storyid)) {
             //if this is not a valid story id, return an error that we can't read the story
-            return res.render("404", {
-                errorMessage: "Sorry, we can't load that story!",
-                url: "/",
-                linkDisplay: "← Back To Home"
-            });
+            var storyError = new Error("Invalid Story Id");
+            return res.render("404", getError.messageTemplate(storyError));
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
@@ -209,11 +203,8 @@ module.exports = function (app) {
     app.get("/story/overview/:storyid", function (req, res) {
         if (!check.isvalidid(req.params.storyid)) {
             //if this is not a valid story id, return an error that we can't read the story
-            return res.render("404", {
-                errorMessage: "Sorry, we can't load that story!",
-                url: "/",
-                linkDisplay: "← Back To Home"
-            });
+            var storyError = new Error("Invalid Story Id");
+            return res.render("404", getError.messageTemplate(storyError));
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
@@ -225,11 +216,8 @@ module.exports = function (app) {
     app.get("/story/write/:storyid", function (req, res) {
         if (!check.isvalidid(req.params.storyid)) {
             //if this is not a valid story id, return an error that we can't read the story
-            return res.render("404", {
-                errorMessage: "Sorry, we can't load that story!",
-                url: "/",
-                linkDisplay: "← Back To Home"
-            });
+            var storyError = new Error("Invalid Story Id");
+            return res.render("404", getError.messageTemplate(storyError));
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
@@ -283,11 +271,8 @@ module.exports = function (app) {
         if (!check.isvalidid(req.params.storyid) || !check.isvalidid(req.params.pageid)) {
             //if the story or page id are not valid, 
             //return an error that we can't read the page
-            return res.render("404", {
-                errorMessage: "Sorry, we can't load that page!",
-                url: "/",
-                linkDisplay: "← Back To Home"
-            });
+            var err = new Error("Invalid Story Id");
+            return res.render("404", getError.messageTemplate(err));
         }
         //otherwise, go ahead and parse the id(s) and proceed!
         var storyId = parseInt(req.params.storyid);
@@ -297,10 +282,7 @@ module.exports = function (app) {
 
     // Render 404 page for any unmatched routes
     app.get("*", function (req, res) {
-        res.render("404", {
-            errorMessage: "How did you end up here?",
-            url: "/",
-            linkDisplay: "← Back To Home"
-        });
+        var err = new Error("Generic Error");
+        res.render("404", getError.messageTemplate(err));
     });
 };
