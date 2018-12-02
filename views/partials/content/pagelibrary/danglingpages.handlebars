@@ -1,0 +1,16 @@
+{{!-- Load all the pages that are currently DANGLING (not orphaned, also not linked)
+      These pages CAN be finished or unfinished --}}
+{{#each pages}}
+{{#unless this.isOrphaned}}
+{{#unless this.isLinked}}
+<div class="px-3 col-4 page-icon-container">
+    <a href="/story/write/{{this.StoryId}}/pages/{{this.id}}">
+    <div class="page-icon {{#if this.isStart}}start-page-icon{{/if}}{{#if this.isEnding}}end-page-icon{{/if}}{{#if this.isTBC}}tbc-page-icon{{/if}}">
+    </div>  
+    <p>{{#if this.isStart}}Start: {{/if}}{{#if this.isTBC}}TBC: {{/if}}{{#if this.isEnding}}Ending: {{/if}}{{this.title}}
+    </p>
+    </a>
+</div>
+{{/unless}}
+{{/unless}}
+{{/each}}

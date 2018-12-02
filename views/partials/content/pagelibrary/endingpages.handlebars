@@ -1,0 +1,26 @@
+{{!-- Load all the pages that are endings (not orphaned, and tbc or ending)
+      These pages CAN be finished or unfinished --}}
+{{#each pages}}
+{{#unless this.isOrphaned}}
+{{#if this.isEnding}}
+<div class="px-3 col-4 page-icon-container">
+    <a href="/story/write/{{this.StoryId}}/pages/{{this.id}}">
+    <div class="page-icon end-page-icon">
+    </div>  
+    <p>Ending: {{this.title}}
+    </p>
+    </a>
+</div>
+{{/if}}
+{{#if this.isTBC}}
+<div class="px-3 col-4 page-icon-container">
+    <a href="/story/write/{{this.StoryId}}/pages/{{this.id}}">
+    <div class="page-icon tbc-page-icon">
+    </div>  
+    <p>TBC: {{this.title}}
+    </p>
+    </a>
+</div>
+{{/if}}
+{{/unless}}
+{{/each}}
