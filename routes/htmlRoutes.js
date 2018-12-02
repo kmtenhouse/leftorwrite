@@ -1,6 +1,6 @@
 var db = require("../models");
 var check = require("../helpers/routevalidators.js");
-
+var getError = require("../helpers/errorhandlers.js");
 // VARIABLES 
 // list helper object
 var helpList = require("../public/js/helperlists");
@@ -350,51 +350,28 @@ module.exports = function (app) {
                 });
             },
             function (err) { //otherwise, if an error occurred: show the right 404 page
-                var errorInfo;
-                console.log(err.message);
-                switch(err.message) {
-                case "Invalid Story Id":
-                    errorInfo = {
-                        errorMessage: "Sorry, we couldn't find that story.",
-                        url: "/",
-                        linkDisplay: "← Return to Dashboard"
-                    };
-                    break;
-                case "Invalid Author Id": 
-                    errorInfo = {
-                        errorMessage: "Please log in first!",
-                        url: "/",
-                        linkDisplay: "← Back To Home"
-                    };
-                    break;
-                case "Story Permission Denied":
-                    errorInfo = {
-                        errorMessage: "That story's too hot to touch!",
-                        url: "/",
-                        linkDisplay: "← Return to Dashboard"
-                    };
-                    break;
-                case "Story Not Found":
-                    errorInfo = {
-                        errorMessage: "Sorry, we couldn't find that story.",
-                        url: "/",
-                        linkDisplay: "← Return to Dashboard"
-                    };
-                    break;
-                default: //if we get a misc error, assume server error
-                    errorInfo = {
-                        errorMessage: "Sorry, something went wrong.",
-                        url: "/",
-                        linkDisplay: "← Return to Dashboard"
-                    };
-                    break;
-                }
                 //render a 404 page with whatever info we customized 
-                return res.render("404", errorInfo);
+                return res.render("404", getError.messageTemplate(err));
             });
     });
 
-    //WRITE PAGES
+    //WRITE PAGES 
+    //Create a new page -- displays a form to add a brand new page to an existing story
+    app.get("/story/write/:storyid/pages/", function(req,res) {
+        //first, check that the existing story is writeable by whoever is trying to access
+        check.storyIsWriteable(req.params.storyid, req.session.token).then(
+            function(storyResult) {
+                //otherwise, the story exists and the person logged in has permissions to write to it!  we can show them the create form :)
+                res.send(storyResult); 
+                //(TO-DO) actually send this object to the 'create page' form ;)
+            }, 
+            function(error) {
+                //otherwise, send the appropriate 404 page
+                res.render("404", getError.messageTemplate(error));
+            });
+    });
+
+    //Edit page
     app.get("/story/write/:storyid/pages/:pageid", function (req, res) {
         if (!check.isvalidid(req.params.storyid) || !check.isvalidid(req.params.pageid)) {
             //if the story or page id are not valid, 

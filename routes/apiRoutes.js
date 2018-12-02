@@ -1,5 +1,6 @@
 var db = require("../models");
 var check = require("../helpers/routevalidators.js");
+var getError = require("../helpers/errorhandlers.js");
 
 module.exports = function (app) {
     // Get all examples
@@ -29,23 +30,12 @@ module.exports = function (app) {
         //check if ONE story is readable
         check.storyIsReadable(req.params.storyid)
             .then(function(result) {
+                //if so, send the story's main details as a json object
                 res.json(result);
             }, 
             function(err) { 
-                switch(err.message) {
-                case "Invalid Story Id":
-                    res.sendStatus(400);
-                    break;
-                case "Story Not Found":
-                    res.sendStatus(404);
-                    break;
-                case "Story Not Public":
-                    res.sendStatus(403);
-                    break;
-                default: //if we get a misc error, assume server error
-                    res.sendStatus(500);
-                    break;
-                }
+                //otherwise, if an error occurred, send the appropriate error code
+                res.sendStatus(getError.statusCode(err));   
             });
     });
 
@@ -59,27 +49,8 @@ module.exports = function (app) {
                 res.json(result);
             }, 
             function(err) { 
-                //otherwise, send the right type of status (depending on the error)
-                switch(err.message) {
-                case "Invalid Page Id": 
-                    res.sendStatus(400);
-                    break;
-                case "Story Not Public": 
-                    res.sendStatus(403);
-                    break;
-                case "Orphaned Page":
-                    res.sendStatus(403);
-                    break;
-                case "Page Not Finished":
-                    res.sendStatus(403);
-                    break;
-                case "Page Not Found":
-                    res.sendStatus(404);
-                    break;
-                default: 
-                    res.sendStatus(500);
-                    break;
-                }
+                //otherwise, if an error occurred, send the appropriate error code
+                res.sendStatus(getError.statusCode(err));    
             });
     });
 
