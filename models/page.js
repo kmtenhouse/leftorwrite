@@ -45,5 +45,6 @@ module.exports = function (sequelize, DataTypes) {
         Page.belongsTo(models.User, { as: "Author" });
         Page.belongsTo(models.Story, { as: "Story" });
     };
+    Page.sync();
     return Page;
 };

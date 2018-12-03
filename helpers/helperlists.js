@@ -29,11 +29,12 @@ var listsObj = {
         }
     },
     storybuttons: [
-        {id: "saveChanges", text: "Save Changes", link: ""}, 
+        {id: "saveChanges", text: "Save Changes"}, 
         {id: "viewStory", text: "View Story", link: ""}, 
         {id: "createNewPage", text: "Create New Page", link: ""}, 
-        {id: "markStoryAsFinished", text: "Mark Story as Finished", link: ""}, 
-        {id: "publishYourStory", text: "Publish Your Story", link: ""}
+        {id: "markAsFinished", text: "Mark as Finished", link: ""}, 
+        {id: "publishStory", text: "Publish Story", link: ""},
+        {id: "deleteStory", text: "Delete Story", link: ""}
     ]
 };
 
