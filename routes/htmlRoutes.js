@@ -96,6 +96,10 @@ module.exports = function (app) {
         }
         check.pageIsReadable(pageId).then(function(page){
             var dbStory = page.Story;
+            // If they are trying to go to the start page, it will redirect to the main story page
+            if(page.isStart){
+                return res.redirect("/story/read/" + dbStory.id);
+            }
             dbMethods.findUser(dbStory.AuthorId).then(function(author){
                 dbMethods.findPageLinks(author.id, dbStory.id, page.id).then(function(links){
                     res.render("index", {

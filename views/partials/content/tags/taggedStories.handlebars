@@ -9,7 +9,7 @@
             </div>
         </div>
     </div>
-    <div class="card-deck p-5 justify-content-around">
+    <div class="card-deck justify-content-around">
         {{#each stories}}
             {{> content/tags/tagStory}}
             {{#if (oddAndThree @index)}}
@@ -21,9 +21,5 @@
                 <div class="w-100 d-none d-md-block d-lg-none"><!-- wrap every 3 on md--></div>
             {{/if}}
         {{/each}}
-    </div>
-    <div class="row my-5">
-        <div class="col text-center">
-        </div>
     </div>
 </div>

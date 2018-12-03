@@ -39,6 +39,12 @@ app.engine(
                     return true;
                 }
                 return false;
+            },
+            checkWarnings: function(a,b,c,d,e,f){
+                if(!a && !b && !c && !d && !e && !f){
+                    return true;
+                }
+                return false;
             }
         }
     })

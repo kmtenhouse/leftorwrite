@@ -1,12 +1,39 @@
-<div class="card border-success m-1 custom-card">
+<div class="card border-success m-1 tag-stories">
     <!-- Link to the Page Libray for this story -->
     <a href="/story/read/{{id}}">
     <!-- Story Title -->
-    <h5 class="card-header border-bottom-0 bg-transparent">{{title}}</h5>
-    <div class="card-body mx-auto d-none d-sm-block">
+    <h5 class="card-header border-bottom-0 bg-transparent">
+        {{title}} 
+        <br> 
+        By: {{Author.displayName}}
+    </h5>
+    <div class="card-body mx-auto d-none d-sm-block text-center">
         <!-- Card Image -->
         <img class="card-img-top img-fluid story-img" src="../images/script.svg" alt="Story">
     </div>
-    <div class="card-footer border-top-0 bg-transparent text-right">By: {{Author.displayName}}</div>
+    <div class="card-footer px-2 border-top-0 bg-transparent text-center">
+        Warnings: <br>
+        {{#if (checkWarnings chooseNotToWarn violence nsfw nonConset characterDeath profanity)}}
+            <span class="badge badge-pill badge-success mt-3">No Warnings</span>
+        {{else if chooseNotToWarn}}
+            <span class="badge badge-pill badge-warning mt-3">Choose Not To Warn</span>
+        {{else}}
+            {{#if violence}}
+                <span class="badge badge-pill badge-warning">Violence</span>
+            {{/if}}
+            {{#if nsfw}}
+                <span class="badge badge-pill badge-warning">NSFW</span>
+            {{/if}}
+            {{#if nonConsent}}
+                <span class="badge badge-pill badge-warning">Non-consent</span>
+            {{/if}}
+            {{#if characterDeath}}
+                <span class="badge badge-pill badge-warning">Character Death</span>
+            {{/if}}
+            {{#if profanity}}
+                <span class="badge badge-pill badge-warning">Profanity</span>
+            {{/if}}
+        {{/if}}
+    </div>
     </a>
 </div>

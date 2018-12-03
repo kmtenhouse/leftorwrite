@@ -150,3 +150,8 @@ footer {
   background-size: cover;
   height: 100vh;
 }
+
+/* Tag Page Classes */
+.tag-stories {
+  max-width: 15rem;
+}
