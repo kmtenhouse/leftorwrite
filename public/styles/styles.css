@@ -12,8 +12,14 @@ a:hover {
   text-decoration: none;
 }
 
+/* Custom nav pills and buttons */
 .custom-nav-pills .nav-item a:hover, .custom-nav-pills .nav-item .active {
   background-color: #798478;
+  color: white;
+}
+
+.custom-primary-btn {
+  background-color: #36723f;
   color: white;
 }
 

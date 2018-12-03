@@ -3,24 +3,10 @@
 {{#each pages}}
 {{#unless this.isOrphaned}}
 {{#if this.isEnding}}
-<div class="px-3 col-4 page-icon-container">
-    <a href="/story/write/{{this.StoryId}}/pages/{{this.id}}">
-    <div class="page-icon end-page-icon">
-    </div>  
-    <p>Ending: {{this.title}}
-    </p>
-    </a>
-</div>
+    {{>content/pagelibrary/pagestyling}}
 {{/if}}
 {{#if this.isTBC}}
-<div class="px-3 col-4 page-icon-container">
-    <a href="/story/write/{{this.StoryId}}/pages/{{this.id}}">
-    <div class="page-icon tbc-page-icon">
-    </div>  
-    <p>TBC: {{this.title}}
-    </p>
-    </a>
-</div>
+    {{>content/pagelibrary/pagestyling}}
 {{/if}}
 {{/unless}}
 {{/each}}

@@ -11,7 +11,7 @@ module.exports = {
         //now look at the error object to figure out what to say!
         switch (err.message) {
         case "Invalid Story Id":
-            errorInfo.errorMessage = "How did you get here?";
+            errorInfo.errorMessage = "Sorry, that's not a story.";
             errorInfo.url = "/";
             errorInfo.linkDisplay = "← Return Home";
             break;
@@ -21,7 +21,7 @@ module.exports = {
             errorInfo.linkDisplay = "← Return Home";
             break;
         case "Invalid Page Id": 
-            errorInfo.errorMessage = "How did you get here?";
+            errorInfo.errorMessage = "Sorry, that's not a page.";
             errorInfo.url = "/";
             errorInfo.linkDisplay = "← Return Home";
             break;            

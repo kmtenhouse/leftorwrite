@@ -92,22 +92,33 @@ var validators = {
             });
         });
     },
-    pageIsReadable: function (pageId) {
+    pageIsReadable: function (pageId, storyId="") {
         //checks if a page is readable
         //pages are publicly readable if the story they belong to is marked public and they are finished, and not orphaned 
+        //also accepts an OPTIONAL pageId so that checks can be done to make sure that routes have stories that match their pages correctly
         return new Promise(function (resolve, reject) {
-            //first, validate the format of the pageid itself
+            //first, validate the format of the pageid itself (and storyid, if provided)
             //if it's not valid, reject immediately
+            if(storyId) {
+                if(!validators.isvalidid(storyId)) {
+                    return reject(new Error("Invalid Story Id"));
+                }
+            }
             if (!validators.isvalidid(pageId)) {
                 return reject(new Error("Invalid Page Id"));
             }
-            //since it's valid, go ahead and parse it to an int
+            //since it's valid, go ahead and set up our search options
             var pageToFind = parseInt(pageId);
+            var whereOptions = {
+                id: pageToFind
+            };
+            if(storyId) {
+                var storyToFind = parseInt(storyId);
+                whereOptions.StoryId = storyToFind;
+            }
             //now look up that page in the db, along with the associated story
             db.Page.findOne({
-                where: {
-                    id: pageToFind
-                },
+                where: whereOptions,
                 include: [{
                     model: db.Story,
                     as: "Story"
@@ -137,23 +148,35 @@ var validators = {
             });
         });
     },
-    pageIsWriteable: function(pageId, authorId) {
+    pageIsWriteable: function(pageId, authorId, storyId="") {
         return new Promise(function (resolve, reject) {
-            //first, let's check that the storyId and authorId are remotely valid
+            //first, let's check that the pageId, authorId, and storyId (if provided) are remotely valid
             //if not, we immediately reject the promise
-            if (!validators.isvalidid(pageId)) {
-                return reject(new Error("Invalid Page Id"));
-            }
             if (!validators.isvalidid(authorId)) {
                 return reject(new Error("Invalid Author Id"));
             }
-            //since it's valid, go ahead and parse it to an int
+
+            if(storyId) { //only run this validation if a story id was provided
+                if(!validators.isvalidid(storyId)) {
+                    return reject(new Error("Invalid Story Id"));
+                }
+            }
+            if (!validators.isvalidid(pageId)) {
+                return reject(new Error("Invalid Page Id"));
+            }
+
+            //since it's valid, go ahead and set up our search options
             var pageToFind = parseInt(pageId);
+            var whereOptions = {
+                id: pageToFind
+            };
+            if(storyId) {
+                var storyToFind = parseInt(storyId);
+                whereOptions.StoryId = storyToFind;
+            }
             //now look up that page in the db, along with the associated story
             db.Page.findOne({
-                where: {
-                    id: pageToFind
-                },
+                where: whereOptions,
                 include: [{
                     model: db.Story,
                     as: "Story"
