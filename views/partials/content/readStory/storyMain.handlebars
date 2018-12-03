@@ -3,7 +3,9 @@
         <h1 class="display-4">{{dbStory.title}}</h1>
         <p class="lead">Written By: {{author.displayName}}</p>
         <hr class="my-4">
-        <p>Display Warnings Here</p>
+        {{#with dbStory}}
+                {{> content/tags/warningBadges}}
+        {{/with}}
     </div>
     <div class="row">
         <div class="col-12">
