@@ -1,0 +1,29 @@
+<div class="container my-5">
+    <div class="jumbotron jumbotron-fluid bg-transparent">
+        <div class="row justify-content-between">
+            <div class="col">
+                <h1 class="display-4">Tag: {{tag.tagName}}</h1>
+            </div>
+            <div class="col text-right align-self-center">
+                <a href="/tags" class="btn btn-outline-success">Return to All Tags</a>
+            </div>
+        </div>
+    </div>
+    <div class="card-deck p-5 justify-content-around">
+        {{#each stories}}
+            {{> content/tags/tagStory}}
+            {{#if (oddAndThree @index)}}
+                <div class="w-100 d-none d-sm-block d-md-none"><!-- wrap every 2 on sm--></div>
+                <div class="w-100 d-none d-md-block d-lg-none"><!-- wrap every 3 on md--></div>
+            {{else if (oddNumber @index)}} 
+                <div class="w-100 d-none d-sm-block d-md-none"><!-- wrap every 2 on sm--></div>
+            {{else if (everyThreeIndices @index)}}
+                <div class="w-100 d-none d-md-block d-lg-none"><!-- wrap every 3 on md--></div>
+            {{/if}}
+        {{/each}}
+    </div>
+    <div class="row my-5">
+        <div class="col text-center">
+        </div>
+    </div>
+</div>

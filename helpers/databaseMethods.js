@@ -64,6 +64,25 @@ var dbMethods = {
         return db.Tag.findAll({}).then(function(dbTags){
             return dbTags;
         });
+    },
+    findTaggedStories: function(tagId){
+        return db.Tag.findOne({
+            where: {
+                id: tagId
+            },
+            include: [{
+                model: db.Story,
+                where: {
+                    isPublic: true,
+                    isFinished: true
+                },
+                include: [{
+                    model: db.User, as: "Author"
+                }]
+            }]
+        }).then(function(result){
+            return result;
+        });
     }
 };
 

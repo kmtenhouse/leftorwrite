@@ -81,33 +81,6 @@ module.exports = function (app) {
         });
     });
 
-    app.get("/tags", function (req, res) {
-        var loggedIn = false;
-        if(req.session.token){
-            loggedIn = true;
-        }
-        dbMethods.findAllTags().then(function(tags){
-            res.render("index", {
-                loggedIn: loggedIn,
-                seeTags: true,
-                tags: tags
-            });
-        });
-    });
-
-    app.get("/tags/:tagid", function (req, res) {
-        if (!check.isvalidid(req.params.tagid)) {
-            //if this is not a valid story id, return an error that we can't read the story
-            var err = {
-                message: "Invalid Tag Id"
-            };
-            return res.render("404", getError.messageTemplate(err));
-        }
-        //otherwise, go ahead and parse the id and proceed!
-        var tagId = parseInt(req.params.tagid);
-        res.send("Displaying all stories with tag #" + tagId);
-    });
-
     //Read a page (by storyid and pageid)
     //If the story is public and published, and the page is finished and not orphaned,
     //display the content of that page
@@ -138,8 +111,18 @@ module.exports = function (app) {
         });
     });
 
-    app.get("/tags/", function (req, res) {
-        res.send("Displaying all tags!");
+    app.get("/tags", function (req, res) {
+        var loggedIn = false;
+        if(req.session.token){
+            loggedIn = true;
+        }
+        dbMethods.findAllTags().then(function(tags){
+            res.render("index", {
+                loggedIn: loggedIn,
+                seeTags: true,
+                tags: tags
+            });
+        });
     });
 
     app.get("/tags/:tagid", function (req, res) {
@@ -150,7 +133,18 @@ module.exports = function (app) {
         }
         //otherwise, go ahead and parse the id and proceed!
         var tagId = parseInt(req.params.tagid);
-        res.send("Displaying all stories with tag #" + tagId);
+        var loggedIn = false;
+        if(req.session.token){
+            loggedIn = true;
+        }
+        dbMethods.findTaggedStories(tagId).then(function(result){
+            res.render("index", {
+                loggedIn: loggedIn,
+                seeTaggedStories: true,
+                tag: result,
+                stories: result.Stories
+            });
+        });
     });
 
     //WRITER ROUTES
