@@ -139,8 +139,7 @@ $(document).on("click", "#deleteStory", function () {
     if (id !== "") {
         $.ajax("/api/story/" + id, {
             type: "DELETE"
-        }).then(function (status) {
-            console.log(status);
+        }).then(function (result, status) {
             if (status === "success") {
                 window.location = "/";
             }
