@@ -38,37 +38,57 @@
                 </li>
             </ul>
         </div>
-        <div class="card w-100">
+        <div class="card w-100 col-12">
             <div class="card-body">
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="inuse" role="tabpanel" aria-labelledby="inuse-tab">
-                        <h3>All Pages Currently In Use</h3>
+                        {{>content/pagelibrary/tabpane-headers header="All Pages Currently In Use"}}
                         <div class="row py-3">
+                            {{#if pages.length}}
                             {{>content/pagelibrary/allpages}}
+                            {{else}}
+                            {{>content/pagelibrary/nopages}}
+                            {{/if}}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="danglingpages" role="tabpanel" aria-labelledby="dangling-tab">
-                        <h3>Dangling Pages</h3>
+                        {{>content/pagelibrary/tabpane-headers header="Dangling Pages"}}
                         <div class="row py-3">
+                            {{#if pages.length}}
                             {{>content/pagelibrary/danglingpages}}
+                            {{else}}
+                            {{>content/pagelibrary/nopages}}
+                            {{/if}}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="unfinishedpages" role="tabpanel" aria-labelledby="unfinished-tab">
-                        <h3>Unfinished Pages</h3>
+                        {{>content/pagelibrary/tabpane-headers header="Unfinished Pages"}}
                         <div class="row py-3">
+                            {{#if pages.length}}
                             {{>content/pagelibrary/unfinishedpages}}
+                            {{else}}
+                            {{>content/pagelibrary/nopages}}
+                            {{/if}}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="endings" role="tabpanel" aria-labelledby="endings-tab">
-                        <h3>Endings</h3>
+                        {{>content/pagelibrary/tabpane-headers header="Endings and TBC"}}
                         <div class="row py-3">
+                            {{#if pages.length}}
                             {{>content/pagelibrary/endingpages}}
+                            {{else}}
+                            {{>content/pagelibrary/nopages}}
+                            {{/if}}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="orphanedpages" role="tabpanel" aria-labelledby="orphan-tab">
-                        <h3>Orphaned Pages</h3>
+                        {{>content/pagelibrary/tabpane-headers header="Orphaned Pages"}}
                         <div class="row py-3">
+                            {{#if pages.length}}
                             {{>content/pagelibrary/orphanedpages}}
+                            {{else}}
+                            {{>content/pagelibrary/nopages}}
+                            {{/if}}
                         </div>
                     </div>
                 </div>

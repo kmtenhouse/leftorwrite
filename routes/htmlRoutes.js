@@ -216,27 +216,17 @@ module.exports = function (app) {
     //STORY AND PAGE OVERVIEWS
     //For writers: view the full overview of your story in a tree-like way
     app.get("/story/overview/:storyid", function (req, res) {
-        if (!check.isvalidid(req.params.storyid)) {
-            //if this is not a valid story id, return an error that we can't read the story
-            var storyError = new Error("Invalid Story Id");
-            return res.render("404", getError.messageTemplate(storyError));
-        }
-        //otherwise, go ahead and parse the id and proceed!
-        var storyId = parseInt(req.params.storyid);
-        res.send("View the story's full overview for story " + storyId);
+        //(LONG TERM: will be a tree view)
+        //Right now: redirects to the page library
+        res.redirect("/story/pagelibrary/"+req.params.storyid);
     });
 
     //For consistency's sake, let's redirect the user to the overview page
     //if they try to just navigate to "story/write/:storyid" :)
     app.get("/story/write/:storyid", function (req, res) {
-        if (!check.isvalidid(req.params.storyid)) {
-            //if this is not a valid story id, return an error that we can't read the story
-            var storyError = new Error("Invalid Story Id");
-            return res.render("404", getError.messageTemplate(storyError));
-        }
-        //otherwise, go ahead and parse the id and proceed!
-        var storyId = parseInt(req.params.storyid);
-        res.send("Redirect to the overview page for consistency's sake - this is story " + storyId);
+        //(LONG TERM: will redirect to the tree view)
+        //Right now: redirects to the page library
+        res.redirect("/story/pagelibrary/"+req.params.storyid);
     });
 
     app.get("/story/pagelibrary/:storyid", function (req, res) {
@@ -250,7 +240,10 @@ module.exports = function (app) {
                         StoryId: storyToFind
                     }
                 }).then(function(allpages) {
+                    //if we had a successful page lookup, create a handlebars object
+                    //note: make sure to include some story info like title and story id
                     var hbsObj = {
+                        storyid: storyResult.id,
                         title: storyResult.title,
                         pages: allpages
                     };
@@ -266,14 +259,18 @@ module.exports = function (app) {
     });
 
     //WRITE PAGES 
-    //Create a new page -- displays a form to add a brand new page to an existing story
+    //Create a new (orphaned) page -- displays a form to add a brand new page to an existing story
     app.get("/story/write/:storyid/pages/", function(req,res) {
         //first, check that the existing story is writeable by whoever is trying to access
         check.storyIsWriteable(req.params.storyid, req.session.token).then(
             function(storyResult) {
                 //otherwise, the story exists and the person logged in has permissions to write to it!  we can show them the create form :)
-                res.send(storyResult); 
+
+                //the logic we'll need to do is 
+                //1) determine if this is the first page in the story (if so, it defaults to the start of the story)
+                //2) if not, it will become an orphaned page by default
                 //(TO-DO) actually send this object to the 'create page' form ;)
+                res.send("Writing a page to story " + storyResult.title);
             }, 
             function(error) {
                 //otherwise, send the appropriate 404 page
@@ -281,18 +278,19 @@ module.exports = function (app) {
             });
     });
 
-    //Edit page
+    //Edit an existing page
     app.get("/story/write/:storyid/pages/:pageid", function (req, res) {
-        if (!check.isvalidid(req.params.storyid) || !check.isvalidid(req.params.pageid)) {
-            //if the story or page id are not valid, 
-            //return an error that we can't read the page
-            var err = new Error("Invalid Story Id");
-            return res.render("404", getError.messageTemplate(err));
-        }
-        //otherwise, go ahead and parse the id(s) and proceed!
-        var storyId = parseInt(req.params.storyid);
-        var pageId = parseInt(req.params.pageid);
-        res.send("Edit form to edit an individual page (#" + pageId + ") in story " + storyId);
+        //check if the page is editable
+        check.pageIsWriteable(req.params.pageid, req.session.token, req.params.storyid).then(
+            function(pageResult){
+                //if we got a page, render the write form and populate it with the data we already have
+                //(TO-DO)
+                res.json(pageResult);
+            }, 
+            function(err) {
+                //if an error occurred with the page load, go ahead and show the user
+                res.render("404", getError.messageTemplate(err));
+            });
     });
 
     // Render 404 page for any unmatched routes
