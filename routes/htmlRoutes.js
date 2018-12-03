@@ -1,11 +1,13 @@
+// VARIABLES 
 var db = require("../models");
 var check = require("../helpers/routevalidators.js");
 var getError = require("../helpers/errorhandlers.js");
 var dbMethods = require("../helpers/databaseMethods");
-
-// VARIABLES 
 // list helper object
-var helpList = require("../public/js/helperlists");
+var helpList = require("../helpers/helperlists.js");
+// helper that sorts which tags are active for the story. 
+// Accepts return data for the story and for all tags.
+var sort = require("../helpers/sortstorytags.js");
 
 module.exports = function (app) {
     // Load index page
@@ -137,23 +139,20 @@ module.exports = function (app) {
     //When a writer first creates a new story, we will show them a blank form for their
     //story's settings. Once they 'save' it, we'll create a new db entry if everything is valid :)
     app.get("/story/create", function (req, res) {
-        db.Tag.findAll({
-            attributes: ["tagName", "id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
-            includeIgnoreAttributes: false,
-            include: [{
-                model: db.Story,
-                attributes: ["Stories.id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
-                duplicating: false
-            }],
-            group: ["id"],
-            order: [[db.sequelize.fn("COUNT", "Stories.id"), "DESC"]]
-        }).then(function (dbTags) {
-            res.render("story", {
-                tags: dbTags,
+        async function create () {
+            var tags = await dbMethods.allTags().catch(function(err) {
+                console.log(err);
+                var storyError = new Error(err.message);
+                return res.render("404", getError.messageTemplate(storyError));
+            });
+            var retObj = {
+                tags: tags,
                 warn: helpList.warnings,
                 storybuttons: helpList.storybuttons
-            });
-        });
+            };
+            res.render("story", retObj);
+        }
+        create();
     });
 
     //EDIT STORY (SETTINGS)
@@ -165,37 +164,33 @@ module.exports = function (app) {
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
-        //THERESA'S PAGE GOES HERE
-        db.Story.findOne({
-            where: { id: storyId },
-            include: {
-                model: db.Tag,
-                attributes: ["id", "tagName"]
-            }
-        }).then(function (dbStory) {
-            db.Tag.findAll({
-                attributes: ["id", "tagName", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
-                includeIgnoreAttributes: false,
-                include: [{
-                    model: db.Story,
-                    attributes: ["Stories.id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
-                    duplicating: false
-                }],
-                group: ["id"],
-                order: [[db.sequelize.fn("COUNT", "Stories.id"), "DESC"]]
-            }).then(function (dbTags) {
-                // console.log(dbStory.Tags[1].dataValues.tagName);
-                // console.log(dbTags);
-                helpList.warningsMatch(dbStory.dataValues);
-                // console.log(helpList.warnings);
-                res.render("story", {
-                    story: dbStory,
-                    tags: dbTags,
-                    warn: helpList.warnings,
-                    storybuttons: helpList.storybuttons
-                });
+        async function update () {
+            var authorID = req.session.token;
+            var theStory = await check.storyIsWriteable(storyId, authorID).catch(function(err) {
+                console.log(err);
+                var storyError = new Error(err.message);
+                return res.render("404", getError.messageTemplate(storyError));
             });
-        });
+            if (theStory) {
+                var tags = await dbMethods.allTags().catch(function(err) {
+                    console.log(err);
+                    var storyError = new Error(err.message);
+                    return res.render("404", getError.messageTemplate(storyError));
+                });
+                var storytags = await theStory.getTags({through: {StoryId: storyId}}).catch(function(err) {
+                    console.log(err);
+                    var storyError = new Error(err.message);
+                    return res.render("404", getError.messageTemplate(storyError));
+                });
+                var retObj = sort(theStory, storytags, tags);
+                console.log(retObj);
+                helpList.warningsMatch(theStory.dataValues);
+                retObj.warn = helpList.warnings;
+                retObj.storybuttons = helpList.storybuttons;
+                res.render("story", retObj);
+            }
+        }
+        update();
     });
 
     //STORY AND PAGE OVERVIEWS

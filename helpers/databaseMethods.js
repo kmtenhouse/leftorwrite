@@ -20,6 +20,12 @@ var dbMethods = {
             return dbTags;
         });
     },
+    allTags: function() {
+        return db.sequelize.query("select tags.id, tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id group by tags.id order by num_stories desc;", 
+            { type: db.Sequelize.QueryTypes.SELECT }).then(function (dbTags) {
+            return dbTags;
+        });
+    },
     findUser: function(userId){
         return db.User.findOne({
             where: {

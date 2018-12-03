@@ -50,5 +50,6 @@ module.exports = function (sequelize, DataTypes) {
         Story.belongsTo(models.User, {as: "Author"});
         Story.belongsToMany(models.Tag, {through: "StoryTag"});
     };
+    Story.sync();
     return Story;
 };
