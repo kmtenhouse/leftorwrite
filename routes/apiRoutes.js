@@ -1,7 +1,9 @@
 var db = require("../models");
+var check = require("../helpers/routevalidators.js");
+var getError = require("../helpers/errorhandlers.js");
 
 module.exports = function (app) {
-    // Get all examples
+/*     // Get all examples
     app.get("/api/examples", function (req, res) {
         db.Example.findAll({}).then(function (dbExamples) {
             res.json(dbExamples);
@@ -20,6 +22,36 @@ module.exports = function (app) {
         db.Example.destroy({ where: { id: req.params.id } }).then(function (dbExample) {
             res.json(dbExample);
         });
+    }); */
+
+    //STORY API
+    //Simple API to read one story's details (if it's publicly available)
+    app.get("/api/story/:storyid", function (req, res) {
+        //check if ONE story is readable
+        check.storyIsReadable(req.params.storyid)
+            .then(function(result) {
+                //if so, send the story's main details as a json object
+                res.json(result);
+            }, 
+            function(err) { 
+                //otherwise, if an error occurred, send the appropriate error code
+                res.sendStatus(getError.statusCode(err));   
+            });
+    });
+
+    //PAGES API
+    //Simple API to get one publicly available page to a story
+    app.get("/api/page/:pageid", function (req, res) {
+        //check if the page is readable
+        check.pageIsReadable(req.params.pageid)
+            .then(function(result) {
+                //if so, send the page as a json object
+                res.json(result);
+            }, 
+            function(err) { 
+                //otherwise, if an error occurred, send the appropriate error code
+                res.sendStatus(getError.statusCode(err));    
+            });
     });
 
     //TAGS API
@@ -39,7 +71,7 @@ module.exports = function (app) {
         }).then(function(dbUser){
             res.json(dbUser);
         });
-    });
+    }); 
 
     app.put("/api/user", function(req, res){
         db.User.update({

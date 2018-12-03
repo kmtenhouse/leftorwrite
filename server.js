@@ -23,12 +23,10 @@ app.engine(
         defaultLayout: "main",
         helpers: {
             equals: function (a, b, c) {
-                if (a === b) {
+                if (a === b || a === c) {
                     return true;
                 }
-                else if (a === c) {
-                    return true;
-                }
+                return false;
             }
         }
     })
