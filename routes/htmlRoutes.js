@@ -1,9 +1,11 @@
+// VARIABLES 
 var db = require("../models");
 var check = require("../helpers/routevalidators.js");
-
-// VARIABLES 
 // list helper object
-var helpList = require("../helpers/helperlists");
+var helpList = require("../helpers/helperlists.js");
+// helper that sorts which tags are active for the story. 
+// Accepts return data for the story and for all tags.
+var sort = require("../helpers/sortstorytags.js");
 
 module.exports = function (app) {
     // Load index page
@@ -160,27 +162,14 @@ module.exports = function (app) {
                 attributes: ["id", "tagName"]
             }
         }).then(function (dbStory) {
-            db.Tag.findAll({
-                attributes: ["id", "tagName", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]],
-                includeIgnoreAttributes:false,
-                include: [{
-                    model: db.Story, 
-                    attributes: ["Stories.id", [db.sequelize.fn("COUNT", "Stories.id"), "NumStories"]], 
-                    duplicating: false
-                }],
-                group: ["id"],
-                order: [[db.sequelize.fn("COUNT", "Stories.id"), "DESC"]]
-            }).then(function (dbTags) {
-                // console.log(dbStory.Tags[1].dataValues.tagName);
+            db.sequelize.query("select tags.id, tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id group by tags.id order by num_stories desc;", { type: db.Sequelize.QueryTypes.SELECT}).then(function (dbTags) {
                 // console.log(dbTags);
+                var retObj = sort(dbStory, dbTags);
                 helpList.warningsMatch(dbStory.dataValues);
-                // console.log(helpList.warnings);
-                res.render("story", {
-                    story: dbStory,
-                    tags: dbTags,
-                    warn: helpList.warnings,
-                    storybuttons: helpList.storybuttons
-                });
+                retObj.warn = helpList.warnings;
+                retObj.storybuttons = helpList.storybuttons;
+                // console.log(retObj);
+                res.render("story", retObj);
             });
         });
     });

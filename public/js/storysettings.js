@@ -1,3 +1,19 @@
+$(document).ready(function() {
+    var retVal;
+    $(".checked").prop("checked", true);
+    $(".checked").each(function() {
+        // if tag is checked
+        if ($(this).hasClass("checked")) {
+            var tag = $(this).data("tag-name");
+            tagsArr.push(tag);
+            tagsArr.sort();
+            retVal = tagsArr.join(", ");
+        }
+    });
+    // Populate to chosen tags field
+    $("#chosenTags").val(retVal);
+});
+
 function filterTags() {
     // VARIABLES
     var input = document.getElementById("tagSearch");
@@ -55,10 +71,11 @@ $(document).on("click", "#saveTag", function () {
 });
 
 // FIXME: This code doesn't work yet, but putting in on the back burner for now
-// $(document).on("click", "#chooseNotToWarn", function () {
-//     $(".content-warning").addClass("active");
-// });
-
+$(document).on("click", "#chooseNotToWarn", function () {
+    if ($(this).hasClass("active")) {
+        $(".content-warning").toggleClass("active");
+    }
+});
 
 // API ROUTES
 
@@ -68,25 +85,37 @@ $(document).on("click", "#saveTag", function () {
 $(document).on("click", "#saveChanges", function (event) {
     event.preventDefault();
     var id = $("#storyTitle").data("id");
+    var warns = {};
+    var storytags = [];
+    $(".content-warning").each(function() {
+        var status = $(this).hasClass("active");
+        var id = $(this).attr("id");
+        warns[id] = status;
+    });
+    $(".tag").each(function() {
+        if ($(this).prop("checked") === true) {
+            var tag =  $(this).data("tag-id");
+            storytags.push(tag);
+        }
+    });
     var storyObj = {
-        title: "new title"
-        // chooseNotToWarn: req.body.chooseNotToWarn ,
-        // violence: req.body.violence,
-        // nsfw: req.body.nsfw,
-        // nonConsent: req.body.nsfw,
-        // characterDeath: req.body.characterDeath,
-        // profanity: req.body.profanity,
-        // isPublic: req.body.isPublic,
-        // isFinished: req.body.isFinished,
-        // doneByDefault: req.body.doneByDefault
+        title: $("#storyTitle").val().trim(),
+        chooseNotToWarn: warns.chooseNotToWarn ,
+        violence: warns.violence,
+        nsfw: warns.nsfw,
+        nonConsent: warns.nsfw,
+        characterDeath: warns.characterDeath,
+        profanity: warns.profanity,
+        tags: storytags.toString()
     }; 
-    console.log(storyObj)
+    console.log("storyObj: ", storyObj);
     $.ajax("/api/story/update/" + id, {
         type: "PUT",
         data: storyObj
     }).then(function () {
         // location.reload();
         console.log("Updated ", id);
+        console.log("Title: ", storyObj.title);
     });
 });
 
