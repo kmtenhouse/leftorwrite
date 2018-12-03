@@ -140,7 +140,11 @@ module.exports = function (app) {
     //story's settings. Once they 'save' it, we'll create a new db entry if everything is valid :)
     app.get("/story/create", function (req, res) {
         async function create () {
-            var tags = await dbMethods.allTags();
+            var tags = await dbMethods.allTags().catch(function(err) {
+                console.log(err);
+                var storyError = new Error(err.message);
+                return res.render("404", getError.messageTemplate(storyError));
+            });
             var retObj = {
                 tags: tags,
                 warn: helpList.warnings,
@@ -162,15 +166,29 @@ module.exports = function (app) {
         var storyId = parseInt(req.params.storyid);
         async function update () {
             var authorID = req.session.token;
-            var theStory = await check.storyIsWriteable(storyId, authorID);
-            var tags = await dbMethods.allTags();
-            var storytags = await theStory.getTags({through: {StoryId: storyId}});
-            var retObj = sort(theStory, storytags, tags);
-            console.log(retObj);
-            helpList.warningsMatch(theStory.dataValues);
-            retObj.warn = helpList.warnings;
-            retObj.storybuttons = helpList.storybuttons;
-            res.render("story", retObj);
+            var theStory = await check.storyIsWriteable(storyId, authorID).catch(function(err) {
+                console.log(err);
+                var storyError = new Error(err.message);
+                return res.render("404", getError.messageTemplate(storyError));
+            });
+            if (theStory) {
+                var tags = await dbMethods.allTags().catch(function(err) {
+                    console.log(err);
+                    var storyError = new Error(err.message);
+                    return res.render("404", getError.messageTemplate(storyError));
+                });
+                var storytags = await theStory.getTags({through: {StoryId: storyId}}).catch(function(err) {
+                    console.log(err);
+                    var storyError = new Error(err.message);
+                    return res.render("404", getError.messageTemplate(storyError));
+                });
+                var retObj = sort(theStory, storytags, tags);
+                console.log(retObj);
+                helpList.warningsMatch(theStory.dataValues);
+                retObj.warn = helpList.warnings;
+                retObj.storybuttons = helpList.storybuttons;
+                res.render("story", retObj);
+            }
         }
         update();
     });

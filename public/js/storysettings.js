@@ -102,7 +102,7 @@ $(document).on("click", "#saveChanges", function (event) {
         chooseNotToWarn: warns.chooseNotToWarn ,
         violence: warns.violence,
         nsfw: warns.nsfw,
-        nonConsent: warns.nsfw,
+        nonConsent: warns.nonConsent,
         characterDeath: warns.characterDeath,
         profanity: warns.profanity,
         tags: storytags.toString()
@@ -113,8 +113,12 @@ $(document).on("click", "#saveChanges", function (event) {
         $.ajax("/api/story/create/", {
             type: "POST",
             data: storyObj
-        }).then(function () {
-            location.reload();
+        }).then(function (result, status) {
+            console.log(status);
+            console.log(result);
+            if (status === "success") {
+                window.location = "/story/settings/" + result.id;
+            }
         });
     }
     // UPDATE
@@ -129,3 +133,21 @@ $(document).on("click", "#saveChanges", function (event) {
 });
 
 // DELETE ROUTE
+$(document).on("click", "#deleteStory", function () {
+    event.preventDefault();
+    var id = $("#storyTitle").data("id");
+    if (id !== "") {
+        $.ajax("/api/story/" + id, {
+            type: "DELETE"
+        }).then(function (status) {
+            console.log(status);
+            if (status === "success") {
+                window.location = "/";
+            }
+        });
+    }
+    // if no id, not created yet, therefore no delete. add error
+    else{
+        // some error handling here
+    }
+});

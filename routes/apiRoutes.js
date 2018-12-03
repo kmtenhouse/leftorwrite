@@ -93,8 +93,11 @@ module.exports = function (app) {
     app.put("/api/story/update/:id", async function(req, res) {
         // console.log("Body: ", req.body);
         console.log("Params id: ", req.params.id);
-        var theStory = await check.storyIsWriteable(req.params.id, req.session.token);
-        try {
+        var theStory = await check.storyIsWriteable(req.params.id, req.session.token).catch(function(err) {
+            console.log(err);
+            return alert(err.message);
+        });
+        if (theStory) {
             var numRows = await db.Story.update({
                 title: req.body.title,
                 chooseNotToWarn: req.body.chooseNotToWarn ,
@@ -121,9 +124,6 @@ module.exports = function (app) {
                 }); 
             }
         }
-        catch (err) {
-            console.log(err);
-        } 
     });
     app.post("/api/story/create/", async function(req, res) {
         console.log("Body: ", req.body);
@@ -139,22 +139,42 @@ module.exports = function (app) {
             isPublic: req.body.isPublic,
             isFinished: req.body.isFinished,
             doneByDefault: req.body.doneByDefault
-        }, {
-            where: {id: req.params.id}
+        }).catch(function(err) {
+            console.log(err);
+            var storyError = new Error(err.message);
+            return res.render("404", getError.messageTemplate(storyError));
         });
-        theStory.setAuthor(authID);
+        theStory.setAuthor(authID).catch(function(err) {
+            console.log(err);
+            var storyError = new Error(err.message);
+            return res.render("404", getError.messageTemplate(storyError));
+        });
         if (req.body.tags) {
             var tagsArr = req.body.tags.split(",");
-            theStory.setTags(tagsArr, {where: {StoryId: req.params.id}}).then(function (dbTag) {
-                if(dbTag === 0) {
-                    return res.status(404).end();
-                }
-                else {
-                    return res.status(200).end();
-                }
-            }); 
+            theStory.setTags(tagsArr, {where: {StoryId: theStory.id}}).catch(function(err) {
+                console.log(err);
+                var storyError = new Error(err.message);
+                return res.render("404", getError.messageTemplate(storyError));
+            });
         }
-        console.log("New Story Id = ", theStory.id);
-        return res.redirect("/story/settings/" + theStory.id);
+        return res.status(200).send({id: theStory.id});
+    });
+    app.delete("/api/story/:id", async function (req, res) {
+        var theStory = await check.storyIsWriteable(req.params.id, req.session.token);
+        theStory.destroy({ where: { id: req.params.id } }).catch(function(err) {
+            console.log(err);
+            var storyError = new Error(err.message);
+            return res.render("404", getError.messageTemplate(storyError));
+        }).then(function (result) {
+            console.log("delete route result = ", result);
+            if (result.length > 0) {
+                return res.status(200);
+            }
+            else {
+                var storyError = new Error("Story Not Found");
+                return res.render("404", getError.messageTemplate(storyError));
+            }
+        });
+        
     });
 };
