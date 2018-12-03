@@ -1,7 +1,9 @@
 var db = require("../models");
+var check = require("../helpers/routevalidators.js");
+var getError = require("../helpers/errorhandlers.js");
 
 module.exports = function (app) {
-    // Get all examples
+/*     // Get all examples
     app.get("/api/examples", function (req, res) {
         db.Example.findAll({}).then(function (dbExamples) {
             res.json(dbExamples);
@@ -20,6 +22,36 @@ module.exports = function (app) {
         db.Example.destroy({ where: { id: req.params.id } }).then(function (dbExample) {
             res.json(dbExample);
         });
+    }); */
+
+    //STORY API
+    //Simple API to read one story's details (if it's publicly available)
+    app.get("/api/story/:storyid", function (req, res) {
+        //check if ONE story is readable
+        check.storyIsReadable(req.params.storyid)
+            .then(function(result) {
+                //if so, send the story's main details as a json object
+                res.json(result);
+            }, 
+            function(err) { 
+                //otherwise, if an error occurred, send the appropriate error code
+                res.sendStatus(getError.statusCode(err));   
+            });
+    });
+
+    //PAGES API
+    //Simple API to get one publicly available page to a story
+    app.get("/api/page/:pageid", function (req, res) {
+        //check if the page is readable
+        check.pageIsReadable(req.params.pageid)
+            .then(function(result) {
+                //if so, send the page as a json object
+                res.json(result);
+            }, 
+            function(err) { 
+                //otherwise, if an error occurred, send the appropriate error code
+                res.sendStatus(getError.statusCode(err));    
+            });
     });
 
     //TAGS API
@@ -39,7 +71,7 @@ module.exports = function (app) {
         }).then(function(dbUser){
             res.json(dbUser);
         });
-    });
+    }); 
 
     app.put("/api/user", function(req, res){
         db.User.update({
@@ -59,10 +91,44 @@ module.exports = function (app) {
     });
 
     app.put("/api/story/update/:id", async function(req, res) {
-        console.log("Body: ", req.body);
+        // console.log("Body: ", req.body);
         console.log("Params id: ", req.params.id);
-        return new Promise(function())
-        var [numRows, theStory] = await db.Story.update({
+        var theStory = await check.storyIsWriteable(req.params.id, req.session.token);
+        try {
+            var numRows = await db.Story.update({
+                title: req.body.title,
+                chooseNotToWarn: req.body.chooseNotToWarn ,
+                violence: req.body.violence,
+                nsfw: req.body.nsfw,
+                nonConsent: req.body.nsfw,
+                characterDeath: req.body.characterDeath,
+                profanity: req.body.profanity,
+                isPublic: req.body.isPublic,
+                isFinished: req.body.isFinished,
+                doneByDefault: req.body.doneByDefault
+            }, {
+                where: {id: req.params.id}
+            });
+            if (req.body.tags) {
+                var tagsArr = req.body.tags.split(",");
+                theStory.setTags(tagsArr, {where: {StoryId: req.params.id}}).then(function (dbTag) {
+                    if(dbTag === 0) {
+                        return res.status(404).end();
+                    }
+                    else {
+                        return res.status(200).end();
+                    }
+                }); 
+            }
+        }
+        catch (err) {
+            console.log(err);
+        } 
+    });
+    app.post("/api/story/create/", async function(req, res) {
+        console.log("Body: ", req.body);
+        var authID = req.session.token;
+        var theStory = await db.Story.create({
             title: req.body.title,
             chooseNotToWarn: req.body.chooseNotToWarn ,
             violence: req.body.violence,
@@ -72,22 +138,23 @@ module.exports = function (app) {
             profanity: req.body.profanity,
             isPublic: req.body.isPublic,
             isFinished: req.body.isFinished,
-            doneByDefault: req.body.doneByDefault}, 
-        {
+            doneByDefault: req.body.doneByDefault
+        }, {
             where: {id: req.params.id}
-        }).catch(
-            console.log
-        );
-        var tagsArr = req.body.tags.split(",");
-        console.log()
-        console.log(theStory);
-        theStory.setTags(tagsArr, {where: {StoryId: req.params.id}}).then(function (dbTag) {
-            if(dbTag === 0) {
-                return res.status(404).end();
-            }
-            else {
-                return res.status(200).end();
-            }
         });
+        theStory.setAuthor(authID);
+        if (req.body.tags) {
+            var tagsArr = req.body.tags.split(",");
+            theStory.setTags(tagsArr, {where: {StoryId: req.params.id}}).then(function (dbTag) {
+                if(dbTag === 0) {
+                    return res.status(404).end();
+                }
+                else {
+                    return res.status(200).end();
+                }
+            }); 
+        }
+        console.log("New Story Id = ", theStory.id);
+        return res.redirect("/story/settings/" + theStory.id);
     });
 };

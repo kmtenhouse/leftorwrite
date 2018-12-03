@@ -1,0 +1,12 @@
+{{!-- Load all the pages that are endings (not orphaned, and tbc or ending)
+      These pages CAN be finished or unfinished --}}
+{{#each pages}}
+{{#unless this.isOrphaned}}
+{{#if this.isEnding}}
+    {{>content/pagelibrary/pagestyling}}
+{{/if}}
+{{#if this.isTBC}}
+    {{>content/pagelibrary/pagestyling}}
+{{/if}}
+{{/unless}}
+{{/each}}

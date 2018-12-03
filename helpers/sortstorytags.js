@@ -1,4 +1,5 @@
-module.exports = function (dbStory, dbTags) {
+module.exports = function (dbStory, storyTags, dbTags) {
+    // console.log("dbTags inside sortstory.js = ", dbTags);
     // clean up story object
     var retS = {
         id: dbStory.dataValues.id,
@@ -19,12 +20,12 @@ module.exports = function (dbStory, dbTags) {
     // sort out which tags are active for the story, and return a tags object with that information
     var retT = [];
     var storytags = [];
-    for (var i = 0; i < dbStory.Tags.length; i++) {
-        storytags.push(dbStory.Tags[i].dataValues.id);
+    for (var i = 0; i < storyTags.length; i++) {
+        storytags.push(storyTags[i].dataValues.id);
     }
     for (var j = 0; j < dbTags.length; j++) {
+        var tag = dbTags[j];
         for (var k = 0; k < storytags.length; k++) {
-            var tag = dbTags[j];
             tag.active = storytags.some(function(value) {
                 return value === dbTags[j].id;
             });

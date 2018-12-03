@@ -71,20 +71,19 @@ $(document).on("click", "#saveTag", function () {
 });
 
 // FIXME: This code doesn't work yet, but putting in on the back burner for now
-$(document).on("click", "#chooseNotToWarn", function () {
-    if ($(this).hasClass("active")) {
-        $(".content-warning").toggleClass("active");
-    }
-});
+// $(document).on("click", "#chooseNotToWarn", function () {
+//     if ($(this).hasClass("active")) {
+//         $(".content-warning").toggleClass("active");
+//     }
+// });
 
 // API ROUTES
 
-// CREATE ROUTE
-
-// UPDATE ROUTE
+// CREATE ROUTE AND UPDATE ROUTE
 $(document).on("click", "#saveChanges", function (event) {
     event.preventDefault();
     var id = $("#storyTitle").data("id");
+    
     var warns = {};
     var storytags = [];
     $(".content-warning").each(function() {
@@ -109,14 +108,24 @@ $(document).on("click", "#saveChanges", function (event) {
         tags: storytags.toString()
     }; 
     console.log("storyObj: ", storyObj);
-    $.ajax("/api/story/update/" + id, {
-        type: "PUT",
-        data: storyObj
-    }).then(function () {
-        // location.reload();
-        console.log("Updated ", id);
-        console.log("Title: ", storyObj.title);
-    });
+    // CREATE
+    if (id === "") {
+        $.ajax("/api/story/create/", {
+            type: "POST",
+            data: storyObj
+        }).then(function () {
+            location.reload();
+        });
+    }
+    // UPDATE
+    else{
+        $.ajax("/api/story/update/" + id, {
+            type: "PUT",
+            data: storyObj
+        }).then(function () {
+            location.reload();
+        });
+    }
 });
 
 // DELETE ROUTE
