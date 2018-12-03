@@ -105,6 +105,20 @@ var dbMethods = {
         }).then(function(result){
             return result;
         });
+    },
+    findStoryTags: function(storyId){
+        return db.Tag.findAll({
+            include: [{
+                model: db.Story,
+                attributes: [],
+                where: {
+                    id: storyId
+                }
+            }],
+            attributes: ["id", "tagName"]
+        }).then(function(result){
+            return result;
+        });
     }
 };
 

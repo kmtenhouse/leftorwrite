@@ -67,20 +67,23 @@ module.exports = function (app) {
             dbMethods.findUser(dbStory.AuthorId).then(function(author){
                 dbMethods.findFirstPage(author.id, storyId).then(function(firstPage){
                     dbMethods.findPageLinks(author.id, storyId, firstPage.id).then(function(links){
-                        res.render("index", {
-                            loggedIn: loggedIn,
-                            readStory: true,
-                            dbStory,
-                            author,
-                            firstPage,
-                            links: links
+                        dbMethods.findStoryTags(storyId).then(function(tags){
+                            res.render("index", {
+                                loggedIn: loggedIn,
+                                readStory: true,
+                                dbStory,
+                                author,
+                                firstPage,
+                                links: links,
+                                tags: tags
+                            });
                         });
                     });
                 });
             });
-        }, function(err){
+        }), function(err){
             res.render("404", getError.messageTemplate(err));
-        });
+        };
     });
 
     //Read a page (by storyid and pageid)

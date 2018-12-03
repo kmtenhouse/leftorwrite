@@ -1,12 +1,16 @@
 <div class="container my-5">
-    <div class="jumbotron jumbotron-fluid text-center bg-white">
+    <section class="text-center bg-white my-3 py-3">
         <h1 class="display-4">{{dbStory.title}}</h1>
         <p class="lead">Written By: {{author.displayName}}</p>
+        Tags:
+        {{#each tags}}
+            <a href="/tags/{{id}}" class="badge badge-pill badge-success">{{tagName}}</a>
+        {{/each}}
         <hr class="my-4">
         {{#with dbStory}}
                 {{> content/tags/warningBadges}}
         {{/with}}
-    </div>
+    </section>
     <div class="row">
         <div class="col-12">
             <div class="card">
