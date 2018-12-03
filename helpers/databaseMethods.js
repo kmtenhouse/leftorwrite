@@ -66,9 +66,25 @@ var dbMethods = {
             return dbLinks;
         });
     },
-    findAllTags: function(){
-        return db.Tag.findAll({}).then(function(dbTags){
-            return dbTags;
+    findAllTagsAndStoriesCount: function(){
+        return db.Tag.findAll({
+            group: ["Tag.id"],
+            includeIgnoreAttributes:false,
+            include: [{
+                model: db.Story,
+                where: {
+                    isPublic: true,
+                    isFinished: true
+                }
+            }],
+            attributes: [
+                "id",
+                "TagName",
+                [db.sequelize.fn("COUNT", db.sequelize.col("stories.id")), "num_stories"],
+            ],
+            order: [[db.sequelize.fn("COUNT", db.sequelize.col("stories.id")), "DESC"]]
+        }).then(function(result){
+            return result;
         });
     },
     findTaggedStories: function(tagId){

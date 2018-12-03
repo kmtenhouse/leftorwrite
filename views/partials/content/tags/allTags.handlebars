@@ -7,7 +7,7 @@
             <div class="row">
                 {{#each tags}}
                     <div class="col text-center">
-                        <a href="/tags/{{id}}" class="btn btn-success">{{tagName}}</a>
+                        <a href="/tags/{{id}}" class="btn btn-success">{{dataValues.TagName}} <span class="badge badge-light"> {{dataValues.num_stories}} </span></a>
                     </div>
                 {{/each}}
             </div>

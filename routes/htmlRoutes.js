@@ -118,7 +118,7 @@ module.exports = function (app) {
         if(req.session.token){
             loggedIn = true;
         }
-        dbMethods.findAllTags().then(function(tags){
+        dbMethods.findAllTagsAndStoriesCount().then(function(tags){
             res.render("index", {
                 loggedIn: loggedIn,
                 seeTags: true,
@@ -140,6 +140,10 @@ module.exports = function (app) {
             loggedIn = true;
         }
         dbMethods.findTaggedStories(tagId).then(function(result){
+            if(result === null){
+                var tagError = new Error("Invalid Tag Id");
+                return res.render("404", getError.messageTemplate(tagError));
+            }
             res.render("index", {
                 loggedIn: loggedIn,
                 seeTaggedStories: true,
