@@ -5,9 +5,15 @@
     <h5 class="card-header border-bottom-0 bg-transparent">{{title}}</h5>
     <div class="card-body mx-auto d-none d-sm-block">
         <!-- Card Image -->
-        <img class="card-img-top img-fluid story-img" src="images/script.svg" alt="Story">
+        <img class="card-img-top img-fluid story-img" src="../images/script.svg" alt="Story">
     </div>
     <!-- When story was last updated -->
-    <div class="card-footer border-top-0 bg-transparent text-right"><small class="text-muted">{{updatedAt}}</small></div>
+    <div class="card-footer border-top-0 bg-transparent text-right">
+        {{#if (greaterThanZero updatedAt)}}
+            <small class="text-muted">Edited {{updatedAt}} Days Ago</small>
+        {{else}}
+            <small class="text-muted">Edited Today</small>
+        {{/if}}
+    </div>
     </a>
 </div>

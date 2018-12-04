@@ -1,3 +1,19 @@
+$(document).ready(function() {
+    var retVal;
+    $(".checked").prop("checked", true);
+    $(".checked").each(function() {
+        // if tag is checked
+        if ($(this).hasClass("checked")) {
+            var tag = $(this).data("tag-name");
+            tagsArr.push(tag);
+            tagsArr.sort();
+            retVal = tagsArr.join(", ");
+        }
+    });
+    // Populate to chosen tags field
+    $("#chosenTags").val(retVal);
+});
+
 function filterTags() {
     // VARIABLES
     var input = document.getElementById("tagSearch");
@@ -53,6 +69,84 @@ $(document).on("click", "#saveTag", function () {
     $("#tagSearch").val($("#newTagInput").val());
     filterTags();
 });
-$(document).on("click", "chooseNotToWarn", function () {
-    $(".content-warning").toggleClass("active");
+
+// FIXME: This code doesn't work yet, but putting in on the back burner for now
+// $(document).on("click", "#chooseNotToWarn", function () {
+//     if ($(this).hasClass("active")) {
+//         $(".content-warning").toggleClass("active");
+//     }
+// });
+
+// API ROUTES
+
+// CREATE ROUTE AND UPDATE ROUTE
+$(document).on("click", "#saveChanges", function (event) {
+    event.preventDefault();
+    var id = $("#storyTitle").data("id");
+    
+    var warns = {};
+    var storytags = [];
+    $(".content-warning").each(function() {
+        var status = $(this).hasClass("active");
+        var id = $(this).attr("id");
+        warns[id] = status;
+    });
+    $(".tag").each(function() {
+        if ($(this).prop("checked") === true) {
+            var tag =  $(this).data("tag-id");
+            storytags.push(tag);
+        }
+    });
+    var storyObj = {
+        title: $("#storyTitle").val().trim(),
+        chooseNotToWarn: warns.chooseNotToWarn ,
+        violence: warns.violence,
+        nsfw: warns.nsfw,
+        nonConsent: warns.nonConsent,
+        characterDeath: warns.characterDeath,
+        profanity: warns.profanity,
+        tags: storytags.toString()
+    }; 
+    console.log("storyObj: ", storyObj);
+    // CREATE
+    if (id === "") {
+        $.ajax("/api/story/create/", {
+            type: "POST",
+            data: storyObj
+        }).then(function (result, status) {
+            console.log(status);
+            console.log(result);
+            if (status === "success") {
+                window.location = "/story/settings/" + result.id;
+            }
+        });
+    }
+    // UPDATE
+    else{
+        $.ajax("/api/story/update/" + id, {
+            type: "PUT",
+            data: storyObj
+        }).then(function () {
+            location.reload();
+        });
+    }
+});
+
+// DELETE ROUTE
+$(document).on("click", "#deleteStory", function () {
+    event.preventDefault();
+    var id = $("#storyTitle").data("id");
+    if (id !== "") {
+        $.ajax("/api/story/" + id, {
+            type: "DELETE"
+        }).then(function (result, status) {
+            if (status === "success") {
+                window.location = "/";
+            }
+        });
+    }
+    // if no id, not created yet, therefore no delete. add error
+    else{
+        // some error handling here
+    }
 });

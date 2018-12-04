@@ -3,27 +3,6 @@ var check = require("../helpers/routevalidators.js");
 var getError = require("../helpers/errorhandlers.js");
 
 module.exports = function (app) {
-/*     // Get all examples
-    app.get("/api/examples", function (req, res) {
-        db.Example.findAll({}).then(function (dbExamples) {
-            res.json(dbExamples);
-        });
-    });
-
-    // Create a new example
-    app.post("/api/examples", function (req, res) {
-        db.Example.create(req.body).then(function (dbExample) {
-            res.json(dbExample);
-        });
-    });
-
-    // Delete an example by id
-    app.delete("/api/examples/:id", function (req, res) {
-        db.Example.destroy({ where: { id: req.params.id } }).then(function (dbExample) {
-            res.json(dbExample);
-        });
-    }); */
-
     //STORY API
     //Simple API to read one story's details (if it's publicly available)
     app.get("/api/story/:storyid", function (req, res) {
@@ -88,5 +67,95 @@ module.exports = function (app) {
                 return res.status(200).end();
             }
         });
+    });
+
+    app.put("/api/story/update/:id", async function(req, res) {
+        // console.log("Body: ", req.body);
+        console.log("Params id: ", req.params.id);
+        var theStory = await check.storyIsWriteable(req.params.id, req.session.token).catch(function(err) {
+            console.log(err);
+            return alert(err.message);
+        });
+        if (theStory) {
+            var numRows = await db.Story.update({
+                title: req.body.title,
+                chooseNotToWarn: req.body.chooseNotToWarn ,
+                violence: req.body.violence,
+                nsfw: req.body.nsfw,
+                nonConsent: req.body.nsfw,
+                characterDeath: req.body.characterDeath,
+                profanity: req.body.profanity,
+                isPublic: req.body.isPublic,
+                isFinished: req.body.isFinished,
+                doneByDefault: req.body.doneByDefault
+            }, {
+                where: {id: req.params.id}
+            });
+            if (req.body.tags) {
+                var tagsArr = req.body.tags.split(",");
+                theStory.setTags(tagsArr, {where: {StoryId: req.params.id}}).then(function (dbTag) {
+                    if(dbTag === 0) {
+                        return res.status(404).end();
+                    }
+                    else {
+                        return res.status(200).end();
+                    }
+                }); 
+            }
+        }
+    });
+    app.post("/api/story/create/", async function(req, res) {
+        console.log("Body: ", req.body);
+        var authID = req.session.token;
+        var theStory = await db.Story.create({
+            title: req.body.title,
+            chooseNotToWarn: req.body.chooseNotToWarn ,
+            violence: req.body.violence,
+            nsfw: req.body.nsfw,
+            nonConsent: req.body.nsfw,
+            characterDeath: req.body.characterDeath,
+            profanity: req.body.profanity,
+            isPublic: req.body.isPublic,
+            isFinished: req.body.isFinished,
+            doneByDefault: req.body.doneByDefault
+        }).catch(function(err) {
+            console.log(err);
+            var storyError = new Error(err.message);
+            return res.render("404", getError.messageTemplate(storyError));
+        });
+        theStory.setAuthor(authID).catch(function(err) {
+            console.log(err);
+            var storyError = new Error(err.message);
+            return res.render("404", getError.messageTemplate(storyError));
+        });
+        if (req.body.tags) {
+            var tagsArr = req.body.tags.split(",");
+            theStory.setTags(tagsArr, {where: {StoryId: theStory.id}}).catch(function(err) {
+                console.log(err);
+                var storyError = new Error(err.message);
+                return res.render("404", getError.messageTemplate(storyError));
+            });
+        }
+        return res.status(200).send({id: theStory.id});
+    });
+    app.delete("/api/story/:id", async function (req, res) {
+        var theStory = await check.storyIsWriteable(req.params.id, req.session.token);
+        var numDeletedTagAssoc = await theStory.setTags([]);
+        theStory.destroy({ where: { id: req.params.id } }).catch(function(err) {
+            console.log("The error returned after delete is ", err);
+            var storyError = new Error(err.message);
+            return res.render("404", getError.messageTemplate(storyError));
+        }).then(function (result) {
+            console.log("delete route result = ", result);
+            if (result.dataValues.id === parseInt(req.params.id)) {
+                console.log("DELETE SUCCEEDED");
+                return res.sendStatus(200);
+            }
+            else {
+                var storyError = new Error("Story Not Found");
+                return res.status(404).render("404", getError.messageTemplate(storyError)).end();
+            }
+        });
+        
     });
 };

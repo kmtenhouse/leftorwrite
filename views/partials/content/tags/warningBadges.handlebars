@@ -1,0 +1,22 @@
+Warnings: <br>
+{{#if (checkWarnings chooseNotToWarn violence nsfw nonConset characterDeath profanity)}}
+    <span class="badge badge-pill badge-success mt-3">No Warnings</span>
+{{else if chooseNotToWarn}}
+    <span class="badge badge-pill badge-warning mt-3">Choose Not To Warn</span>
+{{else}}
+    {{#if violence}}
+        <span class="badge badge-pill badge-warning">Violence</span>
+    {{/if}}
+    {{#if nsfw}}
+        <span class="badge badge-pill badge-warning">NSFW</span>
+    {{/if}}
+    {{#if nonConsent}}
+        <span class="badge badge-pill badge-warning">Non-consent</span>
+    {{/if}}
+    {{#if characterDeath}}
+        <span class="badge badge-pill badge-warning">Character Death</span>
+    {{/if}}
+    {{#if profanity}}
+        <span class="badge badge-pill badge-warning">Profanity</span>
+    {{/if}}
+{{/if}}
