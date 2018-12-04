@@ -20,6 +20,8 @@
     {{> content/tags/allTags}}
 {{else if seeTaggedStories}}
     {{> content/tags/taggedStories}}
+{{else if seeAuthors}}
+    {{> content/authors/allAuthors}}
 {{else if loggedIn}}
     {{> content/dashboard/dashboard}}
 {{else}}

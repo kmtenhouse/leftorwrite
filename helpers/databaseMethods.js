@@ -1,7 +1,7 @@
 var db = require("../models");
 
 var dbMethods = {
-    findAllUserStories: function(userId){
+    findRecentUserStories: function(userId){
         return db.Story.findAll({
             where: {
                 AuthorId: userId
@@ -127,6 +127,11 @@ var dbMethods = {
             }
         }).then(function(count){
             return count;
+        });
+    },
+    findAllUsers: function(){
+        return db.User.findAll().then(function(dbUser){
+            return dbUser;
         });
     }
 };

@@ -20,7 +20,7 @@ module.exports = function (app) {
             res.cookie("token", req.session.token);
             // Finds the most recently updated stories of the User
             dbMethods.findUser(req.session.token).then(function(user){
-                dbMethods.findAllUserStories(user.id).then(function (dbStory) {
+                dbMethods.findRecentUserStories(user.id).then(function (dbStory) {
                     // Finds the top 5 tags 
                     dbMethods.topFiveTags().then(function(dbTags){
                         // Change updatedAt to time difference from now in days
@@ -178,6 +178,20 @@ module.exports = function (app) {
                 seeTaggedStories: true,
                 tag: result,
                 stories: result.Stories
+            });
+        });
+    });
+
+    app.get("/authors", function (req, res) {
+        dbMethods.findAllUsers().then(function(users){
+            var loggedIn = false;
+            if(req.session.token){
+                loggedIn = true;
+            }
+            res.render("index", {
+                loggedIn: loggedIn,
+                seeAuthors: true,
+                authors: users
             });
         });
     });
