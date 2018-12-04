@@ -22,6 +22,8 @@
     {{> content/tags/taggedStories}}
 {{else if seeAuthors}}
     {{> content/authors/allAuthors}}
+{{else if seeAuthorStories}}
+    {{> content/authors/authorStories}}
 {{else if loggedIn}}
     {{> content/dashboard/dashboard}}
 {{else}}

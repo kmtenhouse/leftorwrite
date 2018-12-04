@@ -133,6 +133,17 @@ var dbMethods = {
         return db.User.findAll().then(function(dbUser){
             return dbUser;
         });
+    },
+    findAllUserStories: function(userId){
+        return db.Story.findAll({
+            where: {
+                AuthorId: userId,
+                isPublic: true,
+                isFinished: true
+            }
+        }).then(function(stories){
+            return stories;
+        });
     }
 };
 

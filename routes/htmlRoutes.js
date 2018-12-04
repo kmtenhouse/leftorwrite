@@ -196,6 +196,32 @@ module.exports = function (app) {
         });
     });
 
+    app.get("/authors/:authorid", function(req,res){
+        var authorId = req.params.authorid;
+        var loggedIn = false;
+        if(req.session.token){
+            loggedIn = true;
+        }
+        if(!check.isvalidid(authorId)){
+            var authorError = new Error("Found Invalid Author Id");
+            return res.render("404", getError.messageTemplate(authorError));
+        }
+        dbMethods.findUser(authorId).then(function(author){
+            dbMethods.findAllUserStories(authorId).then(function(stories){
+                if(stories === null){
+                    var nullError = new Error("No Stories Found");
+                    return res.render("404", getError.messageTemplate(nullError));
+                }
+                res.render("index", {
+                    loggedIn: loggedIn,
+                    seeAuthorStories: true,
+                    author,
+                    stories: stories
+                });
+            });
+        });
+    });
+
     //WRITER ROUTES
     //CREATE NEW STORY (SETTINGS)
     //When a writer first creates a new story, we will show them a blank form for their
