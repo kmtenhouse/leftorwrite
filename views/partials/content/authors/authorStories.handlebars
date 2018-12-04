@@ -1,10 +1,14 @@
 <div class="container my-5">
-    <section>
+    <section class="mb-5 py-3">
         <div class="row">
             <div class="col">
                 <h3>{{author.displayName}}'s Stories</h3>
             </div>
         </div>
     </section>
-
+    <div class="card-deck justify-content-around">
+        {{#each stories}}
+            {{> content/tags/tagStory}}
+        {{/each}}
+    </div>
 </div>
