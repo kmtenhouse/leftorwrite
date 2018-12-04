@@ -22,8 +22,26 @@ app.engine(
     exphbs({
         defaultLayout: "main",
         helpers: {
-            equals: function (a, b, c) {
-                if (a === b || a === c) {
+            oddNumber: function(number){
+                if(number % 2 !== 0){
+                    return true;
+                }
+                return false;
+            },
+            everyThreeIndices: function(number){
+                if((number + 1) % 3 === 0){
+                    return true;
+                }
+                return false;
+            },
+            oddAndThree: function(number){
+                if(number % 2 !==0 && (number + 1) % 3 === 0){
+                    return true;
+                }
+                return false;
+            },
+            checkWarnings: function(a,b,c,d,e,f){
+                if(!a && !b && !c && !d && !e && !f){
                     return true;
                 }
                 return false;

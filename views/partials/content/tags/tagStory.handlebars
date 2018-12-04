@@ -1,0 +1,18 @@
+<div class="card border-success m-1 tag-stories">
+    <!-- Link to the Page Libray for this story -->
+    <a href="/story/read/{{id}}">
+    <!-- Story Title -->
+    <h5 class="card-header border-bottom-0 bg-transparent">
+        {{title}} 
+        <br> 
+        By: {{Author.displayName}}
+    </h5>
+    <div class="card-body mx-auto d-none d-sm-block text-center">
+        <!-- Card Image -->
+        <img class="card-img-top img-fluid story-img" src="../images/script.svg" alt="Story">
+    </div>
+    <div class="card-footer px-2 border-top-0 bg-transparent text-center">
+        {{> content/tags/warningBadges}}
+    </div>
+    </a>
+</div>

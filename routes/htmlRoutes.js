@@ -59,38 +59,31 @@ module.exports = function (app) {
     //If the story is not accessible yet, will give an error page
     app.get("/story/read/:storyid", function (req, res) {
         var storyId = req.params.storyid;
+        var loggedIn = false;
+        if(req.session.token){
+            loggedIn = true;
+        }
         check.storyIsReadable(storyId).then(function(dbStory){
             dbMethods.findUser(dbStory.AuthorId).then(function(author){
                 dbMethods.findFirstPage(author.id, storyId).then(function(firstPage){
                     dbMethods.findPageLinks(author.id, storyId, firstPage.id).then(function(links){
-                        res.render("index", {
-                            loggedIn: false,
-                            readStory: true,
-                            dbStory,
-                            author,
-                            firstPage,
-                            links: links
+                        dbMethods.findStoryTags(storyId).then(function(tags){
+                            res.render("index", {
+                                loggedIn: loggedIn,
+                                readStory: true,
+                                dbStory,
+                                author,
+                                firstPage,
+                                links: links,
+                                tags: tags
+                            });
                         });
                     });
                 });
             });
-        }, function(err){
-            res.send(err.message);
-        });
-    });
-
-    app.get("/tags/", function (req, res) {
-        res.send("Displaying all tags!");
-    });
-
-    app.get("/tags/:tagid", function (req, res) {
-        if (!check.isvalidid(req.params.tagid)) {
-            //if this is not a valid story id, return an error that we can't read the story
-            return res.render("tagnotfound");
-        }
-        //otherwise, go ahead and parse the id and proceed!
-        var tagId = parseInt(req.params.tagid);
-        res.send("Displaying all stories with tag #" + tagId);
+        }), function(err){
+            res.render("404", getError.messageTemplate(err));
+        };
     });
 
     //Read a page (by storyid and pageid)
@@ -100,12 +93,20 @@ module.exports = function (app) {
     //If the page is orphaned or not finished, will give an error page
     app.get("/story/read/:storyid/page/:pageid", function (req, res) {
         var pageId = req.params.pageid;
+        var loggedIn = false;
+        if(req.session.token){
+            loggedIn = true;
+        }
         check.pageIsReadable(pageId).then(function(page){
             var dbStory = page.Story;
+            // If they are trying to go to the start page, it will redirect to the main story page
+            if(page.isStart){
+                return res.redirect("/story/read/" + dbStory.id);
+            }
             dbMethods.findUser(dbStory.AuthorId).then(function(author){
                 dbMethods.findPageLinks(author.id, dbStory.id, page.id).then(function(links){
                     res.render("index", {
-                        loggedIn: false,
+                        loggedIn: loggedIn,
                         readPage: true,
                         dbStory,
                         author,
@@ -115,12 +116,22 @@ module.exports = function (app) {
                 });
             });
         }, function(err){
-            res.send(err.message);
+            res.render("404", getError.messageTemplate(err));
         });
     });
 
-    app.get("/tags/", function (req, res) {
-        res.send("Displaying all tags!");
+    app.get("/tags", function (req, res) {
+        var loggedIn = false;
+        if(req.session.token){
+            loggedIn = true;
+        }
+        dbMethods.findAllTagsAndStoriesCount().then(function(tags){
+            res.render("index", {
+                loggedIn: loggedIn,
+                seeTags: true,
+                tags: tags
+            });
+        });
     });
 
     app.get("/tags/:tagid", function (req, res) {
@@ -131,7 +142,22 @@ module.exports = function (app) {
         }
         //otherwise, go ahead and parse the id and proceed!
         var tagId = parseInt(req.params.tagid);
-        res.send("Displaying all stories with tag #" + tagId);
+        var loggedIn = false;
+        if(req.session.token){
+            loggedIn = true;
+        }
+        dbMethods.findTaggedStories(tagId).then(function(result){
+            if(result === null){
+                var tagError = new Error("Invalid Tag Id");
+                return res.render("404", getError.messageTemplate(tagError));
+            }
+            res.render("index", {
+                loggedIn: loggedIn,
+                seeTaggedStories: true,
+                tag: result,
+                stories: result.Stories
+            });
+        });
     });
 
     //WRITER ROUTES

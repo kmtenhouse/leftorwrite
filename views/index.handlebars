@@ -12,16 +12,23 @@
     </div>
 </header>
 
-{{#if loggedIn}}
-    {{> content/dashboard/dashboard}}
-{{else if readStory}}
+<div class="spacer"></div>
+
+{{#if readStory}}
     {{> content/readStory/storyMain}}
 {{else if readPage}}
     {{> content/readStory/page}}
+{{else if seeTags}}
+    {{> content/tags/allTags}}
+{{else if seeTaggedStories}}
+    {{> content/tags/taggedStories}}
+{{else if loggedIn}}
+    {{> content/dashboard/dashboard}}
 {{else}}
     {{> content/intro}}
 {{/if}}
 
+<div class="spacer"></div>
   <!-- Footer containing credits on every page -->
     <footer>
         <div class="container">
