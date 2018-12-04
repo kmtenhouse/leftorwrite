@@ -6,18 +6,24 @@
         <div class="row my-lg-5 py-lg-3">
             <div class="col">
                 <h3>You're current username is: {{user.displayName}}</h3>
+                {{#if displayMessage}}
+                    <br>
+                    <h4 class="text-warning font-weight-bold">{{message}}</h4>
+                {{/if}}
             </div>
         </div>
-        <div class="row mt-5">
-            <div class="col">
-                <a class="btn btn-danger" href="/">Keep Username</a>
+        {{#unless displayMessage}}
+            <div class="row mt-5">
+                <div class="col">
+                    <a class="btn btn-danger" href="/">Keep Username</a>
+                </div>
             </div>
-        </div>
-        <div class="row my-4">
-            <div class="col ml-3">
-                <h3>OR</h3>
+            <div class="row my-4">
+                <div class="col ml-3">
+                    <h3>OR</h3>
+                </div>
             </div>
-        </div>
+        {{/unless}}
         <div class="row align-items-center">
             <div class="col">
                 <h5>Create New Username: </h5>

@@ -1,8 +1,8 @@
 <!-- Recently Edited Section -->
-    <div class="container border m-5 mx-auto">
+    <div class="container m-5 mx-auto">
         <!-- Section Header -->
-        <nav class="navbar pt-4 border-bottom">
-            <span class="navbar-brand"><h3>Recently Edited</h3></span>
+        <nav class="navbar border-bottom border-success pt-4">
+            <span class="navbar-brand"><h3>{{user.displayName}}'s Recently Edited</h3></span>
             <a href="/story/create/" class="btn btn-danger">Create New Story</a>
         </nav>
         <!-- Recently Edited Stories -->
@@ -17,16 +17,14 @@
             {{/each}}
         </div>
     </div>
-    <div class="container border m-5 mx-auto">
-        <nav class="navbar justify-content-start mb-5">
+    <div class="container m-5 mx-auto">
+        <nav class="navbar mb-5 border-bottom border-success">
             <span class="navbar-brand"><h3>Popular Tags</h3></span>
+            <a class="btn btn-danger" href="/tags">See All Tags</a>
         </nav>
         <div class="row m-3">
             {{#each tags}}
                 {{> content/dashboard/dashboard-tags}}
             {{/each}}
-        </div>
-        <div class="footer row justify-content-end mt-5">
-            <a class="btn btn-outline-success nav-item" href="/tags">See All Tags</a>
         </div>
     </div>
