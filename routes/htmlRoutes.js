@@ -208,7 +208,7 @@ module.exports = function (app) {
         }
         dbMethods.findUser(authorId).then(function(author){
             dbMethods.findAllUserStories(authorId).then(function(stories){
-                if(stories === null){
+                if(stories.length === 0){
                     var nullError = new Error("No Stories Found");
                     return res.render("404", getError.messageTemplate(nullError));
                 }
