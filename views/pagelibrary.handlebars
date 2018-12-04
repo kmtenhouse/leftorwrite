@@ -21,12 +21,12 @@
                         aria-selected="true">All Pages Currently In Use</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="dangling-tab" data-toggle="tab" href="#danglingpages" role="tab"
-                        aria-controls="dangling pages" aria-selected="false">Dangling Pages</a>
+                    <a class="nav-link" id="unlinked-tab" data-toggle="tab" href="#unlinkedpages" role="tab"
+                        aria-controls="Unlinked pages" aria-selected="false">Unlinked Pages</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="unfinished-tab" data-toggle="tab" href="#unfinishedpages" role="tab"
-                        aria-controls="unfinished pages" aria-selected="false">Unfinished Pages</a>
+                        aria-controls="unfinished pages" aria-selected="false">Unfinished Writing</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="endings-tab" data-toggle="tab" href="#endings" role="tab" aria-controls="endings"
@@ -45,27 +45,49 @@
                         {{>content/pagelibrary/tabpane-headers header="All Pages Currently In Use"}}
                         <div class="row py-3">
                             {{#if pages.length}}
-                            {{>content/pagelibrary/allpages}}
+                            {{!-- Load all the pages that are currently in use (not orphaned)
+                            These pages CAN be finished or unfinished --}}
+                            {{#each pages}}
+                            {{#unless this.isOrphaned}}
+                            {{>content/pagelibrary/pagestyling}}
+                            {{/unless}}
+                            {{/each}}
                             {{else}}
                             {{>content/pagelibrary/nopages}}
                             {{/if}}
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="danglingpages" role="tabpanel" aria-labelledby="dangling-tab">
-                        {{>content/pagelibrary/tabpane-headers header="Dangling Pages"}}
+                    <div class="tab-pane fade" id="unlinkedpages" role="tabpanel" aria-labelledby="unlinked-tab">
+                        {{>content/pagelibrary/tabpane-headers header="Unlinked Pages"}}
                         <div class="row py-3">
                             {{#if pages.length}}
-                            {{>content/pagelibrary/danglingpages}}
+                            {{!-- Load all the pages that are currently unlinked (not orphaned, also not linked)
+                            These pages CAN be finished or unfinished --}}
+                            {{#each pages}}
+                            {{#unless this.isOrphaned}}
+                            {{#unless this.isLinked}}
+                            {{>content/pagelibrary/pagestyling}}
+                            {{/unless}}
+                            {{/unless}}
+                            {{/each}}
                             {{else}}
                             {{>content/pagelibrary/nopages}}
                             {{/if}}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="unfinishedpages" role="tabpanel" aria-labelledby="unfinished-tab">
-                        {{>content/pagelibrary/tabpane-headers header="Unfinished Pages"}}
+                        {{>content/pagelibrary/tabpane-headers header="Unfinished Writing"}}
                         <div class="row py-3">
                             {{#if pages.length}}
-                            {{>content/pagelibrary/unfinishedpages}}
+                            {{!-- Load all the pages that are currently unfinished
+                            These pages must not be orphans --}}
+                            {{#each pages}}
+                            {{#unless this.isOrphaned}}
+                            {{#unless this.contentFinished}}
+                            {{>content/pagelibrary/pagestyling}}
+                            {{/unless}}
+                            {{/unless}}
+                            {{/each}}
                             {{else}}
                             {{>content/pagelibrary/nopages}}
                             {{/if}}
@@ -75,7 +97,18 @@
                         {{>content/pagelibrary/tabpane-headers header="Endings and TBC"}}
                         <div class="row py-3">
                             {{#if pages.length}}
-                            {{>content/pagelibrary/endingpages}}
+                            {{!-- Load all the pages that are endings (not orphaned, and tbc or ending)
+                            These pages CAN be finished or unfinished --}}
+                            {{#each pages}}
+                            {{#unless this.isOrphaned}}
+                            {{#if this.isEnding}}
+                            {{>content/pagelibrary/pagestyling}}
+                            {{/if}}
+                            {{#if this.isTBC}}
+                            {{>content/pagelibrary/pagestyling}}
+                            {{/if}}
+                            {{/unless}}
+                            {{/each}}
                             {{else}}
                             {{>content/pagelibrary/nopages}}
                             {{/if}}
@@ -85,7 +118,13 @@
                         {{>content/pagelibrary/tabpane-headers header="Orphaned Pages"}}
                         <div class="row py-3">
                             {{#if pages.length}}
-                            {{>content/pagelibrary/orphanedpages}}
+                            {{!-- Load all the pages that are currently orphaned
+                            These pages CAN be finished or unfinished --}}
+                            {{#each pages}}
+                            {{#if this.isOrphaned}}
+                            {{>content/pagelibrary/pagestyling}}
+                            {{/if}}
+                            {{/each}}
                             {{else}}
                             {{>content/pagelibrary/nopages}}
                             {{/if}}
