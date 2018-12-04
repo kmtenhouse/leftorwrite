@@ -1,4 +1,7 @@
-var expect = require("chai").expect;
+var chai = require("chai");
+var expect = chai.expect;
+
+var db = require("../models");
 var validators = require("../helpers/routevalidators");
 
 describe("isvalidid", function(){
