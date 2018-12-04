@@ -6,7 +6,7 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: false,
             validtate: {
-                len: [5, 100]
+                len: [2, 100]
             }
         },
         isPublic: {

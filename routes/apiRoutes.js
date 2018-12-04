@@ -1,6 +1,7 @@
 var db = require("../models");
 var check = require("../helpers/routevalidators.js");
 var getError = require("../helpers/errorhandlers.js");
+var dbMethods = require("../helpers/databaseMethods");
 
 module.exports = function (app) {
 /*     // Get all examples
@@ -63,6 +64,25 @@ module.exports = function (app) {
         });
     }); 
 
+    app.post("/api/tag/create", async function(req, res) {
+        // testRet will be the tag object that matches the search, if one exists.
+        // if none exist, it will be null
+        var testRet = await dbMethods.tagExists(req.body.tagName).catch(function(err) {
+            console.log(err);
+        });
+        if (testRet === null) {
+            db.Tag.create({tagName: req.body.tagName}).then(function(result) {
+                // result will be instance of Tag, a tag object
+                return res.status(200).send(result);
+            }).catch(function(err) {
+                console.log(err);
+            });
+        }
+        else {
+            return res.sendStatus(409);
+        }
+    });
+
     app.get("/api/user/:username", function(req, res){
         db.User.findAll({
             where: {
@@ -90,14 +110,15 @@ module.exports = function (app) {
         });
     });
 
+    // update story info route
     app.put("/api/story/update/:id", async function(req, res) {
-        // console.log("Body: ", req.body);
-        console.log("Params id: ", req.params.id);
         var theStory = await check.storyIsWriteable(req.params.id, req.session.token).catch(function(err) {
             console.log(err);
             return alert(err.message);
         });
         if (theStory) {
+            // set this variable in case we need/want to use it in future.
+            // this could also be done with a .then.
             var numRows = await db.Story.update({
                 title: req.body.title,
                 chooseNotToWarn: req.body.chooseNotToWarn ,
@@ -127,6 +148,7 @@ module.exports = function (app) {
     });
     app.post("/api/story/create/", async function(req, res) {
         console.log("Body: ", req.body);
+
         var authID = req.session.token;
         var theStory = await db.Story.create({
             title: req.body.title,
