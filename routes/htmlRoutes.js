@@ -1,3 +1,5 @@
+var moment = require("moment");
+moment().format();
 // VARIABLES 
 var db = require("../models");
 var check = require("../helpers/routevalidators.js");
@@ -17,13 +19,23 @@ module.exports = function (app) {
             console.log(req.session.token);
             res.cookie("token", req.session.token);
             // Finds the most recently updated stories of the User
-            dbMethods.findAllUserStories(req.session.token).then(function (dbStory) {
-                // Finds the top 5 tags 
-                dbMethods.topFiveTags().then(function(dbTags){
-                    res.render("index", {
-                        loggedIn: true,
-                        stories: dbStory,
-                        tags: dbTags
+            dbMethods.findUser(req.session.token).then(function(user){
+                dbMethods.findAllUserStories(user.id).then(function (dbStory) {
+                    // Finds the top 5 tags 
+                    dbMethods.topFiveTags().then(function(dbTags){
+                        // Change updatedAt to time difference from now in days
+                        for(var i = 0; i < dbStory.length; i++){
+                            var now = moment();
+                            var lastUpdate = dbStory[i].dataValues.updatedAt;
+                            var difference = (now.diff(lastUpdate, "days"));
+                            dbStory[i].dataValues.updatedAt = difference;
+                        }
+                        res.render("index", {
+                            loggedIn: true,
+                            user,
+                            stories: dbStory,
+                            tags: dbTags
+                        });
                     });
                 });
             });
@@ -41,8 +53,18 @@ module.exports = function (app) {
     app.get("/newUser", function (req, res) {
         if (req.session.token) {
             dbMethods.findUser(req.session.token).then(function(dbUser){
-                res.render("newUser", {
-                    user: dbUser
+                dbMethods.checkUsernames(dbUser.displayName).then(function(count){
+                    var displayMessage = false;
+                    var newMessage = "";
+                    if(count > 1){
+                        displayMessage = true;
+                        newMessage = "This username is already in use by another user! Please choose another username!";
+                    }
+                    res.render("newUser", {
+                        user: dbUser,
+                        displayMessage: displayMessage,
+                        message: newMessage
+                    });
                 });
             });
         }

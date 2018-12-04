@@ -119,6 +119,15 @@ var dbMethods = {
         }).then(function(result){
             return result;
         });
+    }, 
+    checkUsernames: function(username){
+        return db.User.count({
+            where: {
+                displayName: username
+            }
+        }).then(function(count){
+            return count;
+        });
     }
 };
 

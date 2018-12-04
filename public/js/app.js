@@ -1,4 +1,4 @@
-var usernameRegex = /^(?!_\h)(?!.*__)(?!.*\h{2})[A-Za-z0-9_\h]{3,50}(?<!_)$/;
+var usernameRegex = /^(?!_)(?!.*__)[\w+|\w+ ?\w+]{3,50}(?<!_\s)$/;
 
 $("#newUsernameForm").on("submit", function(event){
     event.preventDefault();
