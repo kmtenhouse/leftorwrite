@@ -24,12 +24,12 @@ module.exports = {
             errorInfo.errorMessage = "Sorry, that's not a page.";
             errorInfo.url = "/";
             errorInfo.linkDisplay = "← Return Home";
-            break;            
+            break;   
         case "Invalid Tag Id":
-            errorInfo.errorMessage = "How did you get here?";
-            errorInfo.url = "/";
-            errorInfo.linkDisplay = "← Return Home";
-            break;
+            errorInfo.errorMessage = "What tag were you looking for?";
+            errorInfo.url = "/tags";
+            errorInfo.linkDisplay = "← See All Tags";
+            break;      
         case "Story Not Found":
             errorInfo.errorMessage = "Sorry, we couldn't find that story.";
             errorInfo.url = "/";

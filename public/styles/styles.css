@@ -1,6 +1,18 @@
 /* Body background color (default) */
 body {
   background-color: #E7E5DF;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make our footer sticky! */
+.spacer {
+  flex: 1;
+}
+
+footer {
+  flex-shrink: 0;
 }
 
 /* Link colors */
@@ -137,4 +149,9 @@ footer {
   background-image: url("../images/new-user.jpeg");
   background-size: cover;
   height: 100vh;
+}
+
+/* Tag Page Classes */
+.tag-stories {
+  max-width: 15rem;
 }
