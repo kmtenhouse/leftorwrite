@@ -162,12 +162,13 @@ module.exports = function (app) {
     app.delete("/api/story/:id", async function (req, res) {
         var theStory = await check.storyIsWriteable(req.params.id, req.session.token);
         var numDeletedTagAssoc = await theStory.setTags([]);
+        var numDeletedPages = await db.Page.destroy({where: {StoryId: req.params.id}});
+        console.log("Deleted Pages: ", numDeletedPages);
         theStory.destroy({ where: { id: req.params.id } }).catch(function(err) {
             console.log("The error returned after delete is ", err);
             var storyError = new Error(err.message);
             return res.render("404", getError.messageTemplate(storyError));
         }).then(function (result) {
-            console.log("delete route result = ", result);
             if (result.dataValues.id === parseInt(req.params.id)) {
                 console.log("DELETE SUCCEEDED");
                 return res.sendStatus(200);

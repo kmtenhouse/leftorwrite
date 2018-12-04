@@ -79,7 +79,7 @@ $(document).on("click", "#saveTag", function () {
 
 // API ROUTES
 
-// CREATE ROUTE AND UPDATE ROUTE
+// CREATE AND UPDATE ROUTES FOR STORY
 $(document).on("click", "#saveChanges", function (event) {
     event.preventDefault();
     var id = $("#storyTitle").data("id");
@@ -131,6 +131,8 @@ $(document).on("click", "#saveChanges", function (event) {
         });
     }
 });
+
+// CREATE ROUTE FOR TAGS
 
 // DELETE ROUTE
 $(document).on("click", "#deleteStory", function () {

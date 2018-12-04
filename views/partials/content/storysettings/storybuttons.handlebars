@@ -1,9 +1,5 @@
 {{#each storybuttons}}
-    {{#if link}}
-    <a href="{{link}}" class="btn custom-primary-btn text-white mb-2" id="{{id}}">{{text}}</a>
-    {{else}}
-    <button class="btn custom-primary-btn text-white mb-2" id="{{id}}">{{text}}</button>
-    {{/if}}
+    <button class="btn custom-primary-btn text-white mb-2 mr-2" id="{{id}}">{{text}}</button>
 {{/each}}
 <div class="form-check">
     <input type="checkbox" class="form-check-input" id="doneByDefault">
