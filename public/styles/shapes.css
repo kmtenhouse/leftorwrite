@@ -1,5 +1,5 @@
 .page-icon {
-  background: #9F956C;
+  background: #AFE3C0;
   height: 60px;
   width: 90px;
   display: inline-block;
@@ -15,18 +15,18 @@
 .start-page-icon {
   border-top-left-radius: 90px;
   border-top-right-radius: 90px;
-  background: #577399;
+  background: #E8C547;
 }
 
 .end-page-icon {
   border-bottom-left-radius: 90px;
   border-bottom-right-radius: 90px;
-  background: #1f4881;
+  background: #8750CE;
 }
 
 
 .tbc-page-icon {
-  background: rgb(57, 224, 243);
+  background: #C44C94);
   color: white;
   width: 60px;
   height: 60px;
@@ -41,7 +41,7 @@
   left: 0;
   height: 60px;
   width: 60px;
-  background: rgb(57, 224, 243);
+  background: #C44C94;
 }
 .tbc-page-icon:before {
   transform: rotate(30deg);

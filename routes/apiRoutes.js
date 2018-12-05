@@ -34,6 +34,64 @@ module.exports = function (app) {
             });
     });
 
+    // create new page
+    app.post("/api/page/create", async function(req, res) {
+        var page = await dbMethods.newPage({
+            title: req.body.title,
+            content: req.body.content,
+            isStart: req.body.isStart,
+            isTBC: req.body.isTBC,
+            isEnding: req.body.isEnding,
+            isLinked: req.body.isLinked,
+            isOrphaned: req.body.isOrphaned,
+            contentFinished: req.body.contentFinished,
+            AuthorId: req.session.token,
+            StoryId: req.body.storyid,
+        }).catch(function(err) {
+            console.log(err);
+            return alert(err.message);
+        });
+        if (page) {
+            return res.sendStatus(200);
+        }
+    });
+    // update an existing page
+    app.put("/api/page/update/:id", async function(req, res) {
+        if (check.pageIsWriteable(req.body.pageid, req.session.token, req.body.storyid)) {
+            var update = await dbMethods.updatePage({
+                title: req.body.title,
+                content: req.body.content,
+                isStart: req.body.isStart,
+                isTBC: req.body.isTBC,
+                isEnding: req.body.isEnding,
+                isLinked: req.body.isLinked,
+                isOrphaned: req.body.isOrphaned,
+                contentFinished: req.body.contentFinished
+            }, 
+            req.body.pageid).catch(function(err) {
+                console.log(err);
+                return alert(err.message);
+            });
+            if (update) {
+                return res.sendStatus(200);
+            }
+        }
+    });
+
+    // delete an existing page
+    app.delete("/api/page/delete/:id", async function(req, res) {
+        if(check.pageIsWriteable(req.body.pageid, req.session.token, req.body.storyid)) {
+            var deletedPage = await dbMethods.deletePage(req.body.pageid).catch(function(err) {
+                console.log(err);
+                return alert(err.message);
+            });
+            if (deletedPage) {
+                return res.sendStatus(200);
+            }
+
+        }
+    });
+
     //TAGS API
     //GET ALL TAGS
     //Will deliver all existing tags -- including their id, name, and the # of stories that use them - ordered by how many stories use them

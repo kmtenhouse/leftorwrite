@@ -317,7 +317,6 @@ module.exports = function (app) {
                     };
                     //Now render the page
                     res.render("pagelibrary", hbsObj);
-    
                 });
             },
             function (err) { //otherwise, if an error occurred: show the right 404 page
@@ -338,11 +337,25 @@ module.exports = function (app) {
                 //1) determine if this is the first page in the story (if so, it defaults to the start of the story)
                 //2) if not, it will become an orphaned page by default
                 //(TO-DO) actually send this object to the 'create page' form ;)
-               // res.send(typeof(storyResult));
-                var hbsObj = {
-                    title: storyResult.title
-                };
-                res.render("createpage", hbsObj);
+                // res.send(typeof(storyResult));
+                var storyToFind = storyResult.id;
+                db.Page.findAll({
+                    where: {
+                        StoryId: storyToFind,
+                        isStart: true
+                    }
+                }).then(function(allpages) {
+                    console.log("allpages = ", allpages);
+                    //if we had a successful page lookup, create a handlebars object
+                    //note: make sure to include some story info like title and story id
+                    var hbsObj = {
+                        storyid: storyResult.id,
+                        title: storyResult.title,
+                        pages: allpages
+                    };
+                    //Now render the page
+                    res.render("createpage", hbsObj);
+                });
             }, 
             function(error) {
                 //otherwise, send the appropriate 404 page

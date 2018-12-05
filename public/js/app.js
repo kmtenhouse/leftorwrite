@@ -32,3 +32,55 @@ $("#newUsernameForm").on("submit", function(event){
         $("#username-input").popover("show");
     }
 });
+
+
+// PAGE CREATE AND EDIT FUNCTIONALITY
+// save changes after edit
+$(document).on("click", "#savePage", function (event) {
+    event.preventDefault();
+    var id = $("#authorNotes").data("page-id");
+    var pageTitle = $("#authorNotes").val().trim();
+    var pageContent = $("#pageContent").val().trim();
+    var storyid = $("#titleHeader").data("story-id");
+    var ifStart = $("#titleHeader").data("start");
+    var ifEnd = 
+    var ifLinked
+    var ifOrphaned
+    var contentFinished
+    var pageObj = {
+        title: pageTitle,
+        content: pageContent,
+        isStart: req.body.isStart,
+        isTBC: req.body.isTBC,
+        isEnding: req.body.isEnding,
+        isLinked: req.body.isLinked,
+        isOrphaned: req.body.isOrphaned,
+        contentFinished: req.body.contentFinished,
+        storyid: storyid,
+        pageid: id
+    }
+    // CREATE
+    if (id === "") {
+        $.ajax("/api/story/create/", {
+            type: "POST",
+            data: storyObj
+        }).then(function (result, status) {
+            console.log(status);
+            console.log(result);
+            if (status === "success") {
+                window.location = "/story/settings/" + result.id;
+            }
+        });
+    }
+    // UPDATE
+    else{
+        $.ajax("/api/story/update/" + id, {
+            type: "PUT",
+            data: storyObj
+        }).then(function () {
+            location.reload();
+        });
+    }
+
+})
+

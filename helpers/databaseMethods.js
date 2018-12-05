@@ -154,6 +154,32 @@ var dbMethods = {
         }).then(function(stories){
             return stories;
         });
+    },
+    newPage: function(pageObj) {
+        return db.Page.create(pageObj);
+    },
+    updatePage: function(pageObj, pageid) {
+        return db.Page.update({
+            title: pageObj.title,
+            content: pageObj.content,
+            isStart: pageObj.isStart,
+            isTBC: pageObj.isTBC,
+            isEnding: pageObj.isEnding,
+            isLinked: pageObj.isLinked,
+            isOrphaned: pageObj.isOrphaned,
+            contentFinished: pageObj.contentFinished
+        },{
+            where: {
+                id: pageid
+            }
+        });
+    },
+    deletePage: function(pageid) {
+        return db.Page.destroy({
+            where: {
+                id: pageid
+            }
+        });
     }
 };
 
