@@ -30,12 +30,16 @@ var listsObj = {
             }
         // }
     },
+    // for some reason, this 
+    // storycheckboxes: [
+    //     {id: "doneByDefault", text: "When checked, pages in this story will automatically be marked as finished when you press the save button."},
+    //     {id: "markAsFinished", text: "When this box is checked, your story is considered finished."}, 
+    //     {id: "publishStory", text: "Checking this box will make your story public so that readers can find it."}
+    // ],
     storybuttons: [
         {id: "saveChanges", text: "Save Changes"}, 
         {id: "viewStory", text: "View Story"}, 
         {id: "createNewPage", text: "Create New Page"}, 
-        {id: "markAsFinished", text: "Mark as Finished"}, 
-        {id: "publishStory", text: "Publish Story"},
         {id: "deleteStory", text: "Delete Story"}
     ]
 };

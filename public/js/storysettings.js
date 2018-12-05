@@ -48,7 +48,7 @@ $(document).ready(function() {
     var thisurl = window.location.href;
     var pattern = new RegExp("story/create");
     if (pattern.test(thisurl)) {
-        $("#viewStory, #createNewPage, #markAsFinished, #publishStory, #deleteStory").attr("disabled", "disabled");
+        $("#viewStory, #createNewPage, #deleteStory").attr("disabled", "disabled");
     }
 });
 

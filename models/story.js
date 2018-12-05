@@ -19,7 +19,7 @@ module.exports = function (sequelize, DataTypes) {
         },
         doneByDefault: {
             type: DataTypes.BOOLEAN,
-            defaultValue: false
+            defaultValue: true
         },
         chooseNotToWarn: {
             type: DataTypes.BOOLEAN,
