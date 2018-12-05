@@ -65,6 +65,16 @@ module.exports = {
             errorInfo.url = "/";
             errorInfo.linkDisplay = "← Return Home";
             break;
+        case "Found Invalid Author Id":
+            errorInfo.errorMessage = "Sorry, we couldn't find that author.";
+            errorInfo.url = "/authors";
+            errorInfo.linkDisplay = "← See All Authors";
+            break;
+        case "No Stories Found":
+            errorInfo.errorMessage = "Sorry, we couldn't find any stories by this author.";
+            errorInfo.url = "/authors";
+            errorInfo.linkDisplay = "← See All Authors";
+            break;
         default: //if we get a misc error, assume server error
             errorInfo.errorMessage = "Sorry, something went wrong.";
             errorInfo.url = "/";

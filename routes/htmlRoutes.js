@@ -1,3 +1,5 @@
+var moment = require("moment");
+moment().format();
 // VARIABLES 
 var db = require("../models");
 var check = require("../helpers/routevalidators.js");
@@ -17,13 +19,23 @@ module.exports = function (app) {
             console.log(req.session.token);
             res.cookie("token", req.session.token);
             // Finds the most recently updated stories of the User
-            dbMethods.findAllUserStories(req.session.token).then(function (dbStory) {
-                // Finds the top 5 tags 
-                dbMethods.topFiveTags().then(function(dbTags){
-                    res.render("index", {
-                        loggedIn: true,
-                        stories: dbStory,
-                        tags: dbTags
+            dbMethods.findUser(req.session.token).then(function(user){
+                dbMethods.findRecentUserStories(user.id).then(function (dbStory) {
+                    // Finds the top 5 tags 
+                    dbMethods.topFiveTags().then(function(dbTags){
+                        // Change updatedAt to time difference from now in days
+                        for(var i = 0; i < dbStory.length; i++){
+                            var now = moment();
+                            var lastUpdate = dbStory[i].dataValues.updatedAt;
+                            var difference = (now.diff(lastUpdate, "days"));
+                            dbStory[i].dataValues.updatedAt = difference;
+                        }
+                        res.render("index", {
+                            loggedIn: true,
+                            user,
+                            stories: dbStory,
+                            tags: dbTags
+                        });
                     });
                 });
             });
@@ -41,8 +53,18 @@ module.exports = function (app) {
     app.get("/newUser", function (req, res) {
         if (req.session.token) {
             dbMethods.findUser(req.session.token).then(function(dbUser){
-                res.render("newUser", {
-                    user: dbUser
+                dbMethods.checkUsernames(dbUser.displayName).then(function(count){
+                    var displayMessage = false;
+                    var newMessage = "";
+                    if(count > 1){
+                        displayMessage = true;
+                        newMessage = "This username is already in use by another user! Please choose another username!";
+                    }
+                    res.render("newUser", {
+                        user: dbUser,
+                        displayMessage: displayMessage,
+                        message: newMessage
+                    });
                 });
             });
         }
@@ -160,6 +182,46 @@ module.exports = function (app) {
         });
     });
 
+    app.get("/authors", function (req, res) {
+        dbMethods.findAllUsers().then(function(users){
+            var loggedIn = false;
+            if(req.session.token){
+                loggedIn = true;
+            }
+            res.render("index", {
+                loggedIn: loggedIn,
+                seeAuthors: true,
+                authors: users
+            });
+        });
+    });
+
+    app.get("/authors/:authorid", function(req,res){
+        var authorId = req.params.authorid;
+        var loggedIn = false;
+        if(req.session.token){
+            loggedIn = true;
+        }
+        if(!check.isvalidid(authorId)){
+            var authorError = new Error("Found Invalid Author Id");
+            return res.render("404", getError.messageTemplate(authorError));
+        }
+        dbMethods.findUser(authorId).then(function(author){
+            dbMethods.findAllUserStories(authorId).then(function(stories){
+                if(stories.length === 0){
+                    var nullError = new Error("No Stories Found");
+                    return res.render("404", getError.messageTemplate(nullError));
+                }
+                res.render("index", {
+                    loggedIn: loggedIn,
+                    seeAuthorStories: true,
+                    author,
+                    stories: stories
+                });
+            });
+        });
+    });
+
     //WRITER ROUTES
     //CREATE NEW STORY (SETTINGS)
     //When a writer first creates a new story, we will show them a blank form for their
@@ -236,6 +298,7 @@ module.exports = function (app) {
 
     app.get("/story/pagelibrary/:storyid", function (req, res) {
         //first, check if the token & storyid are legit - then go ahead and load the library
+        console.log(req.params.storyid);
         check.storyIsWriteable(req.params.storyid, req.session.token).
             then(function (storyResult) {
             //Hooray!  this story is legit. Run a query to grab its pages
@@ -275,7 +338,11 @@ module.exports = function (app) {
                 //1) determine if this is the first page in the story (if so, it defaults to the start of the story)
                 //2) if not, it will become an orphaned page by default
                 //(TO-DO) actually send this object to the 'create page' form ;)
-                res.send("Writing a page to story " + storyResult.title);
+               // res.send(typeof(storyResult));
+                var hbsObj = {
+                    title: storyResult.title
+                };
+                res.render("createpage", hbsObj);
             }, 
             function(error) {
                 //otherwise, send the appropriate 404 page

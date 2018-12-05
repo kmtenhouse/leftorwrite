@@ -12,8 +12,6 @@
     </div>
 </header>
 
-<div class="spacer"></div>
-
 {{#if readStory}}
     {{> content/readStory/storyMain}}
 {{else if readPage}}
@@ -22,6 +20,10 @@
     {{> content/tags/allTags}}
 {{else if seeTaggedStories}}
     {{> content/tags/taggedStories}}
+{{else if seeAuthors}}
+    {{> content/authors/allAuthors}}
+{{else if seeAuthorStories}}
+    {{> content/authors/authorStories}}
 {{else if loggedIn}}
     {{> content/dashboard/dashboard}}
 {{else}}

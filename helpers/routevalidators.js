@@ -38,7 +38,7 @@ var validators = {
             //since the id format is valid, go ahead and parse the id into an integer...
             var storyToFind = parseInt(storyId);
             //and now search for the story by its id
-            db.Story.findById(storyToFind).then(function (storyResult, err) {
+            db.Story.findOne({where: {id: storyToFind}}).then(function (storyResult, err) {
                 if (err) { //if there's a db error, we immediately reject with the error
                     return reject(err);
                 }
@@ -73,7 +73,7 @@ var validators = {
             //since the ids are reasonable, we now perform a query to find this story 
             //since the id format is valid, go ahead and parse the id into an integer...
             var storyToFind = parseInt(storyId);
-            db.Story.findByPk(storyToFind).then(function (storyResult, err) {
+            db.Story.findOne({where: {id: storyToFind}}).then(function (storyResult, err) {
                 if (err) { //if there's some kind of error, reject the promise
                     return reject(err);
                 }

@@ -45,6 +45,12 @@ app.engine(
                     return true;
                 }
                 return false;
+            },
+            greaterThanZero: function(number){
+                if(number > 0){
+                    return true;
+                }
+                return false;
             }
         }
     })
