@@ -58,6 +58,9 @@ a:hover {
 }
 
 /* Classes defining the sections on our main page */
+.hoverable:hover {
+  cursor: pointer;
+}
 
 /* Separate each section with a border */
 section {
