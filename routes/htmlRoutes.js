@@ -313,6 +313,7 @@ module.exports = function (app) {
 
     app.get("/story/pagelibrary/:storyid", function (req, res) {
         //first, check if the token & storyid are legit - then go ahead and load the library
+        console.log(req.params.storyid);
         check.storyIsWriteable(req.params.storyid, req.session.token).
             then(function (storyResult) {
             //Hooray!  this story is legit. Run a query to grab its pages
@@ -352,7 +353,11 @@ module.exports = function (app) {
                 //1) determine if this is the first page in the story (if so, it defaults to the start of the story)
                 //2) if not, it will become an orphaned page by default
                 //(TO-DO) actually send this object to the 'create page' form ;)
-                res.send("Writing a page to story " + storyResult.title);
+               // res.send(typeof(storyResult));
+                var hbsObj = {
+                    title: storyResult.title
+                };
+                res.render("createpage", hbsObj);
             }, 
             function(error) {
                 //otherwise, send the appropriate 404 page
