@@ -1,5 +1,37 @@
+// VARIABLES
+// Regular expression to test input
+// contains at least one special character, or repeating spaces/dashes
+var specialCharTest = new RegExp(/[^- 0-9a-z]+|[ -]{2,}/i);
+
+// message for the story title popover
+var titleMustBe = "Titles must be 2-100 characters with only letters, numbers, dashes and spaces. Dashes and spaces cannot repeat.";
+// messages for the tag popover
+var tagsMustBe = "Tags must be 2-50 characters with only letters, numbers, dashes and spaces. Dashes and spaces cannot repeat.";
+var tagAlreadyExists = "That tag already exists. If you can't find it using the searchbar, try saving your changes and refreshing the page.";
+
+// multiuse functions
+// test string from input against regex returns true if string is invalid
+function badInputTest(string, min, max) {
+    var containsSpecial = specialCharTest.test(string);
+    if (string.length < min|| string.length > max || containsSpecial === true) {
+        return true;
+    }
+}
+// open popover function
+function openPopover(location, message) {
+    // if not dispose, text won't change (needed for tags)
+    $(location).popover("dispose");
+    $(location).popover({
+        content: message,
+        placement: "top"
+    });
+    $(location).popover("show");
+}
+
+
 $(document).ready(function() {
     var retVal;
+    // make tags loaded with class checked actually checked
     $(".checked").prop("checked", true);
     $(".checked").each(function() {
         // if tag is checked
@@ -12,6 +44,12 @@ $(document).ready(function() {
     });
     // Populate to chosen tags field
     $("#chosenTags").val(retVal);
+    // if on create page, disable story buttons other than save changes
+    var thisurl = window.location.href;
+    var pattern = new RegExp("story/create");
+    if (pattern.test(thisurl)) {
+        $("#viewStory, #createNewPage, #deleteStory").attr("disabled", "disabled");
+    }
 });
 
 function filterTags() {
@@ -63,12 +101,6 @@ $(document).on("click", ".tag", function () {
 $(document).on("click", "#tagModalButton", function () {
     $("#newTagInput").val($("#tagSearch").val());
 });
-// Populate modal input field value back to searchbar on save, 
-// and call filter function again
-$(document).on("click", "#saveTag", function () {
-    $("#tagSearch").val($("#newTagInput").val());
-    filterTags();
-});
 
 // FIXME: This code doesn't work yet, but putting in on the back burner for now
 // $(document).on("click", "#chooseNotToWarn", function () {
@@ -79,11 +111,17 @@ $(document).on("click", "#saveTag", function () {
 
 // API ROUTES
 
-// CREATE ROUTE AND UPDATE ROUTE
+// CREATE AND UPDATE ROUTES FOR STORY
 $(document).on("click", "#saveChanges", function (event) {
     event.preventDefault();
     var id = $("#storyTitle").data("id");
-    
+    var title = $("#storyTitle").val().trim();
+    if (title !== "") { 
+        if (badInputTest(title, 2, 100)) {
+            $(window).scrollTop(0);
+            return openPopover("#storyTitle", titleMustBe);
+        }
+    }
     var warns = {};
     var storytags = [];
     $(".content-warning").each(function() {
@@ -107,7 +145,6 @@ $(document).on("click", "#saveChanges", function (event) {
         profanity: warns.profanity,
         tags: storytags.toString()
     }; 
-    console.log("storyObj: ", storyObj);
     // CREATE
     if (id === "") {
         $.ajax("/api/story/create/", {
@@ -132,6 +169,51 @@ $(document).on("click", "#saveChanges", function (event) {
     }
 });
 
+// CREATE ROUTE FOR TAGS
+$(document).on("click", "#saveTag", function() {
+    event.preventDefault();
+    var newtag = $("#newTagInput").val().trim();
+    if (badInputTest(newtag, 2, 50)) {
+        openPopover("#newTagInput", tagsMustBe);
+    }
+    else {
+        $.ajax("/api/tag/create", {
+            type: "POST",
+            data: {
+                tagName: newtag
+            },
+            error(xhr,status,error) {
+                if (error === "Conflict") {
+                    openPopover("#newTagInput", tagAlreadyExists);
+                    // Populate modal input field value back to searchbar on save, 
+                    // and call filter function again
+                    $("#tagSearch").val(newtag);
+                    filterTags();
+                }
+            }
+        }).then(function (result, status) {
+            if (status==="success") {
+                console.log("success");
+                console.log(result);
+            }
+            // add the new tag to the list without refreshing the page
+            var successfulTag = "<li class=\"list-group-item\">" + 
+            "<div class=\"form-check\">" +
+            "<input type=\"checkbox\" class=\"form-check-input tag\" id=\"tag"+ result.id + 
+            "\" data-tag-name=\""+ result.tagName + "\" data-tag-id=\""+ result.id +"\">" +
+            "<label class=\"form-check-label\" for=\"tag"+ result.id + "\">" + result.tagName +"</label>" +
+            "</div></li>";
+            successfulTag.prop("checked", true);
+            $("#tagList").children().last().before(successfulTag);
+            // Populate new tag value back to searchbar on save, 
+            // and call filter function again
+            $("#tagSearch").val(newtag);
+            filterTags();
+            $("#createTagModal").modal("hide");
+        });
+    }
+});
+
 // DELETE ROUTE
 $(document).on("click", "#deleteStory", function () {
     event.preventDefault();
@@ -147,6 +229,18 @@ $(document).on("click", "#deleteStory", function () {
     }
     // if no id, not created yet, therefore no delete. add error
     else{
-        // some error handling here
+        $.ajax("*", {
+            type: "GET"
+        });
     }
 });
+
+// OTHER BUTTONS 
+// links to other pages 
+// view story
+// create new page
+
+// buttons that change story's booleans
+// mark as finished
+// publish story
+// done by default checkbox

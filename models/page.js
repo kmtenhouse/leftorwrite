@@ -38,7 +38,7 @@ module.exports = function (sequelize, DataTypes) {
         },
         contentFinished: {
             type: DataTypes.BOOLEAN,
-            defaultValue: false
+            defaultValue: true
         }
     });
     Page.associate = function (models) {

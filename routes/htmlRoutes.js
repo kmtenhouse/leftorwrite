@@ -271,7 +271,6 @@ module.exports = function (app) {
                     return res.render("404", getError.messageTemplate(storyError));
                 });
                 var retObj = sort(theStory, storytags, tags);
-                console.log(retObj);
                 helpList.warningsMatch(theStory.dataValues);
                 retObj.warn = helpList.warnings;
                 retObj.storybuttons = helpList.storybuttons;

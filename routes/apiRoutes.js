@@ -1,6 +1,7 @@
 var db = require("../models");
 var check = require("../helpers/routevalidators.js");
 var getError = require("../helpers/errorhandlers.js");
+var dbMethods = require("../helpers/databaseMethods");
 
 module.exports = function (app) {
     //STORY API
@@ -42,6 +43,25 @@ module.exports = function (app) {
         });
     }); 
 
+    app.post("/api/tag/create", async function(req, res) {
+        // testRet will be the tag object that matches the search, if one exists.
+        // if none exist, it will be null
+        var testRet = await dbMethods.tagExists(req.body.tagName).catch(function(err) {
+            console.log(err);
+        });
+        if (testRet === null) {
+            db.Tag.create({tagName: req.body.tagName}).then(function(result) {
+                // result will be instance of Tag, a tag object
+                return res.status(200).send(result);
+            }).catch(function(err) {
+                console.log(err);
+            });
+        }
+        else {
+            return res.sendStatus(409);
+        }
+    });
+
     app.get("/api/user/:username", function(req, res){
         db.User.findAll({
             where: {
@@ -69,14 +89,15 @@ module.exports = function (app) {
         });
     });
 
+    // update story info route
     app.put("/api/story/update/:id", async function(req, res) {
-        // console.log("Body: ", req.body);
-        console.log("Params id: ", req.params.id);
         var theStory = await check.storyIsWriteable(req.params.id, req.session.token).catch(function(err) {
             console.log(err);
             return alert(err.message);
         });
         if (theStory) {
+            // set this variable in case we need/want to use it in future.
+            // this could also be done with a .then.
             var numRows = await db.Story.update({
                 title: req.body.title,
                 chooseNotToWarn: req.body.chooseNotToWarn ,
@@ -106,6 +127,7 @@ module.exports = function (app) {
     });
     app.post("/api/story/create/", async function(req, res) {
         console.log("Body: ", req.body);
+
         var authID = req.session.token;
         var theStory = await db.Story.create({
             title: req.body.title,
@@ -141,12 +163,13 @@ module.exports = function (app) {
     app.delete("/api/story/:id", async function (req, res) {
         var theStory = await check.storyIsWriteable(req.params.id, req.session.token);
         var numDeletedTagAssoc = await theStory.setTags([]);
+        var numDeletedPages = await db.Page.destroy({where: {StoryId: req.params.id}});
+        console.log("Deleted Pages: ", numDeletedPages);
         theStory.destroy({ where: { id: req.params.id } }).catch(function(err) {
             console.log("The error returned after delete is ", err);
             var storyError = new Error(err.message);
             return res.render("404", getError.messageTemplate(storyError));
         }).then(function (result) {
-            console.log("delete route result = ", result);
             if (result.dataValues.id === parseInt(req.params.id)) {
                 console.log("DELETE SUCCEEDED");
                 return res.sendStatus(200);

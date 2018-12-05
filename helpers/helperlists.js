@@ -12,29 +12,35 @@ var listsObj = {
         {id: "nonConsent", text: "NonConsent"}, 
         {id: "profanity", text: "Profanity"}
     ],
-    warningsMatch: function(check) {
-        if (check.chooseNotToWarn) {
-            return this.warnings.all = true; 
-        }
-        else {
+    warningsMatch: function(warns) {
+        // FIXME: this code is to make all buttons marked when choose not to warn is marked,
+            // but the other part doesn't work yet, so I am commenting this out for now.
+        // if (warns.chooseNotToWarn) {
+        //     return this.warnings.all = true; 
+        // }
+        // else {
             this.warnings.all = false;
             for (var i = 0; i < this.warnings.length; i++) {
-                if (check[this.warnings[i].id]) {
+                if (warns[this.warnings[i].id]) {
                     this.warnings[i].yes = true;
                 }
                 else {
                     this.warnings[i].yes = false;
                 }
             }
-        }
+        // }
     },
+    // for some reason, this 
+    // storycheckboxes: [
+    //     {id: "doneByDefault", text: "When checked, pages in this story will automatically be marked as finished when you press the save button."},
+    //     {id: "markAsFinished", text: "When this box is checked, your story is considered finished."}, 
+    //     {id: "publishStory", text: "Checking this box will make your story public so that readers can find it."}
+    // ],
     storybuttons: [
         {id: "saveChanges", text: "Save Changes"}, 
-        {id: "viewStory", text: "View Story", link: ""}, 
-        {id: "createNewPage", text: "Create New Page", link: ""}, 
-        {id: "markAsFinished", text: "Mark as Finished", link: ""}, 
-        {id: "publishStory", text: "Publish Story", link: ""},
-        {id: "deleteStory", text: "Delete Story", link: ""}
+        {id: "viewStory", text: "View Story"}, 
+        {id: "createNewPage", text: "Create New Page"}, 
+        {id: "deleteStory", text: "Delete Story"}
     ]
 };
 

@@ -119,6 +119,16 @@ var dbMethods = {
         }).then(function(result){
             return result;
         });
+    },
+    tagExists: function(tagName) {
+        var lowercase = tagName.toLowerCase();
+        return db.Tag.findOne({
+            where: {
+                tagName: db.sequelize.where(db.sequelize.fn("LOWER", db.sequelize.col("tagName")), lowercase)
+            }
+        }).then(function(result) {
+            return result;
+        });
     }, 
     checkUsernames: function(username){
         return db.User.count({
