@@ -1,19 +1,17 @@
-<div class="card border-success m-1 custom-card" data-id="{{id}}">
-    <!-- Link to the Page Libray for this story -->
-    <a href="/story/pagelibrary/{{id}}">
-    <!-- Story Title -->
-    <h5 class="card-header border-bottom-0 bg-transparent">{{title}}</h5>
-    <div class="card-body mx-auto d-none d-sm-block">
-        <!-- Card Image -->
-        <img class="card-img-top img-fluid story-img" src="../images/script.svg" alt="Story">
+<!-- Link to the Page Libray for this story -->
+<a href="/story/pagelibrary/{{id}}" class="list-group-item list-group-item-action flex-column align-items-start my-2 border-success">
+    <div class="d-flex w-100 justify-content-start align-items-center">
+        <!-- Image -->
+        <img class="img-fluid story-img p-2 d-none d-sm-block" src="../images/script.svg" alt="Story">
+        <!-- Story Title -->
+        <h5 class="p-2">{{title}}</h5>
+        <!-- When story was last updated -->
+        <div class="text-right ml-auto p-2">
+            {{#if (greaterThanZero updatedAt)}}
+                <small class="text-muted">Edited {{updatedAt}} Days Ago</small>
+            {{else}}
+                <small class="text-muted">Edited Today</small>
+            {{/if}}
+        </div>
     </div>
-    <!-- When story was last updated -->
-    <div class="card-footer border-top-0 bg-transparent text-right">
-        {{#if (greaterThanZero updatedAt)}}
-            <small class="text-muted">Edited {{updatedAt}} Days Ago</small>
-        {{else}}
-            <small class="text-muted">Edited Today</small>
-        {{/if}}
-    </div>
-    </a>
-</div>
+</a>
