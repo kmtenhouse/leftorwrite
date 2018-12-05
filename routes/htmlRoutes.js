@@ -325,7 +325,7 @@ module.exports = function (app) {
                     //if we had a successful page lookup, create a handlebars object
                     //note: make sure to include some story info like title and story id
                     var hbsObj = {
-                        storyid: storyResult.id,
+                        storyId: storyResult.id,
                         title: storyResult.title,
                         pages: allpages
                     };
@@ -354,6 +354,7 @@ module.exports = function (app) {
                 //(TO-DO) actually send this object to the 'create page' form ;)
                // res.send(typeof(storyResult));
                 var hbsObj = {
+                    id: storyResult.id,
                     title: storyResult.title
                 };
                 res.render("createpage", hbsObj);
