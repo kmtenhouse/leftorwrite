@@ -36,26 +36,29 @@ $("#newUsernameForm").on("submit", function(event){
 
 // PAGE CREATE AND EDIT FUNCTIONALITY
 // save changes after edit
-$(document).on("click", "#savePage", function (event) {
+// save page function
+function savePage(event) {
     event.preventDefault();
     var id = $("#authorNotes").data("page-id");
     var pageTitle = $("#authorNotes").val().trim();
     var pageContent = $("#pageContent").val().trim();
     var storyid = $("#titleHeader").data("story-id");
     var ifStart = $("#titleHeader").data("start");
-    var ifEnd = 
-    var ifLinked
-    var ifOrphaned
-    var contentFinished
+    var ifEnd = $("#end").hasclass("active");
+    var ifTBC = $("#tbc").hasclass("active");
+    // .lenth returns number of items (with this class)
+    var ifLinked = $(".link").length>0;
+    var ifOrphaned = $("#titleHeader").data("incoming");
+    var contentFinished = true;
     var pageObj = {
         title: pageTitle,
         content: pageContent,
-        isStart: req.body.isStart,
-        isTBC: req.body.isTBC,
-        isEnding: req.body.isEnding,
-        isLinked: req.body.isLinked,
-        isOrphaned: req.body.isOrphaned,
-        contentFinished: req.body.contentFinished,
+        isStart: ifStart,
+        isTBC: ifTBC,
+        isEnding: ifEnd,
+        isLinked: ifLinked,
+        isOrphaned: ifOrphaned,
+        contentFinished: contentFinished,
         storyid: storyid,
         pageid: id
     }
@@ -63,7 +66,7 @@ $(document).on("click", "#savePage", function (event) {
     if (id === "") {
         $.ajax("/api/story/create/", {
             type: "POST",
-            data: storyObj
+            data: pageObj
         }).then(function (result, status) {
             console.log(status);
             console.log(result);
@@ -76,11 +79,18 @@ $(document).on("click", "#savePage", function (event) {
     else{
         $.ajax("/api/story/update/" + id, {
             type: "PUT",
-            data: storyObj
+            data: pageObj
         }).then(function () {
             location.reload();
         });
     }
+}
 
-})
+// connect the functions to the buttons
+$(document).on("click", "#savePage", savePage(event));
+$(document).on("click", "#continue", savePage(event));
+$(document).on("click", "#choices", savePage(event));
+$(document).on("click", "#end", savePage(event));
+$(document).on("click", "#tbc", savePage(event));
+$(document).on("click", "#delete", );
 
