@@ -299,6 +299,7 @@ module.exports = function (app) {
 
     app.get("/story/pagelibrary/:storyid", function (req, res) {
         //first, check if the token & storyid are legit - then go ahead and load the library
+        console.log(req.params.storyid);
         check.storyIsWriteable(req.params.storyid, req.session.token).
             then(function (storyResult) {
             //Hooray!  this story is legit. Run a query to grab its pages
