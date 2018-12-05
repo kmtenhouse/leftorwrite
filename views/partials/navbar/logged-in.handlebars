@@ -4,10 +4,15 @@
 </button>
 <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
-            <form class="nav-link">
-                <input type="text" placeholder="Search...">
-            </form>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle custom-nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Browse
+            </a>
+            <div class="dropdown-menu custom-nav-dropdown" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="/authors">By Author</a>
+                <a class="dropdown-item" href="/tags">By Tags</a>
+                <a class="dropdown-item" href="/stories">By Title</a>
+            </div>
         </li>
     </ul>
     <ul class="navbar-nav ml-auto">

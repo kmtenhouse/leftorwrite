@@ -1,0 +1,10 @@
+<div class="container">
+    <div class="jumbotron jumbotron-fluid text-center bg-transparent">
+        <h1 class="display-4">All Stories</h1>
+    </div>
+    <div class="row justify-content-around my-5">
+        {{#each stories}}
+            {{> content/tags/tagStory}}
+        {{/each}}
+    </div>
+</div>
