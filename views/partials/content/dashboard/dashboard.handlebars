@@ -1,24 +1,19 @@
 <!-- Recently Edited Section -->
-    <div class="container m-5 mx-auto">
+    <div class="container my-5 mx-auto">
         <!-- Section Header -->
-        <nav class="navbar border-bottom border-success pt-4">
-            <span class="navbar-brand"><h3>{{user.displayName}}'s Recently Edited</h3></span>
+        <nav class="navbar border-bottom border-success pt-4 mb-2">
+            <span class="navbar-brand"><h3>{{user.displayName}}'s Recently Edited Stories</h3></span>
             <a href="/story/create/" class="btn btn-danger">Create New Story</a>
         </nav>
         <!-- Recently Edited Stories -->
-        <div class="card-deck p-5 justify-content-around">
+        <div class="list-group">
             {{#each stories}}
                 {{> content/dashboard/dashboard-story}}
-                {{#if (oddNumber @index)}} 
-                    <div class="w-100 d-none d-sm-block d-md-none"><!-- wrap every 2 on sm--></div>
-                {{else if (everyThreeIndices @index)}}
-                    <div class="w-100 d-none d-md-block d-lg-none"><!-- wrap every 3 on md--></div>
-                {{/if}}
             {{/each}}
         </div>
     </div>
-    <div class="container m-5 mx-auto">
-        <nav class="navbar mb-5 border-bottom border-success">
+    <div class="container mb-5 mx-auto">
+        <nav class="navbar mb-5 border-bottom border-success pt-4">
             <span class="navbar-brand"><h3>Popular Tags</h3></span>
             <a class="btn btn-danger" href="/tags">See All Tags</a>
         </nav>
