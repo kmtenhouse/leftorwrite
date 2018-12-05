@@ -180,6 +180,21 @@ var dbMethods = {
                 id: pageid
             }
         });
+    },
+    findAllPublicStories: function(){
+        return db.Story.findAll({
+            where: {
+                isPublic: true,
+                isFinished: true
+            }, 
+            include: [{
+                model: db.User,
+                as: "Author"
+            }],
+            order: [["title", "ASC"]]
+        }).then(function(stories){
+            return stories;
+        });
     }
 };
 

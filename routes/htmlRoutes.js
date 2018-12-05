@@ -222,6 +222,20 @@ module.exports = function (app) {
         });
     });
 
+    app.get("/stories", function(req, res){
+        var loggedIn = false;
+        if(req.session.token){
+            loggedIn = true;
+        }
+        dbMethods.findAllPublicStories().then(function(stories){
+            res.render("index", {
+                loggedIn: loggedIn,
+                seeAllStories: true,
+                stories: stories
+            });
+        });
+    });
+
     //WRITER ROUTES
     //CREATE NEW STORY (SETTINGS)
     //When a writer first creates a new story, we will show them a blank form for their
