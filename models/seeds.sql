@@ -9,6 +9,9 @@ VALUES("Comedy", now(), now()),
 INSERT INTO Stories (createdAt, updatedAt, title, isPublic, isFinished, chooseNotToWarn, AuthorId) 
 VALUES(now(), now(), "The Morning Shift", true, true, true, 1);
 
+INSERT INTO StoryTag (createdAt, updatedAt, StoryId, TagId)
+VALUES (now(), now(), 1, 1);
+
 INSERT INTO Pages (createdAt, updatedAt, AuthorId, StoryId, isLinked, contentFinished, isStart, title, content) 
 VALUES(now(), now(), 1, 1, true, true, true, "Story 1 Page 1", 
 "From the kitchen you can hear the last guests in the café finishing up their meals and the clinks and clanks of dirty coffee cups and plates being stacked in the dishwasher. 
@@ -70,8 +73,90 @@ Your supervisor comes over to let you know one of the other workers, Jules, is g
 Sweet! Early knock off here I come! 
 You are about to make some space in the stock room when you notice a puddle of water on the floor outside the fridge.");
 
+INSERT INTO Pages (createdAt, updatedAt, AuthorId, StoryId, isLinked, contentFinished, title, content) 
+VALUES(now(), now(), 1, 1, true, true, "Story 1 Page 5", 
+"Mopping only takes you a minute and now you can get this stock moved.
+You have just got to move these boxes and you are done.
+The boss did say to use the trolley but these boxes are not particularly heavy.
+You decide to:");
+
+INSERT INTO Pages (createdAt, updatedAt, AuthorId, StoryId, isLinked, contentFinished, title, content) 
+VALUES(now(), now(), 1, 1, true, true, "Story 1 Page 6",
+"While you are walking over to the stock, your
+foot slips making your heart jump and oddly it
+feels like slow motion as you watch, the floor
+getting closer and closer. You try and get your
+arms out in front of you but there is no use.
+You hit the floor and there is an intense pain through
+your right arm, all the way up to your shoulder.
+You hear a noise, just like a carrot snapping.
+Instinctively, you cradle your arm, but you don’t
+even have to look at it to know your wrist is
+broken. It hurts so much you can’t even cry. 
+There are people at your side, yelling instructions but you can’t focus. You wish they
+would just be quiet.
+It seems like no time before the ambulance officers are there and asking you a hundred
+questions. I just want this pain to stop! You snap back.
+They get you into the ambulance and off to hospital. X-rays confirm what you already
+suspected. Your wrist is broken in two places.
+Your arm is put in plaster and secured tightly with a sling.
+With the help of the doctors, the pain has subsided and they let you go home.
+Sitting in the quiet of the car as your Mum is driving home, you start crying,
+Why didn't I just clean up that stupid puddle!");
+
+INSERT INTO Pages (createdAt, updatedAt, AuthorId, StoryId, isLinked, contentFinished, isEnding, title, content) 
+VALUES(now(), now(), 1, 1, true, true, true, "Story 1 Page 7",
+"You were supposed to head to the beach tomorrow with the girls. It’s the
+last trip of the summer and now you’re going to miss it!");
+
+INSERT INTO Pages (createdAt, updatedAt, AuthorId, StoryId, isLinked, contentFinished, title, content) 
+VALUES(now(), now(), 1, 1, true, true, "Story 1 Page 8",
+"You stack three boxes up in your arms and head into the storeroom. The boxes are
+a little heavier than you thought and as you try to negotiate your way towards the
+shelves you need to juggle them a bit to keep balanced. Out of nowhere a pain shoots
+up your back and takes your breath away.
+It feels like someone has stuck a knife through your lower spine. The boxes fly out
+of your hands and crash on the floor as Jules runs in to see what’s going on.
+The pain is so bad you can hardly talk, but you manage a squeak, My back!
+She calls an ambulance.
+When paramedics arrive it takes an eternity to get onto the stretcher.
+‘Don’t rush it love, we can take as long as you need.’
+How embarrassing you think to yourself.
+After hours of tests, x-rays and waiting around the doctor gives you the diagnosis.
+‘You have a serious sprain in your lower back. We’ll need to keep you in overnight
+for observation followed by a minimum of two weeks bed rest. I’ll give you some
+medication to reduce the pain and swelling.’ ");
+
+INSERT INTO Pages (createdAt, updatedAt, AuthorId, StoryId, isLinked, contentFinished, isEnding, title, content) 
+VALUES(now(), now(), 1, 1, true, true, true, "Story 1 Page 9",
+"The trolley is the best. Not only is it
+safer than carrying all those boxes, it’s easier.
+There is no need to work up a sweat at the end of the shift.
+It may have taken an extra couple of minutes, but that doesn’t matter.
+You get that great feeling when you put the last of the boxes away and
+you have a couple of days off to look forward to! ");
+
+INSERT INTO Pages (createdAt, updatedAt, AuthorId, StoryId, isLinked, contentFinished, isEnding, title, content) 
+VALUES(now(), now(), 1, 1, true, true, true, "Story 1 Page 10",
+"You miss touch footy finals and can’t even watch from the sidelines. Bed rest is seriously boring!");
+
 INSERT INTO Links (createdAt, updatedAt, AuthorId, StoryId, FromPageId, ToPageId, linkName)
 VALUES (now(), now(), 1, 1, 1, 2, "You're too lazy to sharpen the knife. Just keep using it.");
 
 INSERT INTO Links (createdAt, updatedAt, AuthorId, StoryId, FromPageId, ToPageId, linkName)
 VALUES (now(), now(), 1, 1, 1, 4, "Ask the chef to sharpen the knife for you.");
+
+INSERT INTO Links (createdAt, updatedAt, AuthorId, StoryId, FromPageId, ToPageId, linkName)
+VALUES (now(), now(), 1, 1, 4, 5, "Grab the mop and clean it up.");
+
+INSERT INTO Links (createdAt, updatedAt, AuthorId, StoryId, FromPageId, ToPageId, linkName)
+VALUES (now(), now(), 1, 1, 4, 6, "Ignore it, you didn't spill it so why should you clean it?");
+
+INSERT INTO Links (createdAt, updatedAt, AuthorId, StoryId, FromPageId, ToPageId, linkName)
+VALUES (now(), now(), 1, 1, 6, 7, "Continue");
+
+INSERT INTO Links (createdAt, updatedAt, AuthorId, StoryId, FromPageId, ToPageId, linkName)
+VALUES (now(), now(), 1, 1, 5, 8, "You're strong! Just carry the boxes into the storeroom.");
+
+INSERT INTO Links (createdAt, updatedAt, AuthorId, StoryId, FromPageId, ToPageId, linkName)
+VALUES (now(), now(), 1, 1, 8, 10, "Continue");
