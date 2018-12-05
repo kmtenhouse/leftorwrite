@@ -1,7 +1,0 @@
-{{!-- Load all the pages that are currently in use (not orphaned)
-      These pages CAN be finished or unfinished --}}
-{{#each pages}}
-{{#unless this.isOrphaned}}
-    {{>content/pagelibrary/pagestyling}}
-{{/unless}}
-{{/each}}

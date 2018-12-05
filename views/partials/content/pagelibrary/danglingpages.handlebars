@@ -1,9 +1,0 @@
-{{!-- Load all the pages that are currently DANGLING (not orphaned, also not linked)
-      These pages CAN be finished or unfinished --}}
-{{#each pages}}
-    {{#unless this.isOrphaned}}
-        {{#unless this.isLinked}}
-            {{>content/pagelibrary/pagestyling}}
-        {{/unless}}
-    {{/unless}}
-{{/each}}
