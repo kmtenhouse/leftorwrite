@@ -24,6 +24,8 @@
     {{> content/authors/allAuthors}}
 {{else if seeAuthorStories}}
     {{> content/authors/authorStories}}
+{{else if seeAllStories}}
+    {{> content/readStory/allStories}}
 {{else if loggedIn}}
     {{> content/dashboard/dashboard}}
 {{else}}
