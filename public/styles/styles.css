@@ -146,6 +146,16 @@ footer {
 /* Ending is a half moon (round part facing bottom) */
 
 /* TBC is a star */
+
+/* Log In Page */
+#login-page {
+  background-image: url("../images/login.jpeg");
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
 /* New User Page */
 
 .newUserPage {
