@@ -35,6 +35,11 @@ a:hover {
   color: white;
 }
 
+.custom-alert-btn {
+  background-color: #8750CE;
+  color: white;
+}
+
 /* Header and nav colors */
 .header {
   background-color: #36723f;
