@@ -6,7 +6,7 @@ var dbMethods = {
             where: {
                 AuthorId: userId
             },
-            limit: 5,
+            limit: 3,
             order: [
                 ["updatedAt", "DESC"]
             ]

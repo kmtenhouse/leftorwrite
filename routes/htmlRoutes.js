@@ -49,6 +49,14 @@ module.exports = function (app) {
         }
     });
 
+    // Loads log-in page
+    app.get("/login", function(req, res){
+        if(req.session.token){
+            return res.redirect("/");
+        }
+        res.render("login");
+    });
+
     // Loads new user page that allows user to change username
     app.get("/newUser", function (req, res) {
         if (req.session.token) {

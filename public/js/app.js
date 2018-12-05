@@ -32,3 +32,10 @@ $("#newUsernameForm").on("submit", function(event){
         $("#username-input").popover("show");
     }
 });
+
+$(".scroll-to").on("click", function(e){
+    var jump = $(this).attr("href");
+    var newPosition = $(jump).offset();
+    $("html, body").stop().animate({ scrollTop: newPosition.top }, 500);
+    e.preventDefault();
+});

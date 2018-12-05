@@ -63,6 +63,9 @@ a:hover {
 }
 
 /* Classes defining the sections on our main page */
+.hoverable:hover {
+  cursor: pointer;
+}
 
 /* Separate each section with a border */
 section {
@@ -123,16 +126,8 @@ footer {
 
 /* Dashboard Classes */
 
-.custom-card {
-  max-width: 10rem;
-}
-
-.custom-card:hover {
-  cursor: pointer;
-}
-
 .story-img {
-  height: 100px;
+  height: 80px;
   width: auto;
 }
 
@@ -148,6 +143,16 @@ footer {
 /* Ending is a half moon (round part facing bottom) */
 
 /* TBC is a star */
+
+/* Log In Page */
+#login-page {
+  background-image: url("../images/login.jpeg");
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
 /* New User Page */
 
 .newUserPage {
