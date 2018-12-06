@@ -66,6 +66,18 @@ var dbMethods = {
             return dbLinks;
         });
     },
+    // Theresa added, not tested yet.
+    findPageParent:function(authorId, storyId, toPageId){
+        return db.Link.findAll({
+            where: {
+                AuthorId: authorId,
+                StoryId: storyId,
+                ToPageId: toPageId
+            }
+        }).then(function(dbLinks){
+            return dbLinks;
+        });
+    },
     findAllTagsAndStoriesCount: function(){
         return db.Tag.findAll({
             group: ["Tag.id"],
@@ -155,9 +167,11 @@ var dbMethods = {
             return stories;
         });
     },
+    // Theresa created, not tested yet
     newPage: function(pageObj) {
         return db.Page.create(pageObj);
     },
+    // Theresa created, not tested yet
     updatePage: function(pageObj, pageid) {
         return db.Page.update({
             title: pageObj.title,
@@ -174,6 +188,7 @@ var dbMethods = {
             }
         });
     },
+    // Theresa created, not tested yet
     deletePage: function(pageid) {
         return db.Page.destroy({
             where: {

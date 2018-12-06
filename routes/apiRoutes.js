@@ -34,6 +34,7 @@ module.exports = function (app) {
             });
     });
 
+    // Theresa created, not tested yet
     // create new page
     app.post("/api/page/create", async function(req, res) {
         var page = await dbMethods.newPage({
@@ -55,6 +56,7 @@ module.exports = function (app) {
             return res.sendStatus(200);
         }
     });
+    // Theresa created, not tested yet
     // update an existing page
     app.put("/api/page/update/:id", async function(req, res) {
         if (check.pageIsWriteable(req.body.pageid, req.session.token, req.body.storyid)) {
@@ -78,6 +80,7 @@ module.exports = function (app) {
         }
     });
 
+    // Theresa created, not tested yet
     // delete an existing page
     app.delete("/api/page/delete/:id", async function(req, res) {
         if(check.pageIsWriteable(req.body.pageid, req.session.token, req.body.storyid)) {

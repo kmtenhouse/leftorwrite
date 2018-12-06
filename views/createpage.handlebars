@@ -41,11 +41,20 @@
                             <textarea class="form-control" id="pageContent" rows="8" placeholder="What's going to happen next?"></textarea>
                         </div>
                     </form>
-                    <button class="btn custom-primary-btn" id="savePage">Save Page</button>
-                    {{#if pageid}}
-                        <button class="btn custom-primary-btn" id="deletePage">Delete Page</button>
-                        
-                    {{/if}}
+                    <div class="row page-buttons-row mx-1">
+                        <button class="btn custom-primary-btn col-12 col-md-2 mb-2 mb-md-0" id="savePage">Save Page</button>
+                        <button class="btn page-btn col-3 col-md-2" id="continue">Cont.</button>
+                        <button class="btn page-btn col-3 col-md-2" id="choices">Choices</button>
+                        <button class="btn page-btn col-3 col-md-2" id="end">End</button>
+                        <button class="btn page-btn col-3 col-md-2" id="tbc">TBC</button>
+                        {{!-- <img src="/images/continue.svg" class="col-6, col-md-2 page-btn" id="continue" alt="continue button">
+                        <img src="/images/choicepoint.svg" class="col-6, col-md-2 page-btn" id="choices" alt="choices button">
+                        <img src="/images/end.svg" class="col-6, col-md-2 page-btn" id="end" alt="end button">
+                        <img src="/images/tbc.svg" class="col-6, col-md-2 page-btn" id="tbc" alt="tbc button"> --}}
+                        {{#if pageid}}
+                            <button class="btn custom-primary-btn col-11 col-md-2 mr-3" id="deletePage">Delete Page</button>
+                        {{/if}}
+                    </div>
                 </div>
             </div>
         </div>

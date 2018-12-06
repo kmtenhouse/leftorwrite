@@ -140,6 +140,31 @@ footer {
   border-radius: 12px;
 }
 
+.page-btn {
+  height: 5em;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: white;
+  font-size: 1em
+  /* #E7E5DF; */
+}
+#continue {
+  background-image: url(/images/continue.svg);
+}
+  
+#choices {
+  background-image: url(/images/choicepoint.svg);
+}
+  
+#end {
+  background-image: url(/images/end.svg);
+}
+  
+#tbc {
+  background-image: url(/images/tbc.svg);
+}
+
 /* CSS for page icons */
 /* Default page is a rectangle */
 

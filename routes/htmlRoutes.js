@@ -351,7 +351,6 @@ module.exports = function (app) {
                 //1) determine if this is the first page in the story (if so, it defaults to the start of the story)
                 //2) if not, it will become an orphaned page by default
                 //(TO-DO) actually send this object to the 'create page' form ;)
-<<<<<<< HEAD
                 // res.send(typeof(storyResult));
                 var storyToFind = storyResult.id;
                 db.Page.findAll({
@@ -371,14 +370,6 @@ module.exports = function (app) {
                     //Now render the page
                     res.render("createpage", hbsObj);
                 });
-=======
-               // res.send(typeof(storyResult));
-                var hbsObj = {
-                    id: storyResult.id,
-                    title: storyResult.title
-                };
-                res.render("createpage", hbsObj);
->>>>>>> 68878528fff2ef854f5c1d6f0351fa715298fb9d
             }, 
             function(error) {
                 //otherwise, send the appropriate 404 page
@@ -386,6 +377,7 @@ module.exports = function (app) {
             });
     });
 
+    // Theresa: This will need to return the incoming and outgoing links for the page as well, if they exist
     //Edit an existing page
     app.get("/story/write/:storyid/pages/:pageid", function (req, res) {
         //check if the page is editable
