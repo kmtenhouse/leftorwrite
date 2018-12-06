@@ -73,14 +73,12 @@ function savePage() {
     // have logic for create and update, but may need to further separate
     // CREATE
     if (id === "") {
-        $.ajax("/api/story/create/", {
+        $.ajax("/api/page/create/", {
             type: "POST",
             data: pageObj
         }).then(function (result, status) {
-            console.log(status);
-            console.log(result);
             if (status === "success") {
-                window.location = "/story/settings/" + result.id;
+                window.location = "/story/write/" + result.storyId + "/pages/" + result.pageId;
             }
         });
     }
