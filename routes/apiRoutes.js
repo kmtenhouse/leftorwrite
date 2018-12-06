@@ -93,6 +93,7 @@ module.exports = function (app) {
             }
 
         }
+    });
     //PUT METHOD - PUBLISH STORY
     //We only call this when we want to validate and publish a story 
     //TO DO - make an UNPUBLISH route for revoking public access to your story
