@@ -356,29 +356,29 @@ module.exports = function (app) {
         check.storyIsWriteable(req.params.storyid, req.session.token).then(
             function(storyResult) {
                 //otherwise, the story exists and the person logged in has permissions to write to it!  we can show them the create form :)
-
-                //the logic we'll need to do is 
-                //1) determine if this is the first page in the story (if so, it defaults to the start of the story)
-                //2) if not, it will become an orphaned page by default
-                //(TO-DO) actually send this object to the 'create page' form ;)
-                // res.send(typeof(storyResult));
+                // search for a start page for this story
                 var storyToFind = storyResult.id;
                 db.Page.findAll({
                     where: {
                         StoryId: storyToFind,
                         isStart: true
                     }
-                }).then(function(allpages) {
-                    console.log("allpages = ", allpages);
-                    //if we had a successful page lookup, create a handlebars object
-                    //note: make sure to include some story info like title and story id
-                    var hbsObj = {
-                        storyid: storyResult.id,
-                        title: storyResult.title,
-                        pages: allpages
-                    };
+                }).then(function(startpage) {
+                    // this page object is formatted very specifically for page rendering
+                    var page = {};
+                    if (startpage[0]) {
+                        page.StoryId = storyToFind;
+                        page.StoryTitle = storyResult.title;
+                        page.isStart = false;
+                    }
+                    else {
+                        page.StoryId = storyToFind;
+                        page.StoryTitle = storyResult.title;
+                        page.isStart = true;
+                    }
                     //Now render the page
-                    res.render("createpage", hbsObj);
+                    res.render("createpage", page);
+                    // res.json(page);
                 });
             }, 
             function(error) {
@@ -394,8 +394,12 @@ module.exports = function (app) {
         check.pageIsWriteable(req.params.pageid, req.session.token, req.params.storyid).then(
             function(pageResult){
                 //if we got a page, render the write form and populate it with the data we already have
-                //(TO-DO)
-                res.json(pageResult);
+                
+                // this page object is formatted very specifically for page rendering
+                var page = pageResult.dataValues;
+                page.StoryTitle = page.Story.dataValues.title;
+                res.json(page);
+                // res.render("createpage", page);
             }, 
             function(err) {
                 //if an error occurred with the page load, go ahead and show the user
