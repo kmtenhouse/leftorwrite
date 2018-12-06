@@ -334,9 +334,11 @@ module.exports = function (app) {
                     //note: make sure to include some story info like title and story id
                     var hbsObj = {
                         storyId: storyResult.id,
+                        storyIsPublic: storyResult.isPublic,
                         title: storyResult.title,
                         pages: allpages
                     };
+                    console.log(hbsObj.storyId + " public " + hbsObj.storyIsPublic);
                     //Now render the page
                     res.render("pagelibrary", hbsObj);
     
