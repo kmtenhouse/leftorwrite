@@ -141,9 +141,10 @@ footer {
   background-repeat: no-repeat;
   background-position: center;
   background-color: white;
-  font-size: 1em
-  /* #E7E5DF; */
+  font-size: 1em;
+  text-shadow: 0 0 5px #ffffff;
 }
+
 #continue {
   background-image: url(/images/continue.svg);
 }
@@ -160,14 +161,18 @@ footer {
   background-image: url(/images/tbc.svg);
 }
 
-/* CSS for page icons */
-/* Default page is a rectangle */
+#authorNotes, #pageContent {
+  overflow: scroll;
+}
 
-/* First page is a half moon (round part facing top) */
+#link-editor {
+  background-color: #cec9c1;
+  display: none;
+}
 
-/* Ending is a half moon (round part facing bottom) */
-
-/* TBC is a star */
+#add-link-btn {
+  background-color: #56A3A6
+}
 
 /* Log In Page */
 #login-page {

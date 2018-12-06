@@ -351,7 +351,7 @@ module.exports = function (app) {
 
     //WRITE PAGES 
     //Create a new (orphaned) page -- displays a form to add a brand new page to an existing story
-    app.get("/story/write/:storyid/pages/", function(req,res) {
+    app.get("/story/write/:storyid/pages", function(req,res) {
         //first, check that the existing story is writeable by whoever is trying to access
         check.storyIsWriteable(req.params.storyid, req.session.token).then(
             function(storyResult) {
