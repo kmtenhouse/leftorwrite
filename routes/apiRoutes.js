@@ -34,10 +34,9 @@ module.exports = function (app) {
             });
     });
 
-    // Theresa created, not tested yet
     // create new page
     app.post("/api/page/create", async function(req, res) {
-        var page = await dbMethods.newPage({
+        var page = await dbMethods.createNewPage({
             title: req.body.title,
             content: req.body.content,
             isStart: req.body.isStart,
@@ -49,11 +48,12 @@ module.exports = function (app) {
             AuthorId: req.session.token,
             StoryId: req.body.storyid,
         }).catch(function(err) {
-            console.log(err);
+            console.log("Error: " + err);
             return alert(err.message);
         });
         if (page) {
-            return res.sendStatus(200);
+            console.log("Success!");
+            return res.status(200).send({storyId: page.StoryId, pageId: page.id});
         }
     });
     // Theresa created, not tested yet
