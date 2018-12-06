@@ -16,6 +16,5 @@ module.exports = function(sequelize, DataTypes) {
         Link.belongsTo(models.Page, {as: "FromPage"});
         Link.belongsTo(models.Page, {as: "ToPage"});
     };
-    Link.sync();
     return Link;
 };
