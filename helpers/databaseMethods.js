@@ -178,6 +178,7 @@ var dbMethods = {
             //do the async thing
             check.storyCanBePublished(storyId, authorId).then(
                 function (testResults) {
+                    console.log("Received test results");
                     //let's see what we got back from the test results, and return info 
                     //about succeeded (or failed)
                     //we SUCCEEDED if we got the story we asked for, it has at least 2 valid pages, and no invalid pages
@@ -201,16 +202,18 @@ var dbMethods = {
                         //note: we are not rejecting these exactly, we are resolving with info about what the user needs to correct (because there could be multiple issues to address)
                         var errorObj = {
                             success: false,
-                            errors: []
+                            storyTooShort: false,
+                            unlinkedPages: false,
+                            unfinishedPages: false
                         };
                         if(testResults[1]<2) {
-                            errorObj.errors.push("Story Too Short To Publish");
+                            errorObj.storyTooShort = true;
                         }
                         if(testResults[2]>0) {
-                            errorObj.errors.push("Story Contains Unlinked Pages");
+                            errorObj.this.unlinkedPages = true;
                         }
                         if(testResults[3]>0) {
-                            errorObj.errors.push("Story Contains Unfinished Pages");
+                            errorObj.this.unfinishedPages = true;
                         }
                         return resolve(errorObj);
                     }
@@ -218,6 +221,8 @@ var dbMethods = {
                 },
                 function (err) {
                     //or if our publish tests failed, then we just return that error
+                    console.log("Failed test results");
+                    console.log(err.message);
                     return reject(err);
                 }
             );

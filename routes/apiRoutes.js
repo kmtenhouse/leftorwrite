@@ -34,16 +34,17 @@ module.exports = function (app) {
             });
     });
 
-    //PUT METHOD SPECIFICALLY FOR PUBLISH
+    //PUT METHOD - PUBLISH STORY
     //We only call this when we want to validate and publish a story 
+    //TO DO - make an UNPUBLISH route for revoking public access to your story
     app.put("/api/story/publish/", function (req, res) {
-        dbMethods.publishStory(req.body.storyid, req.session.token).then(function(result) {
+        dbMethods.publishStory(req.body.storyId, req.session.token).then(function(result) {
             //send info about the result back to the front end
             //NOTE: this will either be a success, or a failure 
             //front end gets to decide what to do with it
-            res.send(result); 
+            res.json(result); 
         }, function(err) { //trap outright rejections for malformed urls, etc
-            res.render("404", getError.messageTemplate(err));
+            res.sendStatus(getError.statusCode(err)); 
         });
     });
 
