@@ -25,27 +25,6 @@ var validators = {
         //if we passed all these checks, we are good!
         return true;
     },
-    storyCanBePublished: function (storyId) {
-        //Helper function to check if a story is fully valid to be published
-        //Stories can be published if:
-        //1) they have a single start page (that is not orphaned)
-        //2) they have no 'dangling pages' (that are not orphaned)
-        //3) all the content is 'finished' (that are not orphaned)
-        return new Promise(function (resolve, reject) {
-            //Do the async job -- look up a story by its id
-            //first, we see if it's even a valid id in the first place
-            //if not, we immediately reject the promise
-            if (!validators.isvalidid(storyId)) {
-                return reject(new Error("Invalid Story Id"));
-            }
-            //since the id format is valid, go ahead and parse the id into an integer...
-            var storyToFind = parseInt(storyId);
-            //(TO-DO) look up the story and count the stuff we do NOT want to find... 
-            //first, we check that all non-orphaned content is finished:
-            
-
-        });
-    },
     storyIsReadable: function (storyId) {
         //Helper function to check if a story is READABLE to readers
         //The story must 1) exist in the db  2) have the 'isPublic' value set to true
@@ -223,6 +202,45 @@ var validators = {
                 return resolve(pageResult);
             });
         });
+    }, 
+    storyCanBePublished: function(storyId, authorId) {
+        //function that checks if a story can be published
+        //1) Author must have write privs to the story
+        var authorHasWritePrivs = validators.storyIsWriteable(storyId, authorId);
+        //we want this query to return a story result and not an error
+ 
+        //2) the story includes at least 2 valid pages - content finished, not dangling pages, not orphaned
+        var minimumValidPages = db.Page.count({
+            where: {
+                isOrphaned: false,
+                isLinked: true,
+                contentFinished: true,
+                StoryId: storyId
+            } //we want this query to return a count of 2 (or more)
+        });
+
+        //3) they have no unlinked ('dangling') pages (that are not orphaned)
+        var countOfUnlinkedPages = db.Page.count({
+            where: {
+                isOrphaned: false,
+                isLinked: false,
+                StoryId: storyId
+            } //we want this query to return a count of 0
+        });
+
+        //4) all the content is 'finished' (that are not orphaned)
+        //(this should be 0)
+        var countofUnfinishedPages = db.Page.count({
+            where: {
+                isOrphaned: false,
+                contentFinished: false,
+                StoryId: storyId
+            }
+        });  //we want this query to return a count of 0
+        
+        //kick off all these individual tests, and then let us do something after they have completed :)
+
+        return Promise.all([authorHasWritePrivs, minimumValidPages, countOfUnlinkedPages, countofUnfinishedPages]);
     }
 };
 
