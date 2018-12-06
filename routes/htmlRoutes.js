@@ -341,7 +341,6 @@ module.exports = function (app) {
                     console.log(hbsObj.storyId + " public " + hbsObj.storyIsPublic);
                     //Now render the page
                     res.render("pagelibrary", hbsObj);
-    
                 });
             },
             function (err) { //otherwise, if an error occurred: show the right 404 page
@@ -352,7 +351,7 @@ module.exports = function (app) {
 
     //WRITE PAGES 
     //Create a new (orphaned) page -- displays a form to add a brand new page to an existing story
-    app.get("/story/write/:storyid/pages/", function(req,res) {
+    app.get("/story/write/:storyid/pages", function(req,res) {
         //first, check that the existing story is writeable by whoever is trying to access
         check.storyIsWriteable(req.params.storyid, req.session.token).then(
             function(storyResult) {
@@ -362,12 +361,25 @@ module.exports = function (app) {
                 //1) determine if this is the first page in the story (if so, it defaults to the start of the story)
                 //2) if not, it will become an orphaned page by default
                 //(TO-DO) actually send this object to the 'create page' form ;)
-               // res.send(typeof(storyResult));
-                var hbsObj = {
-                    id: storyResult.id,
-                    title: storyResult.title
-                };
-                res.render("createpage", hbsObj);
+                // res.send(typeof(storyResult));
+                var storyToFind = storyResult.id;
+                db.Page.findAll({
+                    where: {
+                        StoryId: storyToFind,
+                        isStart: true
+                    }
+                }).then(function(allpages) {
+                    console.log("allpages = ", allpages);
+                    //if we had a successful page lookup, create a handlebars object
+                    //note: make sure to include some story info like title and story id
+                    var hbsObj = {
+                        storyid: storyResult.id,
+                        title: storyResult.title,
+                        pages: allpages
+                    };
+                    //Now render the page
+                    res.render("createpage", hbsObj);
+                });
             }, 
             function(error) {
                 //otherwise, send the appropriate 404 page
@@ -375,6 +387,7 @@ module.exports = function (app) {
             });
     });
 
+    // Theresa: This will need to return the incoming and outgoing links for the page as well, if they exist
     //Edit an existing page
     app.get("/story/write/:storyid/pages/:pageid", function (req, res) {
         //check if the page is editable

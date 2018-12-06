@@ -17,15 +17,15 @@ var dbMethods = {
     },
     topFiveTags: function () {
         return db.sequelize.query("select tags.id, tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id where stories.isPublic = 1 and stories.isFinished = 1 group by tags.id order by num_stories desc limit 5;",
-            { type: db.Sequelize.QueryTypes.SELECT }).then(function (dbTags) {
-                return dbTags;
-            });
+        { type: db.Sequelize.QueryTypes.SELECT }).then(function (dbTags) {
+            return dbTags;
+        });
     },
     allTags: function () {
         return db.sequelize.query("select tags.id, tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id group by tags.id order by num_stories desc;",
-            { type: db.Sequelize.QueryTypes.SELECT }).then(function (dbTags) {
-                return dbTags;
-            });
+        { type: db.Sequelize.QueryTypes.SELECT }).then(function (dbTags) {
+            return dbTags;
+        });
     },
     findUser: function (userId) {
         return db.User.findOne({
@@ -70,7 +70,19 @@ var dbMethods = {
             return dbLinks;
         });
     },
-    findAllTagsAndStoriesCount: function () {
+    // Theresa added, not tested yet.
+    findPageParent:function(authorId, storyId, toPageId) {
+        return db.Link.findAll({
+            where: {
+                AuthorId: authorId,
+                StoryId: storyId,
+                ToPageId: toPageId
+            }
+        }).then(function(dbLinks){
+            return dbLinks;
+        });
+    },
+    findAllTagsAndStoriesCount: function() {
         return db.Tag.findAll({
             group: ["Tag.id"],
             includeIgnoreAttributes: false,
@@ -159,7 +171,36 @@ var dbMethods = {
             return stories;
         });
     },
-    findAllPublicStories: function () {
+    // Theresa created, not tested yet
+    newPage: function(pageObj) {
+        return db.Page.create(pageObj);
+    },
+    // Theresa created, not tested yet
+    updatePage: function(pageObj, pageid) {
+        return db.Page.update({
+            title: pageObj.title,
+            content: pageObj.content,
+            isStart: pageObj.isStart,
+            isTBC: pageObj.isTBC,
+            isEnding: pageObj.isEnding,
+            isLinked: pageObj.isLinked,
+            isOrphaned: pageObj.isOrphaned,
+            contentFinished: pageObj.contentFinished
+        },{
+            where: {
+                id: pageid
+            }
+        });
+    },
+    // Theresa created, not tested yet
+    deletePage: function(pageid) {
+        return db.Page.destroy({
+            where: {
+                id: pageid
+            }
+        });
+    },
+    findAllPublicStories: function(){
         return db.Story.findAll({
             where: {
                 isPublic: true,

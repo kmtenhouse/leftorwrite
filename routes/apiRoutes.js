@@ -34,6 +34,66 @@ module.exports = function (app) {
             });
     });
 
+    // Theresa created, not tested yet
+    // create new page
+    app.post("/api/page/create", async function(req, res) {
+        var page = await dbMethods.newPage({
+            title: req.body.title,
+            content: req.body.content,
+            isStart: req.body.isStart,
+            isTBC: req.body.isTBC,
+            isEnding: req.body.isEnding,
+            isLinked: req.body.isLinked,
+            isOrphaned: req.body.isOrphaned,
+            contentFinished: req.body.contentFinished,
+            AuthorId: req.session.token,
+            StoryId: req.body.storyid,
+        }).catch(function(err) {
+            console.log(err);
+            return alert(err.message);
+        });
+        if (page) {
+            return res.sendStatus(200);
+        }
+    });
+    // Theresa created, not tested yet
+    // update an existing page
+    app.put("/api/page/update/:id", async function(req, res) {
+        if (check.pageIsWriteable(req.body.pageid, req.session.token, req.body.storyid)) {
+            var update = await dbMethods.updatePage({
+                title: req.body.title,
+                content: req.body.content,
+                isStart: req.body.isStart,
+                isTBC: req.body.isTBC,
+                isEnding: req.body.isEnding,
+                isLinked: req.body.isLinked,
+                isOrphaned: req.body.isOrphaned,
+                contentFinished: req.body.contentFinished
+            }, 
+            req.body.pageid).catch(function(err) {
+                console.log(err);
+                return alert(err.message);
+            });
+            if (update) {
+                return res.sendStatus(200);
+            }
+        }
+    });
+
+    // Theresa created, not tested yet
+    // delete an existing page
+    app.delete("/api/page/delete/:id", async function(req, res) {
+        if(check.pageIsWriteable(req.body.pageid, req.session.token, req.body.storyid)) {
+            var deletedPage = await dbMethods.deletePage(req.body.pageid).catch(function(err) {
+                console.log(err);
+                return alert(err.message);
+            });
+            if (deletedPage) {
+                return res.sendStatus(200);
+            }
+
+        }
+    });
     //PUT METHOD - PUBLISH STORY
     //We only call this when we want to validate and publish a story 
     //TO DO - make an UNPUBLISH route for revoking public access to your story
