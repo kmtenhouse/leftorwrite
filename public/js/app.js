@@ -100,7 +100,7 @@ function newBlankLink() {
     var linkAddons = $("<div>").addClass("row col-12 col-md-4 pr-0 mr-0 input-group-append");
     var linkTextInput = $("<input id=\"link-new-text\" type=\"text\" maxlength=\"100\" placeholder=\"Link text -  what your readers will see.\" aria-label=\"Link text -  what your readers will see.\">");
     linkTextInput.addClass("form-control col-12 col-md-8 link-text");
-    var linkPageDropdown = $("<select id=\"link-new-dropdown\"><option>New Blank Page</option></select>");
+    var linkPageDropdown = $("<select id=\"link-new-dropdown\"><option value=\"octopus\">New Blank Page</option><option value=\"snake\">Other snake</option></select>");
     linkPageDropdown.addClass("form-control input-group-text col-10 link-page-dropdown");
     var linkClose = $("<span class=\"input-group-text col-2\"><button type=\"button\" class=\"close\" id=\"link-new-close\" data-line-id=\"new\" aria-label=\"delete link\"><span aria-hidden=\"true\">&times;</span></button></span>");
     linkAddons.append(linkPageDropdown, linkClose);
@@ -130,7 +130,7 @@ $(document).on("click", "#choices", function (event) {
     if (!$(this).hasClass("disabled")) {
         $(this).toggleClass("active");
         $("#continue, #end, #tbc").toggleClass("disabled");
-        $("#link-editor").toggle();
+        $("#link-editor").toggle(1000);
         if ($(this).hasClass("active")) {
             $("#link-list").append(newlink);
 
@@ -142,7 +142,7 @@ $(document).on("click", "#choices", function (event) {
         // savePage();
     }
 });
-// button that only appears when "choices" is clicked, adds new link
+// button inside link editor, adds new link when clicked
 $(document).on("click", "#add-link-btn", function(event) {
     event.preventDefault();
     var newlink = newBlankLink();
@@ -162,7 +162,7 @@ $(document).on("click", "#end", function (event) {
         // savePage();
     }
 });
-// same as end
+// same as end for tbc
 $(document).on("click", "#tbc", function (event) {
     event.preventDefault(); 
     if (!$(this).hasClass("disabled")) {
@@ -172,8 +172,25 @@ $(document).on("click", "#tbc", function (event) {
     }
 });
 // uses the delete route, and will also need to remove all links from all decendants
+// ideally has confirm modal
 $(document).on("click", "#deletePage", function (event) {
     event.preventDefault(); 
     var id = $("#authorNotes").data("page-id"); // will be page id
 });
 
+// THOUGHTS ON DISPLAYING PAGES IN DROPDOWN
+// NEED TO
+// not display current page
+// display page titles for reader friendliness
+// include page id for ease of manipulation, and in case of duplicate titles
+// query the database when choices is clicked and render
+// POSSIBILITIES
+
+$(document).change("select[id=\"link-new-page\"]", function(event){
+    var selected = $(this).find("option:selected");
+    // value is different from displayed text
+    var value = selected.attr("value");
+    console.log(value);
+});
+
+// NOTE TO SELF: disable end and tbc on start page
