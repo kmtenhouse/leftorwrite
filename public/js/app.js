@@ -87,6 +87,13 @@ function savePage(event) {
     }
 }
 
+$(".scroll-to").on("click", function(e){
+    var jump = $(this).attr("href");
+    var newPosition = $(jump).offset();
+    $("html, body").stop().animate({ scrollTop: newPosition.top }, 500);
+    e.preventDefault();
+});
+
 // connect the functions to the buttons
 // save page needs to just save the page info and it's links, if it has any. 
 // Will have logic for create new vs update existing

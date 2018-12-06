@@ -1,7 +1,27 @@
-<div class="px-3 col-4 page-icon-container">
-    <div class="page-icon {{#if this.isStart}}start-page-icon{{/if}}{{#if this.isEnding}}end-page-icon{{/if}}{{#if this.isTBC}}tbc-page-icon{{/if}}">
-    </div>  
-    <p>{{#if this.isStart}}Start: {{/if}}{{#if this.isTBC}}TBC: {{/if}}{{#if this.isEnding}}Ending: {{/if}}{{this.title}}
-    </p>
+<div class="px-3 col-2 page-icon-container">
+    <a href="#"> {{!-- This is where the link to edit a page goes --}}
+        <figure class="ml-auto mr-auto">
+            {{!-- Default is regular page --}}
+            {{#if this.isStart}}
+            <img class="page-icon" src="/images/startpage.svg" />
+            {{else if this.isEnding}}
+            <img class="page-icon" src="/images/end.svg" />
+            {{else if this.isTBC}}
+            <img class="page-icon" src="/images/tbc.svg" />
+            {{else}}
+            {{#if this.isLinked}}
+            {{#if this.contentFinished}}
+            <img class="page-icon" src="/images/linked_page.svg" />
+            {{else}}
+            <img class="page-icon" src="/images/unfinishedcontent.svg" />
+            {{/if}}
+            {{else}}
+            <img class="page-icon" src="/images/unlinkedpage.svg" />
+            {{/if}}
+            {{/if}}
+            <figcaption>{{#if this.isStart}}First Page: {{/if}}{{#if this.isEnding}}Ending Option: {{/if}}{{#if
+                this.isTBC}}TBC Ending Option: {{/if}}{{this.title}}</figcaption>
+            {{!-- Display something different for unfinished content --}}
+        </figure>
     </a>
 </div>

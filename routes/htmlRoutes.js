@@ -49,6 +49,14 @@ module.exports = function (app) {
         }
     });
 
+    // Loads log-in page
+    app.get("/login", function(req, res){
+        if(req.session.token){
+            return res.redirect("/");
+        }
+        res.render("login");
+    });
+
     // Loads new user page that allows user to change username
     app.get("/newUser", function (req, res) {
         if (req.session.token) {
@@ -326,9 +334,11 @@ module.exports = function (app) {
                     //note: make sure to include some story info like title and story id
                     var hbsObj = {
                         storyId: storyResult.id,
+                        storyIsPublic: storyResult.isPublic,
                         title: storyResult.title,
                         pages: allpages
                     };
+                    console.log(hbsObj.storyId + " public " + hbsObj.storyIsPublic);
                     //Now render the page
                     res.render("pagelibrary", hbsObj);
                 });

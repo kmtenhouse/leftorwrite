@@ -238,8 +238,19 @@ $(document).on("click", "#deleteStory", function () {
 // OTHER BUTTONS 
 // links to other pages 
 // view story
+$(document).on("click", "#viewStory", function(event) {
+    event.preventDefault();
+    var storyId = $("#storyTitle").data("id");
+    var url = "/story/overview/" + storyId;
+    window.location = url;
+});
 // create new page
-
+$(document).on("click", "#createNewPage", function(event){
+    event.preventDefault();
+    var storyId = $("#storyTitle").data("id");
+    var url = "/story/write/" + storyId + "/pages";
+    window.location = url;
+});
 // buttons that change story's booleans
 // mark as finished
 // publish story
