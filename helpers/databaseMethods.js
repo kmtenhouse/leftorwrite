@@ -62,7 +62,10 @@ var dbMethods = {
                 AuthorId: authorId,
                 StoryId: storyId,
                 FromPageId: fromPageId
-            }
+            },
+            order: [
+                [db.sequelize.fn("length", db.sequelize.col("linkName")), "ASC"]
+            ]
         }).then(function (dbLinks) {
             return dbLinks;
         });

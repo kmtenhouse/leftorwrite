@@ -14,7 +14,7 @@
    viewBox="0 0 31.003094 41.58643"
    height="41.58643mm"
    width="31.003094mm"
-   sodipodi:docname="linked_page.svg"
+   sodipodi:docname="tbc-page.svg"
    inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <sodipodi:namedview
      pagecolor="#ffffff"
@@ -30,7 +30,7 @@
      id="namedview833"
      showgrid="false"
      inkscape:zoom="2.6975947"
-     inkscape:cx="58.588524"
+     inkscape:cx="-4.61593"
      inkscape:cy="78.588528"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
@@ -63,20 +63,36 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      transform="translate(-36.659168,-22.206787)"
      id="layer1"
-     style="stroke:#66917f;stroke-opacity:1">
+     style="fill:#c14aae;fill-opacity:0.3860465;stroke:#993ba5;stroke-opacity:1">
     <rect
        y="22.589287"
        x="37.041668"
        height="40.82143"
        width="30.238094"
        id="rect4518"
-       style="fill:#afe3c0;fill-opacity:1;stroke:#66917f;stroke-width:0.76499999;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:#c14aae;fill-opacity:0.3860465;stroke:#993ba5;stroke-width:0.76499999;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
+  <path
+     sodipodi:type="star"
+     style="opacity:1;fill:#c14aae;fill-opacity:1;stroke:#993ba5;stroke-width:11.00022793;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="path878"
+     sodipodi:sides="8"
+     sodipodi:cx="102.21943"
+     sodipodi:cy="129.01271"
+     sodipodi:r1="115.46538"
+     sodipodi:r2="56.578037"
+     sodipodi:arg1="0.79465716"
+     sodipodi:arg2="1.1873562"
+     inkscape:flatsided="false"
+     inkscape:rounded="0"
+     inkscape:randomized="0"
+     d="M 183.10633,211.41151 123.38601,181.48223 101.15035,244.47314 80.084909,181.08129 19.820625,209.89961 49.749912,150.17929 -13.240999,127.94363 50.150846,106.87819 21.33253,46.613906 l 59.72032,29.929287 22.23566,-62.990911 21.06544,63.391846 60.26428,-28.818317 -29.92928,59.720319 62.99091,22.23566 -63.39185,21.06544 z"
+     transform="matrix(0.09637705,0,0,0.10588796,5.6452236,1.6397716)" />
 </svg>

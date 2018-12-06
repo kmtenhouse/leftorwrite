@@ -51,6 +51,5 @@ module.exports = function (sequelize, DataTypes) {
         Story.belongsToMany(models.Tag, {through: "StoryTag"});
         Story.hasMany(models.Page);
     };
-    Story.sync();
     return Story;
 };
