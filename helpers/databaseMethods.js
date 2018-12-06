@@ -1,4 +1,5 @@
 var db = require("../models");
+var check = require("./routevalidators.js");
 
 var dbMethods = {
     findRecentUserStories: function (userId) {
@@ -170,78 +171,59 @@ var dbMethods = {
             return stories;
         });
     },
-    publishStory: async function (storyId) {
-        //Helper function to check if a story is fully valid to be published
-        //ASSUMES we have already sanitized the story id and checked for write privs, etc
-        //Stories can be published if:
-        //1) the story HAS at least 2 valid pages - content finished, not dangling pages, not orphaned
-        //(this should be at least 2)
-        var minimumValidPages = db.Page.count({
-            where: {
-                isOrphaned: false,
-                isLinked: true,
-                contentFinished: true,
-                StoryId: storyId
-            }
-        });
+    publishStory: function (storyId, authorId) {
+        //Helper function that will first check if a story can be published,
+        //then attempt to update it in the db
+        return new Promise(function (resolve, reject) {
+            //do the async thing
+            check.storyCanBePublished(storyId, authorId).then(
+                function (testResults) {
+                    //let's see what we got back from the test results, and return info 
+                    //about succeeded (or failed)
+                    //we SUCCEEDED if we got the story we asked for, it has at least 2 valid pages, and no invalid pages
+                    if (testResults[0].id === parseInt(storyId) && testResults[1] > 1 && testResults[2] === 0 && testResults[3] === 0) {
+                        //attempt to actually update the story now
+                        db.Story.update({isPublic: true},{where: {id: testResults[0].id}}).then(function(updateResults) {
+                            if(updateResults) { //if the update worked, we'll resolve with a success!
+                                return resolve({ success: true });
+                            }
+                            else { //otherwise if there was some kind of error, reject with an error
+                                return reject(new Error("Generic Error"));
+                            }
+                        },
+                        function(err) { //if there was a db error, reject with an error
+                            return reject(err); 
+                        }
+                        );
+                    }
+                    else {
+                        //otherwise, see what broke and return the appropriate info via an error
+                        //note: we are not rejecting these exactly, we are resolving with info about what the user needs to correct (because there could be multiple issues to address)
+                        var errorObj = {
+                            success: false,
+                            errors: []
+                        };
+                        if(testResults[1]<2) {
+                            errorObj.errors.push("Story Too Short To Publish");
+                        }
+                        if(testResults[2]>0) {
+                            errorObj.errors.push("Story Contains Unlinked Pages");
+                        }
+                        if(testResults[3]>0) {
+                            errorObj.errors.push("Story Contains Unfinished Pages");
+                        }
+                        return resolve(errorObj);
+                    }
 
-        //2) they have no unlinked ('dangling') pages (that are not orphaned)
-        //(this should be 0)
-        var countOfUnlinkedPages = db.Page.count({
-            where: {
-                isOrphaned: false,
-                isLinked: false,
-                StoryId: storyId
-            }
-        });
-
-        //3) all the content is 'finished' (that are not orphaned)
-        //(this should be 0)
-        var countofUnfinishedPages = db.Page.count({
-            where: {
-                isOrphaned: false,
-                contentFinished: false,
-                StoryId: storyId
-            }
-        });
-
-        return Promise.all([minimumValidPages, countOfUnlinkedPages, countofUnfinishedPages]).then(
-            function (resultsArray) {
-                //now check the results to see if we're updating the story or not
-                var resultsObj = {
-                    success: false,
-                    tooShort: false,
-                    unlinkedPages: false,
-                    unfinishedPages: false
-                };
-                //if we have two or more valid pages, and no invalid pages, then we can go ahead and set the story to public!
-                if (resultsArray[0] > 1 && resultsArray[1] === 0 && resultsArray[2] === 0) {
-                    resultsObj.success = true;
-                    return resultsObj;
+                },
+                function (err) {
+                    //or if our publish tests failed, then we just return that error
+                    return reject(err);
                 }
-                //otherwise, we failed - let's be verbose about why
-                else {
-                  
+            );
+        });
 
-                    resultsObj.success = false;
-                    if (resultsArray[0] < 2) {
-                        resultsObj.tooShort = true;
-                    }
-                    if (resultsArray[1] > 0) {
-                        resultsObj.unlinkedPages = true;
-                    }
-                    if (resultsArray[2] > 0) {
-                        resultsObj.unfinishedPages = true;
-                    }
-                    return resultsObj;
-                }
 
-            },
-            //if some error occurred, reject the promise
-            function (err) {
-                return err;
-            }
-        );
     }
 };
 

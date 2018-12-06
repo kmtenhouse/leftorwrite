@@ -1,51 +1,6 @@
 .page-icon {
-  background: #9F956C;
-  height: 60px;
-  width: 90px;
+  height: 65px;
+  width: auto;
   display: inline-block;
   margin: 0 1em 1em 0;
-}
-
-.start-page-icon,
-.end-page-icon {
-  height: 60px;
-  width: 120px;
-}
-
-.start-page-icon {
-  border-top-left-radius: 90px;
-  border-top-right-radius: 90px;
-  background: #577399;
-}
-
-.end-page-icon {
-  border-bottom-left-radius: 90px;
-  border-bottom-right-radius: 90px;
-  background: #1f4881;
-}
-
-
-.tbc-page-icon {
-  background: rgb(57, 224, 243);
-  color: white;
-  width: 60px;
-  height: 60px;
-  position: relative;
-  text-align: center;
-}
-.tbc-page-icon:before,
-.tbc-page-icon:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 60px;
-  width: 60px;
-  background: rgb(57, 224, 243);
-}
-.tbc-page-icon:before {
-  transform: rotate(30deg);
-}
-.tbc-page-icon:after {
-  transform: rotate(60deg);
 }
