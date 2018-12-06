@@ -44,7 +44,7 @@ $(".scroll-to").on("click", function(e){
 // PAGE CREATE AND EDIT FUNCTIONALITY
 // save changes after edit
 // save page function
-function savePage() {
+function createPageObj(linkName = "") {
     var id = $("#authorNotes").data("page-id"); // will be page id
     var pageTitle = $("#authorNotes").val().trim(); // will be author quick notes
     var pageContent = $("#pageContent").val().trim(); // page content, we need to add a return fixer here
@@ -53,9 +53,15 @@ function savePage() {
     var ifEnd = $("#end").hasClass("active"); // should return a boolean, but the front end isn't built yet
     var ifTBC = $("#tbc").hasClass("active"); // same as the end button
     // .lenth returns number of items (with this class)
-    var ifLinked = $(".link-text").length>0; // not sure if this syntax works, trying to get a boolean
-    var links = $(".link-text");
-    console.log("Link texts = ", links);
+    var ifLinked = false; // not sure if this syntax works, trying to get a boolean
+    var links = $(".link-text").val();
+    if(linkName){
+        links = linkName;
+    }
+    if(links && links.length > 0){
+        ifLinked = true;
+    }
+    console.log(ifLinked);
     var ifOrphaned = $("#titleHeader").data("incoming"); // should return the id(s) of the incoming links
     var contentFinished = true; // using this temporarily, eventually will be set by author.
     var pageObj = {
@@ -70,27 +76,77 @@ function savePage() {
         storyid: storyid,
         pageid: id
     };
+    return pageObj;
+}
+
+async function savePage(pageObj){
     // have logic for create and update, but may need to further separate
     // CREATE
-    if (id === "") {
-        $.ajax("/api/page/create/", {
-            type: "POST",
-            data: pageObj
-        }).then(function (result, status) {
-            if (status === "success") {
-                window.location = "/story/write/" + result.storyId + "/pages/" + result.pageId;
+
+    return $.ajax("/api/page/create/", {
+        type: "POST",
+        data: pageObj
+    }).then(function (result, status) {
+        if (status === "success") {
+            if(pageObj.isLinked){
+                return result.pageId;
             }
-        });
-    }
+            window.location = "/story/write/" + result.storyId + "/pages/" + result.pageId;
+        }
+    });
+
+}
+async function editPage(){
     // UPDATE
-    else{
-        $.ajax("/api/story/update/" + id, {
-            type: "PUT",
-            data: pageObj
-        }).then(function () {
-            location.reload();
-        });
-    }
+
+    $.ajax("/api/story/update/" + id, {
+        type: "PUT",
+        data: pageObj
+    }).then(function () {
+        location.reload();
+    });
+}
+
+
+function createBlankPage() {
+    var pageObj = {
+        title: "Default Title",
+        content: "Default Content", 
+        isStart: false,
+        isTBC: false,
+        isEnding: false,
+        isLinked: false,
+        isOrphaned: false,
+        contentFinished: false,
+        storyid: $("#titleHeader").data("story-id")
+    };
+    return $.ajax("/api/page/create/", {
+        type: "POST",
+        data: pageObj
+    }).then(function (result, status) {
+        if (status === "success") {
+            return result.pageId;
+        }
+    });
+}
+
+function createContinueLink(fromPageId, toPageId) {
+    var linkObj = {
+        linkName: "Continue",
+        storyId: $("#titleHeader").data("story-id"),
+        fromPageId: fromPageId,
+        toPageId: toPageId
+    };
+    $.ajax("/api/link/create", {
+        type: "POST",
+        data: linkObj
+    }).then(function(result, status){
+        console.log(status);
+        if(status === "success"){
+            window.location = "/story/write/" + result.storyId + "/pages/" + result.toPageId;
+        }
+    });
+
 }
 
 function newBlankLink() {
@@ -111,14 +167,21 @@ function newBlankLink() {
 // Will have logic for create new vs update existing
 $(document).on("click", "#savePage", function (event) { 
     event.preventDefault();
-    savePage(); 
+    var pageObj = createPageObj();
+    savePage(pageObj); 
 });
 // continue will also save a page, and create a "continue" link with a new blank page on the other end
 // then redirect to the newly created page for editing
+
 $(document).on("click", "#continue", function (event) {
     event.preventDefault(); 
     if (!$(this).hasClass("disabled")) {
-        // savePage();
+        var pageObj = createPageObj("Continue");
+        savePage(pageObj).then(function(fromPageId){;
+            createBlankPage().then(function(toPageId){
+                createContinueLink(fromPageId, toPageId);
+            });
+        });
     }
 });
 // choices will open the link editor

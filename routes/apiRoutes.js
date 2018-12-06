@@ -52,10 +52,29 @@ module.exports = function (app) {
             return alert(err.message);
         });
         if (page) {
-            console.log("Success!");
+            console.log("Created new page");
             return res.status(200).send({storyId: page.StoryId, pageId: page.id});
         }
     });
+
+    // create a new link 
+    app.post("/api/link/create", async function(req, res) {
+        var link = await dbMethods.createNewLink({
+            linkName: req.body.linkName,
+            AuthorId: req.session.token,
+            StoryId: req.body.storyId,
+            FromPageId: req.body.fromPageId,
+            ToPageId: req.body.toPageId
+        }).catch(function(err){
+            console.log("Error: " + err);
+            return alert(err.message);
+        });
+        if(link){
+            console.log("created new link");
+            return res.status(200).send({storyId: link.StoryId, toPageId: link.ToPageId});
+        }
+    }); 
+
     // Theresa created, not tested yet
     // update an existing page
     app.put("/api/page/update/:id", async function(req, res) {

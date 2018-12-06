@@ -172,6 +172,7 @@ var dbMethods = {
         });
     },
     createNewPage: function(pageObj) {
+        console.log(pageObj);
         return db.Page.create(pageObj).then(function(newPage){
             return newPage;
         });
@@ -274,6 +275,12 @@ var dbMethods = {
         });
 
 
+    },
+    createNewLink: function(linkObj){
+        console.log(linkObj);
+        return db.Link.create(linkObj).then(function(newLink){
+            return newLink;
+        });
     }
 };
 
