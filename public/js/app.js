@@ -85,7 +85,24 @@ function createPageObj(linkName = "") {
 }
 // Create links object
 async function createLinks() {
-    
+    var links = $(".link-text");
+    var linksArray = [];
+    var toPageArray = [];
+    for(var i = 0; i < links.length; i++){
+        if($(links[i]).val().length === 0){
+            $(links[i]).val("Continue");
+        }
+        linksArray.push($(links[i]).val());
+        toPageArray.push($(links[i]).siblings(".input-group-append").children(".link-page-dropdown").val());
+    }
+    var linkObj = {
+        linkName: linksArray[i],
+        AuthorId: AuthorId,
+        StoryId: $("#titleHeader").data("story-id"),
+        FromPageId: fromPageId,
+        ToPageId: toPageId
+    };
+    linkObjArray.push(linkObj);
 }
 // Create page
 async function savePage(pageObj){
