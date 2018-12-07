@@ -177,6 +177,16 @@ var dbMethods = {
             return newPage;
         });
     },
+    createMultiplePages: function(pageObjArray) {
+        return db.Page.bulkCreate(pageObjArray).then(function(newPages){
+            var newPagesId = [];
+            for(var i = 0; i < newPages.length; i++){
+                var id = newPages[i].id;
+                newPagesId.push(id);
+            }
+            return newPagesId;
+        });
+    },
     // Theresa created, not tested yet
     updatePage: function(pageObj, pageid) {
         return db.Page.update({
@@ -277,9 +287,13 @@ var dbMethods = {
 
     },
     createNewLink: function(linkObj){
-        console.log(linkObj);
         return db.Link.create(linkObj).then(function(newLink){
             return newLink;
+        });
+    },
+    createMultipleLinks: function(linkObjArray){
+        return db.Link.bulkCreate(linkObjArray).then(function(newLinks){
+            return newLinks;
         });
     }
 };

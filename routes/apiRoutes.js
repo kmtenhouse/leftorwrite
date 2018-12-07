@@ -53,7 +53,7 @@ module.exports = function (app) {
         });
         if (page) {
             console.log("Created new page");
-            return res.status(200).send({storyId: page.StoryId, pageId: page.id});
+            return res.status(200).send({storyId: page.StoryId, pageId: page.id, authorId: page.AuthorId});
         }
     });
 
@@ -74,6 +74,28 @@ module.exports = function (app) {
             return res.status(200).send({storyId: link.StoryId, toPageId: link.ToPageId});
         }
     }); 
+
+    app.post("/api/page/bulkcreate", async function(req, res){
+        var pages = await dbMethods.createMultiplePages(JSON.parse(req.body.newPages))
+            .catch(function(err){
+                console.log("Error: " + err);
+            });
+        if(pages){
+            console.log("created new pages");
+            return res.status(200).send(pages);
+        }
+    });
+
+    app.post("/api/link/bulkcreate", async function(req, res){
+        console.log(req.body.newLinks);
+        var links = await dbMethods.createMultipleLinks(JSON.parse(req.body.newLinks))
+            .catch(function(err){
+                console.log("Error: " + err);
+            });
+        if(links){
+            return res.status(200).send(links);
+        }
+    });
 
     // Theresa created, not tested yet
     // update an existing page
