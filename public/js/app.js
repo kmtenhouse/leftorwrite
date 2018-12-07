@@ -53,9 +53,7 @@ function createPageObj(linkName = "") {
     var ifEnd = $("#end").hasClass("active"); // should return a boolean, but the front end isn't built yet
     var ifTBC = $("#tbc").hasClass("active"); // same as the end button
     // .lenth returns number of items (with this class)
-    console.log($(".link-text").length)
-    var ifLinked = $(".link-text").length>0; // not sure if this syntax works, trying to get a boolean
-    console.log(ifLinked);
+    var ifLinked = false; // not sure if this syntax works, trying to get a boolean
     var links = $(".link-text");
     if(linkName){
         links = linkName;
@@ -96,8 +94,8 @@ async function savePage(pageObj){
 
 }
 // Update page
-async function editPage(){
-    $.ajax("/api/story/update/" + id, {
+async function editPage(pageObj){
+    $.ajax("/api/page/update/" + pageObj.pageid, {
         type: "PUT",
         data: pageObj
     }).then(function () {
@@ -210,7 +208,7 @@ async function createMultipleBlankPages(toPageArray, AuthorId){
 }
 
 function newBlankLink() {
-    var newlink = $("<div>").addClass("form-row col-12 mb-3 px-0 link-row");
+    var newlink = $("<div>").addClass("form-row col-12 mb-3 px-0");
     var linkAddons = $("<div>").addClass("row col-12 col-md-4 pr-0 mr-0 input-group-append");
     var linkTextInput = $("<input id=\"link-new-text\" type=\"text\" maxlength=\"100\" placeholder=\"Link text -  what your readers will see.\" aria-label=\"Link text -  what your readers will see.\">");
     linkTextInput.addClass("form-control col-12 col-md-8 link-text");
@@ -227,6 +225,7 @@ function newBlankLink() {
 // Will have logic for create new vs update existing
 $(document).on("click", "#savePage", function (event) { 
     event.preventDefault();
+    
     var pageObj = createPageObj();
     var links = $(".link-text");
     var linksArray = [];
@@ -238,14 +237,24 @@ $(document).on("click", "#savePage", function (event) {
         linksArray.push($(links[i]).val());
         toPageArray.push($(links[i]).siblings(".input-group-append").children("#link-new-dropdown").val());
     }
-    savePage(pageObj).then(function(result){
-        var AuthorId = result[0];
-        var FromPageId = result[1];
-        createMultipleBlankPages(toPageArray, AuthorId).then(function(newPagesId){
-            console.log(newPagesId);
-            createMultipleLinks(linksArray, FromPageId, toPageArray, newPagesId, AuthorId);
-        });
-    }); 
+        
+    // Only does this if the current page does not exist in the db
+
+    if($("#authorNotes").data("page-id") === undefined){
+        savePage(pageObj).then(function(result){
+            var AuthorId = result[0];
+            var FromPageId = result[1];
+            createMultipleBlankPages(toPageArray, AuthorId).then(function(newPagesId){
+                console.log(newPagesId);
+                createMultipleLinks(linksArray, FromPageId, toPageArray, newPagesId, AuthorId);
+            });
+        }); 
+    }
+    // Saving new changes to existing page
+    else{
+        editPage(pageObj)
+
+    }
 });
 
 // continue will also save a page, and create a "continue" link with a new blank page on the other end
@@ -273,6 +282,7 @@ $(document).on("click", "#choices", function (event) {
         $("#link-editor").toggle(1000);
         if ($(this).hasClass("active")) {
             $("#link-list").append(newlink);
+
         }
         else {
             $("#link-list").empty();
@@ -290,13 +300,6 @@ $(document).on("click", "#add-link-btn", function(event) {
     if (listLength === 3) {
         $(this).prop("disabled", true);
     }
-});
-// also inside the link editor, one per link row,
-// the close/delete button for an individual link
-$(document).on("click", ".close", function (event) {
-    event.preventDefault();
-    $(this).parent().parent().parent().remove();
-    $("#add-link-btn").prop("disabled", false);
 });
 // end will mark this page, save changes, and disable other buttons. Needs to toggle.
 $(document).on("click", "#end", function (event) {
@@ -331,11 +334,11 @@ $(document).on("click", "#deletePage", function (event) {
 // query the database when choices is clicked and render
 // POSSIBILITIES
 
-// this allows to check value, may not be needed for functionality
-$(document).change("select[class=\"link-page-dropdown\"]", function(event){
+$(document).change("select[id=\"link-new-page\"]", function(event){
     var selected = $(this).find("option:selected");
     // value is different from displayed text
     var value = selected.attr("value");
     console.log(value);
 });
 
+// NOTE TO SELF: disable end and tbc on start page
