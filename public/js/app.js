@@ -335,13 +335,20 @@ $(document).on("click", "#choices", function (event) {
 // button inside link editor, adds new link when clicked
 $(document).on("click", "#add-link-btn", function(event) {
     event.preventDefault();
-    var newlink = newBlankLink();
-    $("#link-list").append(newlink);
-    console.log($(".link-text").length);
-    var listLength = $(".link-text").length;
-    if (listLength === 3) {
-        $(this).prop("disabled", true);
-    }
+    var that = $(this);
+    var storyId = $("#titleHeader").data("story-id");
+    $.ajax("/api/story/" + storyId + "/allpages", {
+        type: "GET"
+    }).then(function(pages){
+        newBlankLink(pages).then(function(newlink){
+            $("#link-list").append(newlink);
+            console.log($(".link-text").length);
+            var listLength = $(".link-text").length;
+            if (listLength === 3) {
+                that.prop("disabled", true);
+            }
+        });
+    });
 });
 // end will mark this page, save changes, and disable other buttons. Needs to toggle.
 $(document).on("click", "#end", function (event) {
