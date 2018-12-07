@@ -62,7 +62,12 @@ function createPageObj(linkName = "") {
         ifLinked = true;
     }
     console.log(ifLinked);
-    var ifOrphaned = $("#titleHeader").data("incoming"); // should return the id(s) of the incoming links
+    var parentLinks = $("#titleHeader").data("incoming"); // should return the id(s) of the incoming links
+    var parentLinksArr = parentLinks.split(",")
+    parentLinksArr.pop();
+    console.log("parentLinksArr = ", parentLinksArr);
+    var ifOrphaned = parentLinksArr.length===0;
+    console.log(ifOrphaned);
     var contentFinished = true; // using this temporarily, eventually will be set by author.
     var pageObj = {
         title: pageTitle,
@@ -77,6 +82,27 @@ function createPageObj(linkName = "") {
         pageid: id
     };
     return pageObj;
+}
+// Create links object
+async function createLinks() {
+    var links = $(".link-text");
+    var linksArray = [];
+    var toPageArray = [];
+    for(var i = 0; i < links.length; i++){
+        if($(links[i]).val().length === 0){
+            $(links[i]).val("Continue");
+        }
+        linksArray.push($(links[i]).val());
+        toPageArray.push($(links[i]).siblings(".input-group-append").children(".link-page-dropdown").val());
+    }
+    var linkObj = {
+        linkName: linksArray[i],
+        AuthorId: AuthorId,
+        StoryId: $("#titleHeader").data("story-id"),
+        FromPageId: fromPageId,
+        ToPageId: toPageId
+    };
+    linkObjArray.push(linkObj);
 }
 // Create page
 async function savePage(pageObj){
