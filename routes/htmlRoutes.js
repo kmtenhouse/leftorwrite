@@ -392,12 +392,15 @@ module.exports = function (app) {
     app.get("/story/write/:storyid/pages/:pageid", function (req, res) {
         //check if the page is editable
         check.pageIsWriteable(req.params.pageid, req.session.token, req.params.storyid).then(
-            function(pageResult){
+            async function(pageResult){
                 //if we got a page, render the write form and populate it with the data we already have
-                
+                var childLinks = await pageResult.getChildLinks();
+                var parentLinks = await pageResult.getParentLinks();
                 // this page object is formatted very specifically for page rendering
                 var page = pageResult.dataValues;
                 page.StoryTitle = page.Story.dataValues.title;
+                page.ChildLinks = childLinks;
+                page.ParentLinks = parentLinks;
                 // res.json(page);
                 res.render("createpage", page);
             }, 
