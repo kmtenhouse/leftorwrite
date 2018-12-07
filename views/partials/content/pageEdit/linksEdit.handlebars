@@ -29,25 +29,6 @@
                             </div>
                         </div>
                     {{/each}}
-                {{else}}
-                    <div class="form-row col-12 mb-3 px-0 link-row">
-                        <input class="form-control col-12 col-md-8 link-text" placeholder="Link text -  what your readers will see." aria-label="Link text -  what your readers will see.">
-                        <div class="row col-12 col-md-4 pr-0 mr-0 input-group-append">
-                            <select class="form-control input-group-text col-10 link-page-dropdown">
-                                <option value="blank">New Blank Page</option>
-                                {{#each StoryPages}}
-                                    {{#unless (equals ../id id)}}
-                                        <option value="{{id}}">{{title}}</option>
-                                    {{/unless}}
-                                {{/each}}
-                            </select>
-                            <span class="input-group-text col-2">
-                                <button type="button" class="close" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </span>
-                        </div>
-                    </div>
                 {{/if}}
             </div>  
             <div class="mb-3">
