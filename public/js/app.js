@@ -83,6 +83,10 @@ function createPageObj(linkName = "") {
     };
     return pageObj;
 }
+// Create links object
+async function createLinks() {
+    
+}
 // Create page
 async function savePage(pageObj){
     return $.ajax("/api/page/create/", {
