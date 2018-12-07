@@ -139,7 +139,7 @@ module.exports = function (app) {
     // Theresa created, not tested yet
     // update an existing page
     app.put("/api/page/update/:id", async function(req, res) {
-        console.log("req.body = ", req.body)
+        console.log("req.body = ", req.body);
         var pageToUpdate = await check.pageIsWriteable(req.body.pageid, req.session.token, req.body.storyid)
         if (pageToUpdate) {
             pageToUpdate.update({
@@ -162,14 +162,16 @@ module.exports = function (app) {
             //     console.log(err);
             //     return err.message;
             // });
-            // console.log("makelinks = ", makelinks);
-            console.log(req.body.children)
-            var children = req.body.children;
+            // // console.log("makelinks = ", makelinks);
+            // var athing = "children[0][linkName]";
+            console.log(req.body)
+            var children = JSON.parse(req.body.children);
             console.log("children = ", children)
             if (children) {
+                var childLinks = [];
                 for (var i = 0; i < children.length; i++) {
                     var toId = 0;
-                    if (children[i].ToPageId === "new") {
+                    if (children[i].ToPageId === "blank") {
                         var childpage = await dbMethods.createNewPage({
                             AuthorId: req.session.token,
                             StoryId: req.body.storyId,
@@ -182,7 +184,7 @@ module.exports = function (app) {
                         toId = children[i].ToPageId;
                     }
                     var link = await dbMethods.createNewLink({
-                        linkName: req.body.linkName,
+                        linkName: children[i].linkName,
                         AuthorId: req.session.token,
                         StoryId: req.body.storyId,
                         FromPageId: pageToUpdate.id,

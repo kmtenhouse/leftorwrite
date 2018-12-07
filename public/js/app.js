@@ -60,14 +60,13 @@ function createPageObj(linksArr) {
     if(links.length > 0){
         ifLinked = true;
     }
-    console.log("ifLinked = ", ifLinked);
     var parentLinks = $("#titleHeader").data("incoming"); // should return the id(s) of the incoming links
     if (parentLinks) {
         var parentLinksArr = parentLinks.split(",");
         parentLinksArr.pop();
-        console.log("parentLinksArr = ", parentLinksArr);
+        // console.log("parentLinksArr = ", parentLinksArr);
         var ifOrphaned = parentLinksArr.length===0;
-        console.log(ifOrphaned);
+        // console.log(ifOrphaned);
     }
     else {
         ifOrphaned = false;
@@ -84,8 +83,9 @@ function createPageObj(linksArr) {
         contentFinished: contentFinished,
         storyid: storyid,
         pageid: id,
-        children: linksArr
+        children: JSON.stringify(linksArr)
     };
+    console.log("pageObj = ", pageObj)
     return pageObj;
 }
 // Create links object
@@ -113,7 +113,7 @@ async function createLinks() {
 // Create page
 function savePage(pageObj){
     // console.log("");
-    // console.log("pageObj = ", pageObj);
+    console.log("pageObj = ", pageObj);
     if($("#authorNotes").data("page-id") === ""){
         return $.ajax("/api/page/create/", {
             type: "POST",
@@ -265,10 +265,20 @@ async function newBlankLink(pagesArray) {
 // connect the functions to the buttons
 // save page needs to just save the page info and it's links, if it has any. 
 // Will have logic for create new vs update existing
-$(document).on("click", "#savePage", function (event) { 
+$(document).on("click", "#savePage", async function (event) { 
     event.preventDefault();
-    var linksArr = createLinks();
-    var pageObj = createPageObj(linksArr);
+    var links = await createLinks().then(function (result) {
+       return result
+    // console.log("I created an array look ", result);
+    })
+    var pageObj = await createPageObj(links)
+    console.log(pageObj)
+    savePage(pageObj)
+    // .then(function (object) {
+    //     console.log("I created an object look ", object);
+    //     savePage(object)
+    // })
+    // var pageObj = createPageObj(linksArr);
     // pageObj.children = linksArr;
     // savePage(pageObj);
     // var links = $(".link-text");
