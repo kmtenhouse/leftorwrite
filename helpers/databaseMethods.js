@@ -56,6 +56,18 @@ var dbMethods = {
             return dbFirstPage;
         });
     },
+    findAllPagesInStory: function(authorId, storyId){
+        return db.Page.findAll({
+            where: {
+                AuthorId: authorId,
+                StoryId: storyId
+            },
+            attributes: ["id", "title"],
+            order: [["isOrphaned", "DESC"]]
+        }).then(function(allPages){
+            return allPages;
+        });
+    },
     findPageLinks: function (authorId, storyId, fromPageId) {
         return db.Link.findAll({
             where: {
@@ -172,8 +184,19 @@ var dbMethods = {
         });
     },
     createNewPage: function(pageObj) {
+        console.log(pageObj);
         return db.Page.create(pageObj).then(function(newPage){
             return newPage;
+        });
+    },
+    createMultiplePages: function(pageObjArray) {
+        return db.Page.bulkCreate(pageObjArray).then(function(newPages){
+            var newPagesId = [];
+            for(var i = 0; i < newPages.length; i++){
+                var id = newPages[i].id;
+                newPagesId.push(id);
+            }
+            return newPagesId;
         });
     },
     // Theresa created, not tested yet
@@ -274,6 +297,16 @@ var dbMethods = {
         });
 
 
+    },
+    createNewLink: function(linkObj){
+        return db.Link.create(linkObj).then(function(newLink){
+            return newLink;
+        });
+    },
+    createMultipleLinks: function(linkObjArray){
+        return db.Link.bulkCreate(linkObjArray).then(function(newLinks){
+            return newLinks;
+        });
     }
 };
 

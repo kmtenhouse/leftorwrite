@@ -34,6 +34,16 @@ module.exports = function (app) {
             });
     });
 
+    // get all the pages in a story
+    app.get("/api/story/:storyid/allpages", function(req, res){
+        check.storyIsWriteable(req.params.storyid, req.session.token)
+            .then(function(result){
+                dbMethods.findAllPagesInStory(result.AuthorId, result.id).then(function(pages){
+                    res.json(pages);
+                });
+            });
+    });
+
     // create new page
     app.post("/api/page/create", async function(req, res) {
         var page = await dbMethods.createNewPage({
@@ -52,10 +62,53 @@ module.exports = function (app) {
             return alert(err.message);
         });
         if (page) {
-            console.log("Success!");
-            return res.status(200).send({storyId: page.StoryId, pageId: page.id});
+            console.log("Created new page");
+            return res.status(200).send({storyId: page.StoryId, pageId: page.id, authorId: page.AuthorId});
         }
     });
+
+    // create a new link 
+    app.post("/api/link/create", async function(req, res) {
+        var link = await dbMethods.createNewLink({
+            linkName: req.body.linkName,
+            AuthorId: req.session.token,
+            StoryId: req.body.storyId,
+            FromPageId: req.body.fromPageId,
+            ToPageId: req.body.toPageId
+        }).catch(function(err){
+            console.log("Error: " + err);
+            return alert(err.message);
+        });
+        if(link){
+            console.log("created new link");
+            return res.status(200).send({storyId: link.StoryId, toPageId: link.ToPageId});
+        }
+    }); 
+
+    // create multiple blank pages
+    app.post("/api/page/bulkcreate", async function(req, res){
+        var pages = await dbMethods.createMultiplePages(JSON.parse(req.body.newPages))
+            .catch(function(err){
+                console.log("Error: " + err);
+            });
+        if(pages){
+            console.log("created new pages");
+            return res.status(200).send(pages);
+        }
+    });
+
+    // create multiple links
+    app.post("/api/link/bulkcreate", async function(req, res){
+        console.log(req.body.newLinks);
+        var links = await dbMethods.createMultipleLinks(JSON.parse(req.body.newLinks))
+            .catch(function(err){
+                console.log("Error: " + err);
+            });
+        if(links){
+            return res.status(200).send(links);
+        }
+    });
+
     // Theresa created, not tested yet
     // update an existing page
     app.put("/api/page/update/:id", async function(req, res) {
