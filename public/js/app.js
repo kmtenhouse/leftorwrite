@@ -262,10 +262,9 @@ $(document).on("click", "#tbc", function (event) {
 // ideally has confirm modal
 $(document).on("click", "#deletePage", function (event) {
     event.preventDefault(); 
-    var id = $("#authorNotes").data("page-id"); // will be page id
 });
 
-$(document).change("select[class=\"link-page-dropdown\"]", function(event){
+$(document).change("select[class=\"link-page-dropdown\"]", function(){
     $(".next-page").addClass("disabled");
 });
 
