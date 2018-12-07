@@ -39,6 +39,12 @@ app.engine(
                     return true;
                 }
                 return false;
+            },
+            equals: function(a, b){
+                if(a === b){
+                    return true;
+                }
+                return false;
             }
         }
     })
