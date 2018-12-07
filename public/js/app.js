@@ -239,8 +239,8 @@ $(document).on("click", "#savePage", function (event) {
     }
         
     // Only does this if the current page does not exist in the db
-
-    if($("#authorNotes").data("page-id") === undefined){
+    
+    if($("#authorNotes").data("page-id") === ""){
         savePage(pageObj).then(function(result){
             var AuthorId = result[0];
             var FromPageId = result[1];
@@ -252,7 +252,7 @@ $(document).on("click", "#savePage", function (event) {
     }
     // Saving new changes to existing page
     else{
-        editPage(pageObj)
+        editPage(pageObj);
 
     }
 });
