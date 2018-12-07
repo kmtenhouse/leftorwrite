@@ -61,14 +61,6 @@ module.exports = function (app) {
             console.log("Error: " + err);
             return alert(err.message);
         });
-        if (page) {
-            console.log("Created new page");
-            return res.status(200).send({storyId: page.StoryId, pageId: page.id, authorId: page.AuthorId});
-        }
-    });
-
-    // create a new link 
-    app.post("/api/link/create", async function(req, res) {
         var link = await dbMethods.createNewLink({
             linkName: req.body.linkName,
             AuthorId: req.session.token,
@@ -79,41 +71,58 @@ module.exports = function (app) {
             console.log("Error: " + err);
             return alert(err.message);
         });
-        if(link){
-            console.log("created new link");
-            return res.status(200).send({storyId: link.StoryId, toPageId: link.ToPageId});
-        }
-    }); 
-
-    // create multiple blank pages
-    app.post("/api/page/bulkcreate", async function(req, res){
-        var pages = await dbMethods.createMultiplePages(JSON.parse(req.body.newPages))
-            .catch(function(err){
-                console.log("Error: " + err);
-            });
-        if(pages){
-            console.log("created new pages");
-            return res.status(200).send(pages);
-        }
+        console.log("Created new page");
+        return res.status(200).send({storyId: page.StoryId, pageId: page.id, authorId: page.AuthorId});
     });
 
-    // create multiple links
-    app.post("/api/link/bulkcreate", async function(req, res){
-        console.log(req.body.newLinks);
-        var links = await dbMethods.createMultipleLinks(JSON.parse(req.body.newLinks))
-            .catch(function(err){
-                console.log("Error: " + err);
-            });
-        if(links){
-            return res.status(200).send(links);
-        }
-    });
+    // // create a new link 
+    // app.post("/api/link/create", async function(req, res) {
+    //     var link = await dbMethods.createNewLink({
+    //         linkName: req.body.linkName,
+    //         AuthorId: req.session.token,
+    //         StoryId: req.body.storyId,
+    //         FromPageId: req.body.fromPageId,
+    //         ToPageId: req.body.toPageId
+    //     }).catch(function(err){
+    //         console.log("Error: " + err);
+    //         return alert(err.message);
+    //     });
+    //     if(link){
+    //         console.log("created new link");
+    //         return res.status(200).send({storyId: link.StoryId, toPageId: link.ToPageId});
+    //     }
+    // }); 
+
+    // // create multiple blank pages
+    // app.post("/api/page/bulkcreate", async function(req, res){
+    //     var pages = await dbMethods.createMultiplePages(JSON.parse(req.body.newPages))
+    //         .catch(function(err){
+    //             console.log("Error: " + err);
+    //         });
+    //     if(pages){
+    //         console.log("created new pages");
+    //         return res.status(200).send(pages);
+    //     }
+    // });
+
+    // // create multiple links
+    // app.post("/api/link/bulkcreate", async function(req, res){
+    //     console.log(req.body.newLinks);
+    //     var links = await dbMethods.createMultipleLinks(JSON.parse(req.body.newLinks))
+    //         .catch(function(err){
+    //             console.log("Error: " + err);
+    //         });
+    //     if(links){
+    //         return res.status(200).send(links);
+    //     }
+    // });
 
     // Theresa created, not tested yet
     // update an existing page
     app.put("/api/page/update/:id", async function(req, res) {
-        if (check.pageIsWriteable(req.body.pageid, req.session.token, req.body.storyid)) {
-            var update = await dbMethods.updatePage({
+        var pageToUpdate = await check.pageIsWriteable(req.body.pageid, req.session.token, req.body.storyid)
+        if (pageToUpdate) {
+            pageToUpdate.update({
                 title: req.body.title,
                 content: req.body.content,
                 isStart: req.body.isStart,
@@ -122,15 +131,19 @@ module.exports = function (app) {
                 isLinked: req.body.isLinked,
                 isOrphaned: req.body.isOrphaned,
                 contentFinished: req.body.contentFinished
-            }, 
-            {where: {id: req.params.id}}).catch(function(err) {
+            }).catch(function(err) {
                 console.log(err);
                 return alert(err.message);
             });
-            if (update) {
-                update.setChildLinks([{linkName: "Marching Orders", ToPageId: 6}, {linkName: "Open the door", ToPageId: 8}]);
-                return res.sendStatus(200);
-            }
+            // console.log("pageToUpdate = ", pageToUpdate);
+            var link1 = await db.Link.create({linkName: "Marching Orders", AuthorId: req.session.token, StoryId: req.body.storyid, ToPageId: 6});
+            var link2 = await db.Link.create({linkName: "Open the door", AuthorId: req.session.token, StoryId: req.body.storyid, ToPageId: 8});
+            var makelinks = await pageToUpdate.setChildLinks([link1, link2]).catch(function(err) {
+                console.log(err);
+                return err.message;
+            });
+            console.log("makelinks = ", makelinks);
+            return res.sendStatus(200);
         }
     });
 

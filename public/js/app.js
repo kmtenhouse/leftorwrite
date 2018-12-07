@@ -101,13 +101,11 @@ async function createLinks() {
         linksArray.push($(links[i]).val());
         toPageArray.push($(links[i]).siblings(".input-group-append").children(".link-page-dropdown").val());
         console.log("toPageArray = ", toPageArray);
-        // var linkObj = {
-        //     linkName: linksArray[i],
-        //     // StoryId: $("#titleHeader").data("story-id"),
-        //     // FromPageId: fromPageId,
-        //     ToPageId: toPageId
-        // };
-        // linkObjArray.push(linkObj);
+        var linkObj = {
+            linkName: linksArray[i],
+            ToPageId: toPageArray[i]
+        };
+        linkObjArray.push(linkObj);
     }
     // console.log(linkObjArray);
 }
@@ -382,15 +380,7 @@ $(document).on("click", "#deletePage", function (event) {
     var id = $("#authorNotes").data("page-id"); // will be page id
 });
 
-// THOUGHTS ON DISPLAYING PAGES IN DROPDOWN
-// NEED TO
-// not display current page
-// display page titles for reader friendliness
-// include page id for ease of manipulation, and in case of duplicate titles
-// query the database when choices is clicked and render
-// POSSIBILITIES
-
-$(document).change("select[id=\".link-page-dropdown\"]", function(event){
+$(document).change("select[class=\".link-page-dropdown\"]", function(event){
     var selected = $(this).find("option:selected");
     // value is different from displayed text
     var value = selected.attr("value");
