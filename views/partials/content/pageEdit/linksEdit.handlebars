@@ -6,15 +6,25 @@
                 {{#if ChildLinks}}
                     {{#each ChildLinks}}
                         <div class="form-row col-12 mb-3 px-0 link-row">
-                            <input class="form-control col-12 col-md-8 link-text" id="link-{{id}}" data-link-id="{{id}}" type="text" maxlength="100" value="{{linkName}}" placeholder="Link text -  what your readers will see." aria-label="Link text -  what your readers will see.">
-                            <div class="row col-12 col-md-4 pr-0 mr-0 input-group-append">
-                                <select class="form-control input-group-text col-10 link-page-dropdown">
+                            <input class="form-control col-12 col-md-7 link-text" id="link-{{id}}" data-link-id="{{id}}" type="text" maxlength="100" value="{{linkName}}" placeholder="Link text -  what your readers will see." aria-label="Link text -  what your readers will see.">
+                            <div class="row col-12 col-md-5 pr-0 mr-0 input-group-append">
+                                <select class="form-control input-group-text col-8 link-page-dropdown">
                                     <option>New Blank Page</option>
+                                    {{#each StoryPages}}
+                                        {{#unless (equals ../../id id)}}
+                                            <option value="{{id}}">{{title}}</option>
+                                        {{/unless}}
+                                    {{/each}}
                                 </select>
                                 <span class="input-group-text col-2">
-                                    <button type="button" class="close" aria-label="Close">
+                                    <button type="button" class="close mx-auto" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
+                                </span>
+                                <span class="input-group-text col-2 p-0">
+                                    <a href="/story/write/{{../StoryId}}/pages/{{ToPageId}}" class="btn btn-sm mx-auto" aria-label="Next Page">
+                                        <span aria-hidden="true">&rarr;</span>
+                                    </a>
                                 </span>
                             </div>
                         </div>
