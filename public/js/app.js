@@ -233,12 +233,18 @@ async function createMultipleBlankPages(toPageArray, AuthorId){
     });
 }
 
-function newBlankLink() {
+async function newBlankLink(pagesArray) {
     var newlink = $("<div>").addClass("form-row col-12 mb-3 px-0");
     var linkAddons = $("<div>").addClass("row col-12 col-md-4 pr-0 mr-0 input-group-append");
     var linkTextInput = $("<input id=\"link-new-text\" type=\"text\" maxlength=\"100\" placeholder=\"Link text -  what your readers will see.\" aria-label=\"Link text -  what your readers will see.\">");
     linkTextInput.addClass("form-control col-12 col-md-8 link-text");
-    var linkPageDropdown = $("<select id=\"link-new-dropdown\"><option value=\"blank\">New Blank Page</option><option value=\"snake\">Other snake</option></select>");
+    var linkPageDropdown = $("<select>").attr("id", "link-new-dropdown");
+    var blankPageOption = $("<option value=\"blank\">New Blank Page</option>");
+    linkPageDropdown.append(blankPageOption);
+    for(var i = 0; i < pagesArray.length; i++){
+        var newOption = $("<option>").val(pagesArray[i].id).text(pagesArray[i].title);
+        linkPageDropdown.append(newOption);
+    }
     linkPageDropdown.addClass("form-control input-group-text col-10 link-page-dropdown");
     var linkClose = $("<span class=\"input-group-text col-2\"><button type=\"button\" class=\"close\" id=\"link-new-close\" data-line-id=\"new\" aria-label=\"delete link\"><span aria-hidden=\"true\">&times;</span></button></span>");
     linkAddons.append(linkPageDropdown, linkClose);
@@ -301,20 +307,30 @@ $(document).on("click", "#continue", function (event) {
 // choices will open the link editor
 $(document).on("click", "#choices", function (event) {
     event.preventDefault(); 
-    var newlink = newBlankLink();
-    if (!$(this).hasClass("disabled")) {
-        $(this).toggleClass("active");
-        $("#continue, #end, #tbc").toggleClass("disabled");
-        $("#link-editor").toggle(1000);
-        if ($(this).hasClass("active")) {
-            $("#link-list").append(newlink);
-
-        }
-        else {
-            $("#link-list").empty();
-            $("#add-link-btn").prop("disabled", false);
-        }
-    }
+    var that = $(this);
+    var storyId = $("#titleHeader").data("story-id");
+    $.ajax("/api/story/" + storyId + "/allpages", {
+        type: "GET"
+    }).then(function(pages){
+        newBlankLink(pages).then(function(newlink){
+            console.log(newlink);
+            if (!that.hasClass("disabled")) {
+                that.toggleClass("active");
+                $("#continue, #end, #tbc").toggleClass("disabled");
+                $("#link-editor").toggle(1000);
+                if (that.hasClass("active")) {
+                    console.log("append new links");
+                    $("#link-list").append(newlink);
+        
+                }
+                else {
+                    $("#link-list").empty();
+                    $("#add-link-btn").prop("disabled", false);
+                }
+            }
+        });
+    });
+    
 });
 // button inside link editor, adds new link when clicked
 $(document).on("click", "#add-link-btn", function(event) {
