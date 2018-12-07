@@ -61,16 +61,35 @@ module.exports = function (app) {
             console.log("Error: " + err);
             return alert(err.message);
         });
-        var link = await dbMethods.createNewLink({
-            linkName: req.body.linkName,
-            AuthorId: req.session.token,
-            StoryId: req.body.storyId,
-            FromPageId: req.body.fromPageId,
-            ToPageId: req.body.toPageId
-        }).catch(function(err){
-            console.log("Error: " + err);
-            return alert(err.message);
-        });
+        var children = req.body.children;
+        if (children) {
+            for (var i = 0; i < children.length; i++) {
+                var toId = 0;
+                if (children[i].ToPageId === "new") {
+                    var childpage = await dbMethods.createNewPage({
+                        AuthorId: req.session.token,
+                        StoryId: req.body.storyId,
+                        title: "Default Title",
+                        content: "Default Content"
+                    });
+                    toId = childpage.id
+                }
+                else {
+                    toId = children[i].ToPageId;
+                }
+                var link = await dbMethods.createNewLink({
+                    linkName: req.body.linkName,
+                    AuthorId: req.session.token,
+                    StoryId: req.body.storyId,
+                    FromPageId: page.id,
+                    ToPageId: toId
+                }).catch(function(err){
+                    console.log("Error: " + err);
+                    return alert(err.message);
+                });
+                console.log(link.dataValues);
+            }
+        }
         console.log("Created new page");
         return res.status(200).send({storyId: page.StoryId, pageId: page.id, authorId: page.AuthorId});
     });
@@ -136,13 +155,42 @@ module.exports = function (app) {
                 return alert(err.message);
             });
             // console.log("pageToUpdate = ", pageToUpdate);
-            var link1 = await db.Link.create({linkName: "Marching Orders", AuthorId: req.session.token, StoryId: req.body.storyid, ToPageId: 6});
-            var link2 = await db.Link.create({linkName: "Open the door", AuthorId: req.session.token, StoryId: req.body.storyid, ToPageId: 8});
-            var makelinks = await pageToUpdate.setChildLinks([link1, link2]).catch(function(err) {
-                console.log(err);
-                return err.message;
-            });
-            console.log("makelinks = ", makelinks);
+            // var link1 = await db.Link.create({linkName: "Marching Orders", AuthorId: req.session.token, StoryId: req.body.storyid, ToPageId: 6});
+            // var link2 = await db.Link.create({linkName: "Open the door", AuthorId: req.session.token, StoryId: req.body.storyid, ToPageId: 8});
+            // var makelinks = await pageToUpdate.setChildLinks([link1, link2]).catch(function(err) {
+            //     console.log(err);
+            //     return err.message;
+            // });
+            // console.log("makelinks = ", makelinks);
+            var children = req.body.children;
+            if (children) {
+                for (var i = 0; i < children.length; i++) {
+                    var toId = 0;
+                    if (children[i].ToPageId === "new") {
+                        var childpage = await dbMethods.createNewPage({
+                            AuthorId: req.session.token,
+                            StoryId: req.body.storyId,
+                            title: "Default Title",
+                            content: "Default Content"
+                        });
+                        toId = childpage.id;
+                    }
+                    else {
+                        toId = children[i].ToPageId;
+                    }
+                    var link = await dbMethods.createNewLink({
+                        linkName: req.body.linkName,
+                        AuthorId: req.session.token,
+                        StoryId: req.body.storyId,
+                        FromPageId: pageToUpdate.id,
+                        ToPageId: toId
+                    }).catch(function(err){
+                        console.log("Error: " + err);
+                        return alert(err.message);
+                    });
+                    console.log(link.dataValues);
+                }
+            }
             return res.sendStatus(200);
         }
     });
