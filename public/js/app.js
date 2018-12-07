@@ -64,7 +64,12 @@ function createPageObj(linkName = "") {
         ifLinked = true;
     }
     console.log(ifLinked);
-    var ifOrphaned = $("#titleHeader").data("incoming"); // should return the id(s) of the incoming links
+    var parentLinks = $("#titleHeader").data("incoming"); // should return the id(s) of the incoming links
+    var parentLinksArr = parentLinks.split(",")
+    parentLinksArr.pop();
+    console.log("parentLinksArr = ", parentLinksArr);
+    var ifOrphaned = parentLinksArr.length===0;
+    console.log(ifOrphaned);
     var contentFinished = true; // using this temporarily, eventually will be set by author.
     var pageObj = {
         title: pageTitle,

@@ -24,6 +24,9 @@
                         {{else}}
                             data-start="false"
                         {{/if}}
+                        {{#if ParentLinks}}
+                            data-incoming="{{#each ParentLinks}}{{FromPageId}},{{/each}}"
+                        {{/if}}
                     >{{StoryTitle}} - 
                         {{#if isStart}}
                             Start Page

@@ -6,7 +6,7 @@
                 {{#if ChildLinks}}
                     {{#each ChildLinks}}
                         <div class="form-row col-12 mb-3 px-0 link-row">
-                            <input class="form-control col-12 col-md-8 link-text" id="link-{{id}}" type="text" maxlength="100" value="{{linkName}}" placeholder="Link text -  what your readers will see." aria-label="Link text -  what your readers will see.">
+                            <input class="form-control col-12 col-md-8 link-text" id="link-{{id}}" data-link-id="{{id}}" type="text" maxlength="100" value="{{linkName}}" placeholder="Link text -  what your readers will see." aria-label="Link text -  what your readers will see.">
                             <div class="row col-12 col-md-4 pr-0 mr-0 input-group-append">
                                 <select class="form-control input-group-text col-10 link-page-dropdown">
                                     <option>New Blank Page</option>
