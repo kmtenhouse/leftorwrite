@@ -44,7 +44,9 @@ $(".scroll-to").on("click", function(e){
 // PAGE CREATE AND EDIT FUNCTIONALITY
 // save changes after edit
 // save page function
-function createPageObj() {
+function createPageObj(linksArr) {
+    console.log("inside createPageObj function ");
+    console.log("linksArr = ", linksArr)
     var id = $("#authorNotes").data("page-id"); // will be page id
     var pageTitle = $("#authorNotes").val().trim(); // will be author quick notes
     var pageContent = $("#pageContent").val().trim(); // page content, we need to add a return fixer here
@@ -81,7 +83,8 @@ function createPageObj() {
         isOrphaned: ifOrphaned,
         contentFinished: contentFinished,
         storyid: storyid,
-        pageid: id
+        pageid: id,
+        children: linksArr
     };
     return pageObj;
 }
@@ -108,16 +111,20 @@ async function createLinks() {
     return linkObjArray;
 }
 // Create page
-async function savePage(pageObj){
+function savePage(pageObj){
+    // console.log("");
+    // console.log("pageObj = ", pageObj);
     if($("#authorNotes").data("page-id") === ""){
         return $.ajax("/api/page/create/", {
             type: "POST",
-            data: pageObj
+            data: {
+                page: pageObj
+            }
         }).then(function (result, status) {
             if (status === "success") {
-                if(pageObj.isLinked){
-                    return [result.authorId, result.pageId];
-                }
+                // if(pageObj.isLinked){
+                //     return [result.authorId, result.pageId];
+                // }
                 window.location = "/story/write/" + result.storyId + "/pages/" + result.pageId;
             }
         });
@@ -260,11 +267,10 @@ async function newBlankLink(pagesArray) {
 // Will have logic for create new vs update existing
 $(document).on("click", "#savePage", function (event) { 
     event.preventDefault();
-    
-    var pageObj = createPageObj();
     var linksArr = createLinks();
-    pageObj.children = linksArr;
-    savePage(pageObj);
+    var pageObj = createPageObj(linksArr);
+    // pageObj.children = linksArr;
+    // savePage(pageObj);
     // var links = $(".link-text");
     // var linksArray = [];
     // var toPageArray = [];
@@ -353,7 +359,7 @@ $(document).on("click", "#add-link-btn", function(event) {
     }).then(function(pages){
         newBlankLink(pages).then(function(newlink){
             $("#link-list").append(newlink);
-            console.log($(".link-text").length);
+            // console.log($(".link-text").length);
             var listLength = $(".link-text").length;
             if (listLength === 3) {
                 that.prop("disabled", true);
@@ -386,12 +392,12 @@ $(document).on("click", "#deletePage", function (event) {
     var id = $("#authorNotes").data("page-id"); // will be page id
 });
 
-$(document).change("select[class=\".link-page-dropdown\"]", function(event){
+$(document).change("select[class=\"link-page-dropdown\"]", function(event){
     var selected = $(this).find("option:selected");
     // value is different from displayed text
     var value = selected.attr("value");
     // console.log(value);
-    createLinks();
+    // createLinks();
 });
 
 $(document).on("click", ".close", function () {

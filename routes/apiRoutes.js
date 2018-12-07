@@ -139,6 +139,7 @@ module.exports = function (app) {
     // Theresa created, not tested yet
     // update an existing page
     app.put("/api/page/update/:id", async function(req, res) {
+        console.log("req.body = ", req.body)
         var pageToUpdate = await check.pageIsWriteable(req.body.pageid, req.session.token, req.body.storyid)
         if (pageToUpdate) {
             pageToUpdate.update({
@@ -162,7 +163,9 @@ module.exports = function (app) {
             //     return err.message;
             // });
             // console.log("makelinks = ", makelinks);
+            console.log(req.body.children)
             var children = req.body.children;
+            console.log("children = ", children)
             if (children) {
                 for (var i = 0; i < children.length; i++) {
                     var toId = 0;
@@ -188,8 +191,10 @@ module.exports = function (app) {
                         console.log("Error: " + err);
                         return alert(err.message);
                     });
-                    console.log(link.dataValues);
+                    console.log(link);
+                    childLinks.push(link);
                 }
+                pageToUpdate.setChildLinks(childLinks);
             }
             return res.sendStatus(200);
         }
