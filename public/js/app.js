@@ -390,7 +390,7 @@ $(document).on("click", "#deletePage", function (event) {
 // query the database when choices is clicked and render
 // POSSIBILITIES
 
-$(document).change("select[id=\"link-new-page\"]", function(event){
+$(document).change("select[id=\".link-page-dropdown\"]", function(event){
     var selected = $(this).find("option:selected");
     // value is different from displayed text
     var value = selected.attr("value");

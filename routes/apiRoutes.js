@@ -123,11 +123,12 @@ module.exports = function (app) {
                 isOrphaned: req.body.isOrphaned,
                 contentFinished: req.body.contentFinished
             }, 
-            req.body.pageid).catch(function(err) {
+            {where: {id: req.params.id}}).catch(function(err) {
                 console.log(err);
                 return alert(err.message);
             });
             if (update) {
+                update.setChildLinks([{linkName: "Marching Orders", ToPageId: 6}, {linkName: "Open the door", ToPageId: 8}]);
                 return res.sendStatus(200);
             }
         }
@@ -203,17 +204,17 @@ module.exports = function (app) {
         db.User.update({
             displayName: req.body.username
         }, {
-                where: {
-                    id: req.session.token
-                }
-            }).then(function (dbUser) {
-                if (dbUser === 0) {
-                    return res.status(404).end();
-                }
-                else {
-                    return res.status(200).end();
-                }
-            });
+            where: {
+                id: req.session.token
+            }
+        }).then(function (dbUser) {
+            if (dbUser === 0) {
+                return res.status(404).end();
+            }
+            else {
+                return res.status(200).end();
+            }
+        });
     });
 
     // update story info route
@@ -237,8 +238,8 @@ module.exports = function (app) {
                 isFinished: req.body.isFinished,
                 doneByDefault: req.body.doneByDefault
             }, {
-                    where: { id: req.params.id }
-                });
+                where: { id: req.params.id }
+            });
             if (req.body.tags) {
                 var tagsArr = req.body.tags.split(",");
                 theStory.setTags(tagsArr, { where: { StoryId: req.params.id } }).then(function (dbTag) {
