@@ -9,7 +9,7 @@ $(document).on("click", ".publish-btn", function(event) {
         type: "PUT",
         dataType: "json",
         data: { storyId: thisStory },
-        success: function(data, textStatus, xhr) {
+        success: function(data) {
             //upon success, check the object we got back...
             if(data.success) {
                 //disable any publish buttons and show the user that they succeeded in publishing!
