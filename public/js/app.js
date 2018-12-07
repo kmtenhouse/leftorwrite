@@ -61,13 +61,18 @@ function createPageObj(linkName = "") {
     if(links.length > 0){
         ifLinked = true;
     }
-    console.log(ifLinked);
+    console.log("ifLinked = ", ifLinked);
     var parentLinks = $("#titleHeader").data("incoming"); // should return the id(s) of the incoming links
-    var parentLinksArr = parentLinks.split(",")
-    parentLinksArr.pop();
-    console.log("parentLinksArr = ", parentLinksArr);
-    var ifOrphaned = parentLinksArr.length===0;
-    console.log(ifOrphaned);
+    if (parentLinks) {
+        var parentLinksArr = parentLinks.split(",");
+        parentLinksArr.pop();
+        console.log("parentLinksArr = ", parentLinksArr);
+        var ifOrphaned = parentLinksArr.length===0;
+        console.log(ifOrphaned);
+    }
+    else {
+        ifOrphaned = false;
+    }
     var contentFinished = true; // using this temporarily, eventually will be set by author.
     var pageObj = {
         title: pageTitle,
@@ -88,21 +93,23 @@ async function createLinks() {
     var links = $(".link-text");
     var linksArray = [];
     var toPageArray = [];
+    var linkObjArray = [];
     for(var i = 0; i < links.length; i++){
         if($(links[i]).val().length === 0){
             $(links[i]).val("Continue");
         }
         linksArray.push($(links[i]).val());
         toPageArray.push($(links[i]).siblings(".input-group-append").children(".link-page-dropdown").val());
+        console.log("toPageArray = ", toPageArray);
+        // var linkObj = {
+        //     linkName: linksArray[i],
+        //     // StoryId: $("#titleHeader").data("story-id"),
+        //     // FromPageId: fromPageId,
+        //     ToPageId: toPageId
+        // };
+        // linkObjArray.push(linkObj);
     }
-    var linkObj = {
-        linkName: linksArray[i],
-        AuthorId: AuthorId,
-        StoryId: $("#titleHeader").data("story-id"),
-        FromPageId: fromPageId,
-        ToPageId: toPageId
-    };
-    linkObjArray.push(linkObj);
+    // console.log(linkObjArray);
 }
 // Create page
 async function savePage(pageObj){
@@ -364,7 +371,8 @@ $(document).change("select[id=\"link-new-page\"]", function(event){
     var selected = $(this).find("option:selected");
     // value is different from displayed text
     var value = selected.attr("value");
-    console.log(value);
+    // console.log(value);
+    createLinks();
 });
 
 // NOTE TO SELF: disable end and tbc on start page
