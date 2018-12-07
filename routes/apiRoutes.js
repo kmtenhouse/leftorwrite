@@ -201,7 +201,12 @@ module.exports = function (app) {
                 }
                 pageToUpdate.setChildLinks(childLinks);
             }
-            return res.status(200).send({storyId: pageToUpdate.StoryId, toPageId: childpage.id});
+            if(childpage){
+                return res.status(200).send({storyId: pageToUpdate.StoryId, toPageId: childpage.id});
+            }
+            else{
+                return res.sendStatus(200);
+            }
         }
     });
 

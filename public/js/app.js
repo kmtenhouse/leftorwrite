@@ -145,111 +145,8 @@ function savePage(pageObj, clickedContinue){
     }
 }
 
-// Creates blank pages, used for when creating links to new pages
-// function createBlankPage() {
-//     var pageObj = {
-//         title: "Default Title",
-//         content: "Default Content", 
-//         isStart: false,
-//         isTBC: false,
-//         isEnding: false,
-//         isLinked: false,
-//         isOrphaned: false,
-//         contentFinished: false,
-//         storyid: $("#titleHeader").data("story-id")
-//     };
-//     return $.ajax("/api/page/create/", {
-//         type: "POST",
-//         data: pageObj
-//     }).then(function (result, status) {
-//         if (status === "success") {
-//             return result.pageId;
-//         }
-//     });
-// }
-
-// Creates a single link that is continue only
-// function createContinueLink(fromPageId, toPageId) {
-//     var linkObj = {
-//         linkName: "Continue",
-//         storyId: $("#titleHeader").data("story-id"),
-//         fromPageId: fromPageId,
-//         toPageId: toPageId
-//     };
-//     $.ajax("/api/link/create", {
-//         type: "POST",
-//         data: linkObj
-//     }).then(function(result, status){
-//         console.log(status);
-//         if(status === "success"){
-//             window.location = "/story/write/" + result.storyId + "/pages/" + result.toPageId;
-//         }
-//     });
-// }
-
-// function createMultipleLinks(linksArray, fromPageId, toPageArray, blankPageArray, AuthorId){
-//     var linkObjArray = [];
-//     for(var i = 0; i < linksArray.length; i ++){
-
-//         if(toPageArray[i] !== "blank"){
-//             var toPageId = toPageArray[i];
-//         }
-//         else{
-//             toPageId = blankPageArray[0];
-//             blankPageArray.splice(0,1);
-//         }
-//         var linkObj = {
-//             linkName: linksArray[i],
-//             AuthorId: AuthorId,
-//             StoryId: $("#titleHeader").data("story-id"),
-//             FromPageId: fromPageId,
-//             ToPageId: toPageId
-//         };
-//         linkObjArray.push(linkObj);
-//     }
-//     $.ajax("/api/link/bulkcreate", {
-//         type: "POST",
-//         data: {newLinks: JSON.stringify(linkObjArray)}
-//     }).then(function(result, status){
-//         if(status === "success"){
-//             var storyId = result[0].StoryId;
-//             var fromPageId = result[0].FromPageId;
-//             window.location = "/story/write/" + storyId + "/pages/" + fromPageId;
-//         }
-//     });
-// }
-
-// async function createMultipleBlankPages(toPageArray, AuthorId){
-//     var createPagesArray = [];
-//     for(var i = 0; i < toPageArray.length; i ++){
-//         if(toPageArray[i] === "blank"){
-//             var pageObj = {
-//                 title: "Default Title",
-//                 content: "Default Content", 
-//                 isStart: false,
-//                 isTBC: false,
-//                 isEnding: false,
-//                 isLinked: false,
-//                 isOrphaned: false,
-//                 contentFinished: false,
-//                 StoryId: $("#titleHeader").data("story-id"),
-//                 AuthorId: AuthorId
-//             };
-//             createPagesArray.push(pageObj);
-//         }
-//     }
-//     console.log(createPagesArray);
-//     return $.ajax("/api/page/bulkcreate", {
-//         type: "POST",
-//         data: {newPages: JSON.stringify(createPagesArray)}
-//     }).then(function(result, status){
-//         if(status === "success"){
-//             return(result);
-//         }
-//     });
-// }
-
 async function newBlankLink(pagesArray) {
+    var currentPage = $("#authorNotes").data("page-id");
     var newlink = $("<div>").addClass("form-row col-12 mb-3 px-0 link-row");
     var linkAddons = $("<div>").addClass("row col-12 col-md-5 pr-0 mr-0 input-group-append");
     var linkTextInput = $("<input id=\"link-new-text\" type=\"text\" maxlength=\"100\" placeholder=\"Link text -  what your readers will see.\" aria-label=\"Link text -  what your readers will see.\">");
@@ -258,8 +155,10 @@ async function newBlankLink(pagesArray) {
     var blankPageOption = $("<option value=\"blank\">New Blank Page</option>");
     linkPageDropdown.append(blankPageOption);
     for(var i = 0; i < pagesArray.length; i++){
-        var newOption = $("<option>").val(pagesArray[i].id).text(pagesArray[i].title);
-        linkPageDropdown.append(newOption);
+        if(pagesArray[i].id !== currentPage){
+            var newOption = $("<option>").val(pagesArray[i].id).text(pagesArray[i].title);
+            linkPageDropdown.append(newOption);
+        }
     }
     linkPageDropdown.addClass("form-control input-group-text col-8 link-page-dropdown");
     var linkClose = $("<span class=\"input-group-text col-2\"><button type=\"button\" class=\"close\" id=\"link-new-close\" data-line-id=\"new\" aria-label=\"delete link\"><span aria-hidden=\"true\">&times;</span></button></span>");
@@ -277,41 +176,6 @@ $(document).on("click", "#savePage", async function (event) {
     var pageObj = createPageObj(links);
     console.log(pageObj);
     savePage(pageObj);
-    // .then(function (object) {
-    //     console.log("I created an object look ", object);
-    //     savePage(object)
-    // })
-    // var pageObj = createPageObj(linksArr);
-    // pageObj.children = linksArr;
-    // savePage(pageObj);
-    // var links = $(".link-text");
-    // var linksArray = [];
-    // var toPageArray = [];
-    // for(var i = 0; i < links.length; i++){
-    //     if($(links[i]).val().length === 0){
-    //         $(links[i]).val("Continue");
-    //     }
-    //     linksArray.push($(links[i]).val());
-    //     toPageArray.push($(links[i]).siblings(".input-group-append").children("#link-new-dropdown").val());
-    // }
-        
-    // Only does this if the current page does not exist in the db
-    
-    // if($("#authorNotes").data("page-id") === ""){
-    //     savePage(pageObj).then(function(result){
-    //         var AuthorId = result[0];
-    //         var FromPageId = result[1];
-    //         createMultipleBlankPages(toPageArray, AuthorId).then(function(newPagesId){
-    //             console.log(newPagesId);
-    //             createMultipleLinks(linksArray, FromPageId, toPageArray, newPagesId, AuthorId);
-    //         });
-    //     }); 
-    // }
-    // // Saving new changes to existing page
-    // else{
-    //     editPage(pageObj);
-
-    // }
 });
 
 // continue will also save a page, and create a "continue" link with a new blank page on the other end
@@ -326,12 +190,6 @@ $(document).on("click", "#continue", function (event) {
         }];
         var pageObj = createPageObj(links);
         savePage(pageObj, clickedContinue);
-        // savePage(pageObj).then(function(result){
-        //     var fromPageId = result[1];
-        //     createBlankPage().then(function(toPageId){
-        //         createContinueLink(fromPageId, toPageId);
-        //     });
-        // });
     }
 });
 
@@ -366,6 +224,7 @@ $(document).on("click", "#choices", function (event) {
 // button inside link editor, adds new link when clicked
 $(document).on("click", "#add-link-btn", function(event) {
     event.preventDefault();
+    $(".next-page").addClass("disabled");
     var that = $(this);
     var storyId = $("#titleHeader").data("story-id");
     $.ajax("/api/story/" + storyId + "/allpages", {
@@ -407,11 +266,7 @@ $(document).on("click", "#deletePage", function (event) {
 });
 
 $(document).change("select[class=\"link-page-dropdown\"]", function(event){
-    var selected = $(this).find("option:selected");
-    // value is different from displayed text
-    var value = selected.attr("value");
-    // console.log(value);
-    // createLinks();
+    $(".next-page").addClass("disabled");
 });
 
 $(document).on("click", ".close", function () {
