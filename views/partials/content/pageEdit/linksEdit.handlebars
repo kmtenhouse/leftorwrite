@@ -9,10 +9,10 @@
                             <input class="form-control col-12 col-md-7 link-text" id="link-{{id}}" data-link-id="{{id}}" type="text" maxlength="100" value="{{linkName}}" placeholder="Link text -  what your readers will see." aria-label="Link text -  what your readers will see.">
                             <div class="row col-12 col-md-5 pr-0 mr-0 input-group-append">
                                 <select class="form-control input-group-text col-8 link-page-dropdown">
-                                    <option>New Blank Page</option>
-                                    {{#each StoryPages}}
+                                    <option value="blank">New Blank Page</option>
+                                    {{#each ../StoryPages}}
                                         {{#unless (equals ../../id id)}}
-                                            <option value="{{id}}">{{title}}</option>
+                                            <option value="{{id}}"{{#if (equals ../ToPageId id)}} selected {{/if}}>{{title}}</option>
                                         {{/unless}}
                                     {{/each}}
                                 </select>
