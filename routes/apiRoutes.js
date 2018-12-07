@@ -61,37 +61,40 @@ module.exports = function (app) {
             console.log("Error: " + err);
             return alert(err.message);
         });
-        var children = req.body.children;
-        if (children) {
-            for (var i = 0; i < children.length; i++) {
-                var toId = 0;
-                if (children[i].ToPageId === "new") {
-                    var childpage = await dbMethods.createNewPage({
+        if(page){
+            var children = JSON.parse(req.body.children);
+            if (children) {
+                for (var i = 0; i < children.length; i++) {
+                    var toId = 0;
+                    if (children[i].ToPageId === "blank") {
+                        var childpage = await dbMethods.createNewPage({
+                            AuthorId: req.session.token,
+                            StoryId: req.body.storyid,
+                            title: "Default Title",
+                            content: "Default Content"
+                        });
+                        toId = childpage.id;
+                        console.log(toId);
+                    }
+                    else {
+                        toId = children[i].ToPageId;
+                    }
+                    var link = await dbMethods.createNewLink({
+                        linkName: children[i].linkName,
                         AuthorId: req.session.token,
-                        StoryId: req.body.storyId,
-                        title: "Default Title",
-                        content: "Default Content"
+                        StoryId: req.body.storyid,
+                        FromPageId: page.id,
+                        ToPageId: toId
+                    }).catch(function(err){
+                        console.log("Error: " + err);
+                        return alert(err.message);
                     });
-                    toId = childpage.id
+                    console.log(link.dataValues);
                 }
-                else {
-                    toId = children[i].ToPageId;
-                }
-                var link = await dbMethods.createNewLink({
-                    linkName: req.body.linkName,
-                    AuthorId: req.session.token,
-                    StoryId: req.body.storyId,
-                    FromPageId: page.id,
-                    ToPageId: toId
-                }).catch(function(err){
-                    console.log("Error: " + err);
-                    return alert(err.message);
-                });
-                console.log(link.dataValues);
             }
+            console.log("Created new page");
+            return res.status(200).send({storyId: page.StoryId, pageId: page.id, authorId: page.AuthorId});
         }
-        console.log("Created new page");
-        return res.status(200).send({storyId: page.StoryId, pageId: page.id, authorId: page.AuthorId});
     });
 
     // // create a new link 
@@ -174,7 +177,7 @@ module.exports = function (app) {
                     if (children[i].ToPageId === "blank") {
                         var childpage = await dbMethods.createNewPage({
                             AuthorId: req.session.token,
-                            StoryId: req.body.storyId,
+                            StoryId: req.body.storyid,
                             title: "Default Title",
                             content: "Default Content"
                         });
@@ -186,7 +189,7 @@ module.exports = function (app) {
                     var link = await dbMethods.createNewLink({
                         linkName: children[i].linkName,
                         AuthorId: req.session.token,
-                        StoryId: req.body.storyId,
+                        StoryId: req.body.storyid,
                         FromPageId: pageToUpdate.id,
                         ToPageId: toId
                     }).catch(function(err){
@@ -198,7 +201,7 @@ module.exports = function (app) {
                 }
                 pageToUpdate.setChildLinks(childLinks);
             }
-            return res.sendStatus(200);
+            return res.status(200).send({storyId: pageToUpdate.StoryId, toPageId: childpage.id});
         }
     });
 

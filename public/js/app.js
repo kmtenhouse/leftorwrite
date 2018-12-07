@@ -46,7 +46,7 @@ $(".scroll-to").on("click", function(e){
 // save page function
 function createPageObj(linksArr) {
     console.log("inside createPageObj function ");
-    console.log("linksArr = ", linksArr)
+    console.log("linksArr = ", linksArr);
     var id = $("#authorNotes").data("page-id"); // will be page id
     var pageTitle = $("#authorNotes").val().trim(); // will be author quick notes
     var pageContent = $("#pageContent").val().trim(); // page content, we need to add a return fixer here
@@ -85,11 +85,11 @@ function createPageObj(linksArr) {
         pageid: id,
         children: JSON.stringify(linksArr)
     };
-    console.log("pageObj = ", pageObj)
+    console.log("pageObj = ", pageObj);
     return pageObj;
 }
 // Create links object
-async function createLinks() {
+function createLinks() {
     var links = $(".link-text");
     var linksArray = [];
     var toPageArray = [];
@@ -111,15 +111,14 @@ async function createLinks() {
     return linkObjArray;
 }
 // Create page
-function savePage(pageObj){
+function savePage(pageObj, clickedContinue){
     // console.log("");
     console.log("pageObj = ", pageObj);
+    console.log(clickedContinue);
     if($("#authorNotes").data("page-id") === ""){
         return $.ajax("/api/page/create/", {
             type: "POST",
-            data: {
-                page: pageObj
-            }
+            data: pageObj
         }).then(function (result, status) {
             if (status === "success") {
                 // if(pageObj.isLinked){
@@ -133,8 +132,15 @@ function savePage(pageObj){
         $.ajax("/api/page/update/" + pageObj.pageid, {
             type: "PUT",
             data: pageObj
-        }).then(function () {
-            location.reload();
+        }).then(function (result, status) {
+            if(status === "success"){
+                if(clickedContinue){
+                    window.location = "/story/write/" + result.storyId + "/pages/" + result.toPageId;
+                }
+                else{
+                    location.reload();
+                }
+            }
         });
     }
 }
@@ -245,9 +251,9 @@ function savePage(pageObj){
 
 async function newBlankLink(pagesArray) {
     var newlink = $("<div>").addClass("form-row col-12 mb-3 px-0 link-row");
-    var linkAddons = $("<div>").addClass("row col-12 col-md-4 pr-0 mr-0 input-group-append");
+    var linkAddons = $("<div>").addClass("row col-12 col-md-5 pr-0 mr-0 input-group-append");
     var linkTextInput = $("<input id=\"link-new-text\" type=\"text\" maxlength=\"100\" placeholder=\"Link text -  what your readers will see.\" aria-label=\"Link text -  what your readers will see.\">");
-    linkTextInput.addClass("form-control col-12 col-md-8 link-text");
+    linkTextInput.addClass("form-control col-12 col-md-7 link-text");
     var linkPageDropdown = $("<select>").attr("id", "link-new-dropdown");
     var blankPageOption = $("<option value=\"blank\">New Blank Page</option>");
     linkPageDropdown.append(blankPageOption);
@@ -255,7 +261,7 @@ async function newBlankLink(pagesArray) {
         var newOption = $("<option>").val(pagesArray[i].id).text(pagesArray[i].title);
         linkPageDropdown.append(newOption);
     }
-    linkPageDropdown.addClass("form-control input-group-text col-10 link-page-dropdown");
+    linkPageDropdown.addClass("form-control input-group-text col-8 link-page-dropdown");
     var linkClose = $("<span class=\"input-group-text col-2\"><button type=\"button\" class=\"close\" id=\"link-new-close\" data-line-id=\"new\" aria-label=\"delete link\"><span aria-hidden=\"true\">&times;</span></button></span>");
     linkAddons.append(linkPageDropdown, linkClose);
     newlink.append(linkTextInput, linkAddons);
@@ -267,13 +273,10 @@ async function newBlankLink(pagesArray) {
 // Will have logic for create new vs update existing
 $(document).on("click", "#savePage", async function (event) { 
     event.preventDefault();
-    var links = await createLinks().then(function (result) {
-       return result
-    // console.log("I created an array look ", result);
-    })
-    var pageObj = await createPageObj(links)
-    console.log(pageObj)
-    savePage(pageObj)
+    var links = createLinks();
+    var pageObj = createPageObj(links);
+    console.log(pageObj);
+    savePage(pageObj);
     // .then(function (object) {
     //     console.log("I created an object look ", object);
     //     savePage(object)
@@ -315,13 +318,14 @@ $(document).on("click", "#savePage", async function (event) {
 // then redirect to the newly created page for editing
 $(document).on("click", "#continue", function (event) {
     event.preventDefault(); 
+    var clickedContinue = true;
     if (!$(this).hasClass("disabled")) {
-        var pageObj = createPageObj();
-        var link = {
+        var links = [{
             linkName: "Continue",
-            ToPageId: "new"
-        };
-        savePage(pageObj);
+            ToPageId: "blank"
+        }];
+        var pageObj = createPageObj(links);
+        savePage(pageObj, clickedContinue);
         // savePage(pageObj).then(function(result){
         //     var fromPageId = result[1];
         //     createBlankPage().then(function(toPageId){
