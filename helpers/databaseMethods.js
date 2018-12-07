@@ -56,6 +56,18 @@ var dbMethods = {
             return dbFirstPage;
         });
     },
+    findAllPagesInStory: function(authorId, storyId){
+        return db.Page.findAll({
+            where: {
+                AuthorId: authorId,
+                StoryId: storyId
+            },
+            attributes: ["id", "title"],
+            order: [["isOrphaned", "DESC"]]
+        }).then(function(allPages){
+            return allPages;
+        });
+    },
     findPageLinks: function (authorId, storyId, fromPageId) {
         return db.Link.findAll({
             where: {

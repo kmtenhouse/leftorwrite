@@ -34,6 +34,16 @@ module.exports = function (app) {
             });
     });
 
+    // get all the pages in a story
+    app.get("/api/story/:storyid/allpages", function(req, res){
+        check.storyIsWriteable(req.params.storyid, req.session.token)
+            .then(function(result){
+                dbMethods.findAllPagesInStory(result.AuthorId, result.id).then(function(pages){
+                    res.json(pages);
+                });
+            });
+    });
+
     // create new page
     app.post("/api/page/create", async function(req, res) {
         var page = await dbMethods.createNewPage({
@@ -75,6 +85,7 @@ module.exports = function (app) {
         }
     }); 
 
+    // create multiple blank pages
     app.post("/api/page/bulkcreate", async function(req, res){
         var pages = await dbMethods.createMultiplePages(JSON.parse(req.body.newPages))
             .catch(function(err){
@@ -86,6 +97,7 @@ module.exports = function (app) {
         }
     });
 
+    // create multiple links
     app.post("/api/link/bulkcreate", async function(req, res){
         console.log(req.body.newLinks);
         var links = await dbMethods.createMultipleLinks(JSON.parse(req.body.newLinks))
