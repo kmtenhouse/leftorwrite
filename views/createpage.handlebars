@@ -56,7 +56,7 @@
                     <div class="row page-buttons-row mx-1">
                         <button class="btn custom-primary-btn col-12 col-md-2 my-3" id="savePage" aria-describedby="save page button">Save Page</button>
                         <button class="btn page-btn col-3 col-md-2 pr-4" id="continue" aria-describedby="save page button">Cont.</button>
-                        <button class="btn page-btn col-3 col-md-2 p-0" id="choices" aria-describedby="save page button">Choices</button>
+                        <button class="btn page-btn col-3 col-md-2 p-0 {{#if id}} active {{/if}}" id="choices" aria-describedby="save page button">Choices</button>
                         {{#unless isStart}}
                             <button class="btn page-btn col-3 col-md-2{{#if isEnding}} active{{/if}}" id="end" aria-describedby="save page button">End</button>
                             <button class="btn page-btn col-3 col-md-2{{#if isTBC}} active{{/if}}" id="tbc" aria-describedby="save page button">TBC</button>

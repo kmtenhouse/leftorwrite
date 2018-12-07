@@ -396,11 +396,13 @@ module.exports = function (app) {
                 //if we got a page, render the write form and populate it with the data we already have
                 var childLinks = await pageResult.getChildLinks();
                 var parentLinks = await pageResult.getParentLinks();
+                var storyPages = await dbMethods.findAllPagesInStory(pageResult.AuthorId, pageResult.StoryId);
                 // this page object is formatted very specifically for page rendering
                 var page = pageResult.dataValues;
                 page.StoryTitle = page.Story.dataValues.title;
                 page.ChildLinks = childLinks;
                 page.ParentLinks = parentLinks;
+                page.StoryPages = storyPages;
                 // res.json(page);
                 res.render("createpage", page);
             }, 
