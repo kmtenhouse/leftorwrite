@@ -39,13 +39,13 @@
                         <div class="form-row">
                             <div class="form-group col-12 col-md-3">
                                 <label for="authorNotes">Author Notes:</label>
-                                <textarea class="form-control border-secondary" id="authorNotes" rows="5" data-page-id="{{id}}" maxlength="100" value="{{title}}" placeholder="A few words to help you remember what this page is about. So make them memorable."></textarea>
+                                <textarea class="form-control border-secondary" id="authorNotes" rows="5" data-page-id="{{id}}" maxlength="100" placeholder="A few words to help you remember what this page is about. So make them memorable.">{{title}}</textarea>
                                 <small id="titleHelp" class="form-text text-muted">The Author Notes section is just for your reference -
                                     your readers won't see it! <br> Author Notes allows 100 characters, Page Content allows 5000.</small>
                             </div>
                             <div class="form-group col-12 col-md-9">
                                 <label for="pageContent">Page Content:</label>
-                                <textarea class="form-control border-secondary" id="pageContent" rows="12" maxlength="5000" value="{{content}}" placeholder="What's going to happen next?"></textarea>
+                                <textarea class="form-control border-secondary" id="pageContent" rows="12" maxlength="5000" placeholder="What's going to happen next?">{{content}}</textarea>
                             </div>
                         </div>
                     </form>

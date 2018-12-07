@@ -398,8 +398,8 @@ module.exports = function (app) {
                 // this page object is formatted very specifically for page rendering
                 var page = pageResult.dataValues;
                 page.StoryTitle = page.Story.dataValues.title;
-                res.json(page);
-                // res.render("createpage", page);
+                // res.json(page);
+                res.render("createpage", page);
             }, 
             function(err) {
                 //if an error occurred with the page load, go ahead and show the user

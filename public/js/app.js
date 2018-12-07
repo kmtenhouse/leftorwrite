@@ -54,6 +54,7 @@ function savePage() {
     var ifTBC = $("#tbc").hasClass("active"); // same as the end button
     // .lenth returns number of items (with this class)
     var ifLinked = $(".link-text").length>0; // not sure if this syntax works, trying to get a boolean
+    console.log(ifLinked);
     var links = $(".link-text");
     console.log("Link texts = ", links);
     var ifOrphaned = $("#titleHeader").data("incoming"); // should return the id(s) of the incoming links
@@ -73,7 +74,7 @@ function savePage() {
     // have logic for create and update, but may need to further separate
     // CREATE
     if (id === "") {
-        $.ajax("/api/page/create/", {
+        $.ajax("/api/page/create", {
             type: "POST",
             data: pageObj
         }).then(function (result, status) {
@@ -94,7 +95,7 @@ function savePage() {
 }
 
 function newBlankLink() {
-    var newlink = $("<div>").addClass("form-row col-12 mb-3 px-0");
+    var newlink = $("<div>").addClass("form-row col-12 mb-3 px-0 link-row");
     var linkAddons = $("<div>").addClass("row col-12 col-md-4 pr-0 mr-0 input-group-append");
     var linkTextInput = $("<input id=\"link-new-text\" type=\"text\" maxlength=\"100\" placeholder=\"Link text -  what your readers will see.\" aria-label=\"Link text -  what your readers will see.\">");
     linkTextInput.addClass("form-control col-12 col-md-8 link-text");
@@ -131,7 +132,6 @@ $(document).on("click", "#choices", function (event) {
         $("#link-editor").toggle(1000);
         if ($(this).hasClass("active")) {
             $("#link-list").append(newlink);
-
         }
         else {
             $("#link-list").empty();
@@ -150,6 +150,13 @@ $(document).on("click", "#add-link-btn", function(event) {
     if (listLength === 3) {
         $(this).prop("disabled", true);
     }
+});
+// also inside the link editor, one per link row,
+// the close/delete button for an individual link
+$(document).on("click", ".close", function (event) {
+    event.preventDefault();
+    $(this).parent().parent().parent().remove();
+    $("#add-link-btn").prop("disabled", false);
 });
 // end will mark this page, save changes, and disable other buttons. Needs to toggle.
 $(document).on("click", "#end", function (event) {
@@ -184,11 +191,11 @@ $(document).on("click", "#deletePage", function (event) {
 // query the database when choices is clicked and render
 // POSSIBILITIES
 
-$(document).change("select[id=\"link-new-page\"]", function(event){
+// this allows to check value, may not be needed for functionality
+$(document).change("select[class=\"link-page-dropdown\"]", function(event){
     var selected = $(this).find("option:selected");
     // value is different from displayed text
     var value = selected.attr("value");
     console.log(value);
 });
 
-// NOTE TO SELF: disable end and tbc on start page
