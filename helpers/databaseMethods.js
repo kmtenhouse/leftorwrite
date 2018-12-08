@@ -16,14 +16,14 @@ var dbMethods = {
         });
     },
     topFiveTags: function () {
-        return db.sequelize.query("select Tags.id, Tags.tagName, COUNT(Stories.id) as num_stories from Tags left join StoryTag on StoryTag.TagId = Tags.id left join Stories on StoryTag.StoryId = Stories.id where Stories.isPublic = 1 and Stories.isFinished = 1 group by Tags.id order by num_stories desc limit 5;",
+        return db.sequelize.query("select Tags.id, Tags.TagName, COUNT(Stories.id) as num_stories from Tags left join StoryTag on StoryTag.TagId = Tags.id left join Stories on StoryTag.StoryId = Stories.id where Stories.isPublic = 1 and Stories.isFinished = 1 group by Tags.id order by num_stories desc limit 5;",
             { type: db.Sequelize.QueryTypes.SELECT }).then(
             function (dbTags) {
                 return dbTags;
             });
     },
     allTags: function () {
-        return db.sequelize.query("select Tags.id, Tags.tagName, COUNT(Stories.id) as num_stories from Tags left join StoryTag on StoryTag.TagId = Tags.id left join Stories on StoryTag.StoryId = Stories.id group by Tags.id order by num_stories desc;",
+        return db.sequelize.query("select Tags.id, Tags.TagName, COUNT(Stories.id) as num_stories from Tags left join StoryTag on StoryTag.TagId = Tags.id left join Stories on StoryTag.StoryId = Stories.id group by Tags.id order by num_stories desc;",
             { type: db.Sequelize.QueryTypes.SELECT }).then(
             function (dbTags) {
                 return dbTags;
