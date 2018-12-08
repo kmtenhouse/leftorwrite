@@ -16,14 +16,16 @@ var dbMethods = {
         });
     },
     topFiveTags: function () {
-        return db.sequelize.query("select tags.id, tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id where stories.isPublic = 1 and stories.isFinished = 1 group by tags.id order by num_stories desc limit 5;",
-            { type: db.Sequelize.QueryTypes.SELECT }).then(function (dbTags) {
+        return db.sequelize.query("select Tags.id, Tags.TagName, COUNT(Stories.id) as num_stories from Tags left join StoryTag on StoryTag.TagId = Tags.id left join Stories on StoryTag.StoryId = Stories.id where Stories.isPublic = 1 and Stories.isFinished = 1 group by Tags.id order by num_stories desc limit 5;",
+            { type: db.Sequelize.QueryTypes.SELECT }).then(
+            function (dbTags) {
                 return dbTags;
             });
     },
     allTags: function () {
-        return db.sequelize.query("select tags.id, tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id group by tags.id order by num_stories desc;",
-            { type: db.Sequelize.QueryTypes.SELECT }).then(function (dbTags) {
+        return db.sequelize.query("select Tags.id, Tags.TagName, COUNT(Stories.id) as num_stories from Tags left join StoryTag on StoryTag.TagId = Tags.id left join Stories on StoryTag.StoryId = Stories.id group by Tags.id order by num_stories desc;",
+            { type: db.Sequelize.QueryTypes.SELECT }).then(
+            function (dbTags) {
                 return dbTags;
             });
     },
@@ -56,18 +58,45 @@ var dbMethods = {
             return dbFirstPage;
         });
     },
+    findAllPagesInStory: function(authorId, storyId){
+        return db.Page.findAll({
+            where: {
+                AuthorId: authorId,
+                StoryId: storyId
+            },
+            attributes: ["id", "title"],
+            order: [["isOrphaned", "DESC"]]
+        }).then(function(allPages){
+            return allPages;
+        });
+    },
     findPageLinks: function (authorId, storyId, fromPageId) {
         return db.Link.findAll({
             where: {
                 AuthorId: authorId,
                 StoryId: storyId,
                 FromPageId: fromPageId
-            }
+            },
+            order: [
+                [db.sequelize.fn("length", db.sequelize.col("linkName")), "ASC"]
+            ]
         }).then(function (dbLinks) {
             return dbLinks;
         });
     },
-    findAllTagsAndStoriesCount: function () {
+    // Theresa added, not tested yet.
+    findPageParent:function(authorId, storyId, toPageId) {
+        return db.Link.findAll({
+            where: {
+                AuthorId: authorId,
+                StoryId: storyId,
+                ToPageId: toPageId
+            }
+        }).then(function(dbLinks){
+            return dbLinks;
+        });
+    },
+    findAllTagsAndStoriesCount: function() {
         return db.Tag.findAll({
             group: ["Tag.id"],
             includeIgnoreAttributes: false,
@@ -81,9 +110,9 @@ var dbMethods = {
             attributes: [
                 "id",
                 "TagName",
-                [db.sequelize.fn("COUNT", db.sequelize.col("stories.id")), "num_stories"],
+                [db.sequelize.fn("COUNT", db.sequelize.col("Stories.id")), "num_stories"],
             ],
-            order: [[db.sequelize.fn("COUNT", db.sequelize.col("stories.id")), "DESC"]]
+            order: [[db.sequelize.fn("COUNT", db.sequelize.col("Stories.id")), "DESC"]]
         }).then(function (result) {
             return result;
         });
@@ -156,7 +185,48 @@ var dbMethods = {
             return stories;
         });
     },
-    findAllPublicStories: function () {
+    createNewPage: function(pageObj) {
+        console.log(pageObj);
+        return db.Page.create(pageObj).then(function(newPage){
+            return newPage;
+        });
+    },
+    createMultiplePages: function(pageObjArray) {
+        return db.Page.bulkCreate(pageObjArray).then(function(newPages){
+            var newPagesId = [];
+            for(var i = 0; i < newPages.length; i++){
+                var id = newPages[i].id;
+                newPagesId.push(id);
+            }
+            return newPagesId;
+        });
+    },
+    // Theresa created, not tested yet
+    updatePage: function(pageObj, pageid) {
+        return db.Page.update({
+            title: pageObj.title,
+            content: pageObj.content,
+            isStart: pageObj.isStart,
+            isTBC: pageObj.isTBC,
+            isEnding: pageObj.isEnding,
+            isLinked: pageObj.isLinked,
+            isOrphaned: pageObj.isOrphaned,
+            contentFinished: pageObj.contentFinished
+        },{
+            where: {
+                id: pageid
+            }
+        });
+    },
+    // Theresa created, not tested yet
+    deletePage: function(pageid) {
+        return db.Page.destroy({
+            where: {
+                id: pageid
+            }
+        });
+    },
+    findAllPublicStories: function(){
         return db.Story.findAll({
             where: {
                 isPublic: true,
@@ -184,7 +254,7 @@ var dbMethods = {
                     //we SUCCEEDED if we got the story we asked for, it has at least 2 valid pages, and no invalid pages
                     if (testResults[0].id === parseInt(storyId) && testResults[1] > 1 && testResults[2] === 0 && testResults[3] === 0) {
                         //attempt to actually update the story now
-                        db.Story.update({isPublic: true},{where: {id: testResults[0].id}}).then(function(updateResults) {
+                        db.Story.update({isPublic: true, isFinished: true},{where: {id: testResults[0].id}}).then(function(updateResults) {
                             if(updateResults) { //if the update worked, we'll resolve with a success!
                                 return resolve({ success: true });
                             }
@@ -229,6 +299,16 @@ var dbMethods = {
         });
 
 
+    },
+    createNewLink: function(linkObj){
+        return db.Link.create(linkObj).then(function(newLink){
+            return newLink;
+        });
+    },
+    createMultipleLinks: function(linkObjArray){
+        return db.Link.bulkCreate(linkObjArray).then(function(newLinks){
+            return newLinks;
+        });
     }
 };
 
