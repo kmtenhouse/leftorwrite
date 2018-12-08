@@ -14,12 +14,12 @@
     <div class="container py-3">
         <div class="row">
             <div class="col-12 d-flex flex-column">
-                <h3 class="pb-2">Story Edit Page</h3>
+                <h3 class="pb-2">Story Settings</h3>
                 <form>
                     <div class="form-group">
                         {{!-- story title --}}
                         <input type="title" class="form-control form-control-lg" id="storyTitle" aria-describedby="titleHelp"
-                            placeholder="Story Title" value="{{story.title}}">
+                            placeholder="Story Title" data-id="{{story.id}}" value="{{story.title}}">
                         <small id="titleHelp" class="form-text text-muted">Your title should be unique among your
                             stories, but don't worry about getting the perfect title right now. You can edit it at any time.</small>
                     </div>
@@ -68,7 +68,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add a brand new tag!</h5>
+                    <h5 class="modal-title">Add a brand new tag!</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -84,7 +84,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" id="saveTag">Save Tag</button>
+                    <button type="button" class="btn custom-primary-btn" id="saveTag">Save Tag</button>
                 </div>
             </div>
         </div>

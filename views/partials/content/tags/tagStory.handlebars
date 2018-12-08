@@ -1,0 +1,17 @@
+<!-- Link to the Page Libray for this story -->
+<a href="/story/read/{{id}}" class="list-group-item list-group-item-action flex-column align-items-start my-2 border-success">
+    <div class="d-flex w-100 justify-content-start align-items-center">
+        <!-- Card Image -->
+        <img class="img-fluid story-img p-2" src="../images/script.svg" alt="Story">
+        <!-- Story Title -->
+        <h5 class="p-2 w-100">
+            {{title}} 
+            {{#if Author}}
+                <br>
+                By: {{Author.displayName}}
+            {{/if}}
+            <br>
+            <small>{{> content/tags/warningBadges}}</small>
+        </h5>
+    </div>
+</a>

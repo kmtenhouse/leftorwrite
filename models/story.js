@@ -6,7 +6,7 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: false,
             validtate: {
-                len: [5, 100]
+                len: [2, 100]
             }
         },
         isPublic: {
@@ -19,7 +19,7 @@ module.exports = function (sequelize, DataTypes) {
         },
         doneByDefault: {
             type: DataTypes.BOOLEAN,
-            defaultValue: false
+            defaultValue: true
         },
         chooseNotToWarn: {
             type: DataTypes.BOOLEAN,
@@ -49,6 +49,7 @@ module.exports = function (sequelize, DataTypes) {
     Story.associate = function(models) {
         Story.belongsTo(models.User, {as: "Author"});
         Story.belongsToMany(models.Tag, {through: "StoryTag"});
+        Story.hasMany(models.Page);
     };
     return Story;
 };

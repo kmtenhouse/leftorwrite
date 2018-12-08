@@ -38,7 +38,7 @@ var validators = {
             //since the id format is valid, go ahead and parse the id into an integer...
             var storyToFind = parseInt(storyId);
             //and now search for the story by its id
-            db.Story.findById(storyToFind).then(function (storyResult, err) {
+            db.Story.findOne({ where: { id: storyToFind } }).then(function (storyResult, err) {
                 if (err) { //if there's a db error, we immediately reject with the error
                     return reject(err);
                 }
@@ -73,7 +73,7 @@ var validators = {
             //since the ids are reasonable, we now perform a query to find this story 
             //since the id format is valid, go ahead and parse the id into an integer...
             var storyToFind = parseInt(storyId);
-            db.Story.findById(storyToFind).then(function (storyResult, err) {
+            db.Story.findOne({ where: { id: storyToFind } }).then(function (storyResult, err) {
                 if (err) { //if there's some kind of error, reject the promise
                     return reject(err);
                 }
@@ -92,15 +92,15 @@ var validators = {
             });
         });
     },
-    pageIsReadable: function (pageId, storyId="") {
+    pageIsReadable: function (pageId, storyId = "") {
         //checks if a page is readable
         //pages are publicly readable if the story they belong to is marked public and they are finished, and not orphaned 
         //also accepts an OPTIONAL pageId so that checks can be done to make sure that routes have stories that match their pages correctly
         return new Promise(function (resolve, reject) {
             //first, validate the format of the pageid itself (and storyid, if provided)
             //if it's not valid, reject immediately
-            if(storyId) {
-                if(!validators.isvalidid(storyId)) {
+            if (storyId) {
+                if (!validators.isvalidid(storyId)) {
                     return reject(new Error("Invalid Story Id"));
                 }
             }
@@ -112,7 +112,7 @@ var validators = {
             var whereOptions = {
                 id: pageToFind
             };
-            if(storyId) {
+            if (storyId) {
                 var storyToFind = parseInt(storyId);
                 whereOptions.StoryId = storyToFind;
             }
@@ -123,24 +123,24 @@ var validators = {
                     model: db.Story,
                     as: "Story"
                 }]
-            }).then(function(pageResult, error) {
-                if(error) { //if some kind of error happened, reject the promise
+            }).then(function (pageResult, error) {
+                if (error) { //if some kind of error happened, reject the promise
                     return reject(error);
                 }
                 //otherwise see if we found a page
-                if(!pageResult) {
+                if (!pageResult) {
                     return reject(new Error("Page Not Found"));
                 }
                 //now make sure the parent story is public
-                if(!pageResult.Story.isPublic) {
+                if (!pageResult.Story.isPublic) {
                     return reject(new Error("Story Not Public"));
                 }
                 //now, check if the page is orphaned
-                if(pageResult.isOrphaned) {
+                if (pageResult.isOrphaned) {
                     return reject(new Error("Orphaned Page"));
                 }
                 //lastly, check if the page is unfinished
-                if(!pageResult.contentFinished) {
+                if (!pageResult.contentFinished) {
                     return reject(new Error("Page Not Finished"));
                 }
                 //if we made it through all those checks, we win!
@@ -148,7 +148,7 @@ var validators = {
             });
         });
     },
-    pageIsWriteable: function(pageId, authorId, storyId="") {
+    pageIsWriteable: function (pageId, authorId, storyId = "") {
         return new Promise(function (resolve, reject) {
             //first, let's check that the pageId, authorId, and storyId (if provided) are remotely valid
             //if not, we immediately reject the promise
@@ -156,8 +156,8 @@ var validators = {
                 return reject(new Error("Invalid Author Id"));
             }
 
-            if(storyId) { //only run this validation if a story id was provided
-                if(!validators.isvalidid(storyId)) {
+            if (storyId) { //only run this validation if a story id was provided
+                if (!validators.isvalidid(storyId)) {
                     return reject(new Error("Invalid Story Id"));
                 }
             }
@@ -170,7 +170,7 @@ var validators = {
             var whereOptions = {
                 id: pageToFind
             };
-            if(storyId) {
+            if (storyId) {
                 var storyToFind = parseInt(storyId);
                 whereOptions.StoryId = storyToFind;
             }
@@ -181,27 +181,66 @@ var validators = {
                     model: db.Story,
                     as: "Story"
                 }]
-            }).then(function(pageResult, error) {
-                if(error) { //if some kind of error happened, reject the promise
+            }).then(function (pageResult, error) {
+                if (error) { //if some kind of error happened, reject the promise
                     return reject(error);
                 }
                 //otherwise see if we found a page
-                if(!pageResult) {
+                if (!pageResult) {
                     return reject(new Error("Page Not Found"));
                 }
                 //first, make sure the story belongs to this author
-                if(pageResult.Story.AuthorId!==authorId) {
+                if (pageResult.Story.AuthorId !== authorId) {
                     return reject(new Error("Story Permission Denied"));
                 }
                 //now make sure the author is the correct author for the page as well
                 //(this is forward looking to group edits)
-                if(pageResult.AuthorId!==authorId) {
+                if (pageResult.AuthorId !== authorId) {
                     return reject(new Error("Page Permission Denied"));
                 }
                 //if we made it through all those checks, we win!
                 return resolve(pageResult);
             });
         });
+    }, 
+    storyCanBePublished: function(storyId, authorId) {
+        //function that checks if a story can be published
+        //1) Author must have write privs to the story
+        var authorHasWritePrivs = validators.storyIsWriteable(storyId, authorId);
+        //we want this query to return a story result and not an error
+ 
+        //2) the story includes at least 2 valid pages - content finished, not dangling pages, not orphaned
+        var minimumValidPages = db.Page.count({
+            where: {
+                isOrphaned: false,
+                isLinked: true,
+                contentFinished: true,
+                StoryId: storyId
+            } //we want this query to return a count of 2 (or more)
+        });
+
+        //3) they have no unlinked ('dangling') pages (that are not orphaned)
+        var countOfUnlinkedPages = db.Page.count({
+            where: {
+                isOrphaned: false,
+                isLinked: false,
+                StoryId: storyId
+            } //we want this query to return a count of 0
+        });
+
+        //4) all the content is 'finished' (that are not orphaned)
+        //(this should be 0)
+        var countofUnfinishedPages = db.Page.count({
+            where: {
+                isOrphaned: false,
+                contentFinished: false,
+                StoryId: storyId
+            }
+        });  //we want this query to return a count of 0
+        
+        //kick off all these individual tests, and then let us do something after they have completed :)
+
+        return Promise.all([authorHasWritePrivs, minimumValidPages, countOfUnlinkedPages, countofUnfinishedPages]);
     }
 };
 

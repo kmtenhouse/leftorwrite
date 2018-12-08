@@ -1,8 +1,10 @@
-<div class="px-3 col-4 page-icon-container">
-    <a href="/story/write/{{this.StoryId}}/pages/{{this.id}}">
-    <div class="page-icon {{#if this.isStart}}start-page-icon{{/if}}{{#if this.isEnding}}end-page-icon{{/if}}{{#if this.isTBC}}tbc-page-icon{{/if}}">
-    </div>  
-    <p>{{#if this.isStart}}Start: {{/if}}{{#if this.isTBC}}TBC: {{/if}}{{#if this.isEnding}}Ending: {{/if}}{{this.title}}
-    </p>
-    </a>
+<div class="px-3 col-2 page-icon-container">
+   <a href="/story/write/{{this.StoryId}}/pages/{{this.id}}"> {{!-- This is where the link to edit a page goes --}}
+       <figure class="ml-auto mr-auto">
+           <img class="page-icon" src="/images/{{#unless this.isLinked}}unlinked-{{/unless}}{{#unless this.contentFinished}}unfinished-{{/unless}}{{#if this.isStart}}start-{{/if}}{{#if this.isEnding}}ending-{{/if}}{{#if this.isTBC}}tbc-{{/if}}page.svg">
+           <figcaption>{{#if this.isStart}}First Page: {{/if}}{{#if this.isEnding}}Ending: {{/if}}{{#if
+               this.isTBC}}TBC: {{/if}}{{this.title}}</figcaption>
+       </figure>
+   </a>
 </div>
+

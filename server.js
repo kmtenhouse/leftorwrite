@@ -22,8 +22,26 @@ app.engine(
     exphbs({
         defaultLayout: "main",
         helpers: {
-            equals: function (a, b, c) {
-                if (a === b || a === c) {
+            checkWarnings: function(a,b,c,d,e,f){
+                if(!a && !b && !c && !d && !e && !f){
+                    return true;
+                }
+                return false;
+            },
+            greaterThanZero: function(number){
+                if(number > 0){
+                    return true;
+                }
+                return false;
+            },
+            equalsOne: function(number){
+                if(number === 1){
+                    return true;
+                }
+                return false;
+            },
+            equals: function(a, b){
+                if(a === b){
                     return true;
                 }
                 return false;

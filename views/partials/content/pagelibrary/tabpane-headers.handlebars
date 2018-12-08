@@ -1,8 +1,12 @@
 <div class="row">
-    <div class="col-12 col-md-10">
+    <div class="col-12 col-md-9 col-xl-10">
         <h3>{{header}}</h3>
     </div>
-    <div class="col-12 col-md-2 py-2">
-        <button class="btn custom-primary-btn"><a class="text-white" href="/story/write/{{storyid}}/pages/">Add a Page</a></button>
+    <div class="col-12 col-md-3 col-xl-2 py-2 pr-1">
+        {{#unless storyIsPublic}}
+        <a class="btn custom-alert-btn publish-btn text-white" data-story-id="{{storyId}}"href="#">Publish Story</a>
+        {{else}}
+         <a class="btn btn-success disabled" data-story-id="{{storyId}}"href="#">Your Story is LIVE!</a>
+        {{/unless}}
     </div>
 </div>

@@ -1,0 +1,10 @@
+<div class="container my-5">
+    <section class="mb-5 py-3">
+        <h1 class="display-4 text-center">All Stories</h1>
+    </section>
+    <div class="list-group justify-content-around my-5">
+        {{#each stories}}
+            {{> content/tags/tagStory}}
+        {{/each}}
+    </div>
+</div>

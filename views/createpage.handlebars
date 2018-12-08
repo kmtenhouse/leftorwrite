@@ -1,7 +1,72 @@
+<!-- Header -->
+<header class="header">
+    <div class="container-fluid px-3">
+        <nav class="navbar navbar-expand-lg custom-nav">
+            {{> navbar/logged-in}}
+        </nav>
+    </div>
+</header>
+
 <div class="container">
     <div class="row">
-        <div class="col-12">
-
+        <div class="col-12 col-md-8 pt-3 pb-1">
+            <h2>Add a Page</h2>
+        </div>
+        <div class="col-12 col-md-4 pt-md-3 pb-1">
+            <a class="btn custom-primary-btn w-100 text-white" href="/story/pagelibrary/{{StoryId}}">Return to Story Overview</a>
+        </div>
+        <div class="col-12 py-1">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" id="titleHeader" data-story-id="{{StoryId}}" 
+                        {{#if isStart}}
+                            data-start="true"
+                        {{else}}
+                            data-start="false"
+                        {{/if}}
+                        {{#if ParentLinks}}
+                            data-incoming="{{#each ParentLinks}}{{FromPageId}},{{/each}}"
+                        {{/if}}
+                    >{{StoryTitle}} - 
+                        {{#if isStart}}
+                            Start Page
+                        {{else}}
+                            {{#if id}}
+                                Edit Page
+                            {{else}}
+                                New Page
+                            {{/if}}
+                        {{/if}}
+                    </h5>
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group col-12 col-md-3">
+                                <label for="authorNotes">Author Notes:</label>
+                                <textarea class="form-control border-secondary" id="authorNotes" rows="5" data-page-id="{{id}}" maxlength="100" placeholder="A few words to help you remember what this page is about. So make them memorable.">{{title}}</textarea>
+                                <small id="titleHelp" class="form-text text-muted">The Author Notes section is just for your reference -
+                                    your readers won't see it! <br> Author Notes allows 100 characters, Page Content allows 5000.</small>
+                            </div>
+                            <div class="form-group col-12 col-md-9">
+                                <label for="pageContent">Page Content:</label>
+                                <textarea class="form-control border-secondary" id="pageContent" rows="12" maxlength="5000" placeholder="What's going to happen next?">{{content}}</textarea>
+                            </div>
+                        </div>
+                    </form>
+                    {{>content/pageEdit/linksEdit}}
+                    <div class="row page-buttons-row mx-1">
+                        <button class="btn custom-primary-btn col-12 col-md-2 my-3" id="savePage" aria-describedby="save page button">Save Page</button>
+                        <button class="btn page-btn col-3 col-md-2 pr-4{{#if id}} disabled{{/if}}"  id="continue" aria-describedby="save page button">Cont.</button>
+                        <button class="btn page-btn col-3 col-md-2 p-0{{#if id}} active{{/if}}" id="choices" aria-describedby="save page button">Choices</button>
+                        {{#unless isStart}}
+                            <button class="btn page-btn col-3 col-md-2{{#if isEnding}} active{{/if}}{{#unless isEnding}}{{#if id}} disabled{{/if}}{{/unless}}" id="end" aria-describedby="save page button">End</button>
+                            <button class="btn page-btn col-3 col-md-2{{#if isTBC}} active{{/if}}{{#unless isTBC}}{{#if id}} disabled{{/if}}{{/unless}}" id="tbc" aria-describedby="save page button">TBC</button>
+                            {{#if id}}
+                                <button class="btn custom-primary-btn col-12 col-md-2 my-3" id="deletePage">Delete Page</button>
+                            {{/if}}
+                        {{/unless}}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

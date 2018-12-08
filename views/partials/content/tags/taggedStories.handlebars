@@ -1,0 +1,17 @@
+<div class="container my-5">
+    <section class="mb-5 py-3">
+        <div class="row justify-content-between">
+            <div class="col">
+                <h1>Tag: {{tag.tagName}}</h1>
+            </div>
+            <div class="col text-right align-self-center">
+                <a href="/tags" class="btn btn-outline-success">Return to All Tags</a>
+            </div>
+        </div>
+    </section>
+    <div class="list-group">
+        {{#each stories}}
+            {{> content/tags/tagStory}}
+        {{/each}}
+    </div>
+</div>
