@@ -189,7 +189,7 @@ module.exports = function (app) {
     //GET ALL TAGS
     //Will deliver all existing tags -- including their id, name, and the # of stories that use them - ordered by how many stories use them
     app.get("/api/tags", function (req, res) {
-        db.sequelize.query("select tags.id, tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id group by tags.id order by num_stories desc;", { type: db.Sequelize.QueryTypes.SELECT }).then(function (result) {
+        db.sequelize.query("select Tags.id, Tags.TagName, COUNT(Stories.id) as num_stories from Tags left join StoryTag on StoryTag.TagId = Tags.id left join Stories on StoryTag.StoryId = Stories.id group by Tags.id order by num_stories desc;", { type: db.Sequelize.QueryTypes.SELECT }).then(function (result) {
             res.send(result);
         });
     });
