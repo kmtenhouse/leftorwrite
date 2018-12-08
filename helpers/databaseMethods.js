@@ -58,6 +58,18 @@ var dbMethods = {
             return dbFirstPage;
         });
     },
+    findAllPagesInStory: function(authorId, storyId){
+        return db.Page.findAll({
+            where: {
+                AuthorId: authorId,
+                StoryId: storyId
+            },
+            attributes: ["id", "title"],
+            order: [["isOrphaned", "DESC"]]
+        }).then(function(allPages){
+            return allPages;
+        });
+    },
     findPageLinks: function (authorId, storyId, fromPageId) {
         return db.Link.findAll({
             where: {
@@ -72,7 +84,19 @@ var dbMethods = {
             return dbLinks;
         });
     },
-    findAllTagsAndStoriesCount: function () {
+    // Theresa added, not tested yet.
+    findPageParent:function(authorId, storyId, toPageId) {
+        return db.Link.findAll({
+            where: {
+                AuthorId: authorId,
+                StoryId: storyId,
+                ToPageId: toPageId
+            }
+        }).then(function(dbLinks){
+            return dbLinks;
+        });
+    },
+    findAllTagsAndStoriesCount: function() {
         return db.Tag.findAll({
             group: ["Tag.id"],
             includeIgnoreAttributes: false,
@@ -161,7 +185,48 @@ var dbMethods = {
             return stories;
         });
     },
-    findAllPublicStories: function () {
+    createNewPage: function(pageObj) {
+        console.log(pageObj);
+        return db.Page.create(pageObj).then(function(newPage){
+            return newPage;
+        });
+    },
+    createMultiplePages: function(pageObjArray) {
+        return db.Page.bulkCreate(pageObjArray).then(function(newPages){
+            var newPagesId = [];
+            for(var i = 0; i < newPages.length; i++){
+                var id = newPages[i].id;
+                newPagesId.push(id);
+            }
+            return newPagesId;
+        });
+    },
+    // Theresa created, not tested yet
+    updatePage: function(pageObj, pageid) {
+        return db.Page.update({
+            title: pageObj.title,
+            content: pageObj.content,
+            isStart: pageObj.isStart,
+            isTBC: pageObj.isTBC,
+            isEnding: pageObj.isEnding,
+            isLinked: pageObj.isLinked,
+            isOrphaned: pageObj.isOrphaned,
+            contentFinished: pageObj.contentFinished
+        },{
+            where: {
+                id: pageid
+            }
+        });
+    },
+    // Theresa created, not tested yet
+    deletePage: function(pageid) {
+        return db.Page.destroy({
+            where: {
+                id: pageid
+            }
+        });
+    },
+    findAllPublicStories: function(){
         return db.Story.findAll({
             where: {
                 isPublic: true,
@@ -234,6 +299,16 @@ var dbMethods = {
         });
 
 
+    },
+    createNewLink: function(linkObj){
+        return db.Link.create(linkObj).then(function(newLink){
+            return newLink;
+        });
+    },
+    createMultipleLinks: function(linkObjArray){
+        return db.Link.bulkCreate(linkObjArray).then(function(newLinks){
+            return newLinks;
+        });
     }
 };
 

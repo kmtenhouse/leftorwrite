@@ -44,6 +44,8 @@ module.exports = function (sequelize, DataTypes) {
     Page.associate = function (models) {
         Page.belongsTo(models.User, { as: "Author" });
         Page.belongsTo(models.Story, { as: "Story" });
+        Page.hasMany(models.Link, {as: "ParentLinks", foreignKey: "ToPageId"});
+        Page.hasMany(models.Link, {as: "ChildLinks", foreignKey: "FromPageId"})
     };
     return Page;
 };
