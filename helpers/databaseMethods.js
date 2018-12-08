@@ -110,9 +110,9 @@ var dbMethods = {
             attributes: [
                 "id",
                 "TagName",
-                [db.sequelize.fn("COUNT", db.sequelize.col("stories.id")), "num_stories"],
+                [db.sequelize.fn("COUNT", db.sequelize.col("Stories.id")), "num_stories"],
             ],
-            order: [[db.sequelize.fn("COUNT", db.sequelize.col("stories.id")), "DESC"]]
+            order: [[db.sequelize.fn("COUNT", db.sequelize.col("Stories.id")), "DESC"]]
         }).then(function (result) {
             return result;
         });
