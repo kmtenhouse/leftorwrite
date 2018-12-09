@@ -15,9 +15,9 @@ module.exports = function (sequelize, DataTypes) {
         }
     });
     User.associate = function(models) {
-        User.hasMany(models.Story), {as: "Stories", foreignKey: "AuthorId"};
-        User.hasMany(models.Page), {as: "Pages", foreignKey: "AuthorId"};
-        User.hasMany(models.Link), {as: "Links", foreignKey: "AuthorId"};
+        User.hasMany(models.Story, {as: "Stories", foreignKey: "AuthorId"});
+        User.hasMany(models.Page, {as: "Pages", foreignKey: "AuthorId"});
+        User.hasMany(models.Link, {as: "Links", foreignKey: "AuthorId"});
     };
     return User;
 };
