@@ -47,9 +47,9 @@ module.exports = function (sequelize, DataTypes) {
         }
     });
     Story.associate = function(models) {
-        Story.belongsTo(models.User, {as: "Author"});
+        Story.belongsTo(models.User, {as: "Author", sourceKey: "id"});
         Story.belongsToMany(models.Tag, {through: "StoryTag"});
-        Story.hasMany(models.Page);
+        Story.hasMany(models.Page), {as: "Pages", foreignKey: "StoryId"};
     };
     return Story;
 };
