@@ -11,8 +11,8 @@ module.exports = function(sequelize, DataTypes) {
         }
     });
     Link.associate = function(models) {
-        Link.belongsTo(models.User, {as: "Author"});
-        Link.belongsTo(models.Story, {as: "Story"});
+        Link.belongsTo(models.User, {as: "Author", sourceKey: "id"});
+        Link.belongsTo(models.Story, {as: "Story", sourceKey: "id"});
         Link.belongsTo(models.Page, {as: "FromPage", sourceKey: "id"});
         Link.belongsTo(models.Page, {as: "ToPage", sourceKey: "id"});
     };

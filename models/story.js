@@ -50,6 +50,7 @@ module.exports = function (sequelize, DataTypes) {
         Story.belongsTo(models.User, {as: "Author", sourceKey: "id"});
         Story.belongsToMany(models.Tag, {through: "StoryTag"});
         Story.hasMany(models.Page), {as: "Pages", foreignKey: "StoryId"};
+        Story.hasMany(models.Link), {as: "Links", foreignKey: "StoryId"};
     };
     return Story;
 };
