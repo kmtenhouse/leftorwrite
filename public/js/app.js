@@ -57,7 +57,7 @@ function createPageObj(linksArr) {
     // .lenth returns number of items (with this class)
     var ifLinked = false; // not sure if this syntax works, trying to get a boolean
     var links = $(".link-text");
-    if(links.length > 0){
+    if(links.length > 0 || ifEnd || ifTBC){
         ifLinked = true;
     }
     var parentLinks = $("#titleHeader").data("incoming"); // should return the id(s) of the incoming links
