@@ -11,4 +11,4 @@ package-lock.json
 
 #Test Directories
 archive/
-config/config.json
+config/config.jsonconfig.json
