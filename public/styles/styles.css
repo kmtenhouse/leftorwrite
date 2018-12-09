@@ -70,6 +70,7 @@ a:hover {
 /* Separate each section with a border */
 section {
   border-bottom: 5px solid #44BBA4;
+  min-height: 80vh;
 }
 
 /* Implement a splash image for the main section */
@@ -79,10 +80,21 @@ section {
   min-height: 90vh;
 }
 
+/* Implement a splash for the about-readers section*/
+.for-writers {
+  background-image: url('../images/planning-xs.jpg');
+  background-size: cover;
+  min-height: 90vh;
+}
+
 /* Provide a neutral background for other sections */
 .neutral {
   background-color: #E7E5DF;
-  min-height: 60vh;
+}
+
+/* Provide a grey background for cards */
+.grey-bg {
+  background-color: #c3c2c2;
 }
 
 /* Icons for the main page */
@@ -116,6 +128,11 @@ footer {
   .splash { 
     background-image: url('../images/open-notebook-med.jpeg');
   }
+
+/* Implement a splash for the about-readers section*/
+  .for-writers {
+    background-image: url('../images/planning-med.jpg');
+   }
 
   .headline {
     font-size: 3.5rem;
