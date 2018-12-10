@@ -14,11 +14,17 @@
         <div class="card-footer">
             {{#if page.isEnding}}
                 {{> content/readStory/endPageButtons}}
-            {{else}}
+            {{/if}}
+            {{#if page.isTBC}}
+                {{> content/readStory/tbcPageButtons}}
+            {{/if}}
+            {{#unless page.isEnding}}
+            {{#unless page.isTBC}}
                 {{#each links}}
                     {{> content/readStory/pageLinks}}
                 {{/each}}
-            {{/if}}
+            {{/unless}}
+            {{/unless}}
         </div>
     </div>
 </div>
