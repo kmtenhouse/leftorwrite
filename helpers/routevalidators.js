@@ -232,6 +232,7 @@ var validators = {
         });  //we want this query to return a count of 0
         
         //4) story has to have at least one page (a start page)
+        //we only expect ONE start page
         var hasStartPage = db.Page.count({
             where: {
                 isOrphaned: false,
@@ -239,7 +240,7 @@ var validators = {
                 isStart: true,
                 StoryId: storyId
             }
-        });  //we want this query to return a count of 0
+        });  //we want this query to return a count of 1
 
         //kick off all these individual tests, and then let us do something after they have completed :)
         return Promise.all([authorHasWritePrivs, countOfUnlinkedPages, countofUnfinishedPages, hasStartPage]);

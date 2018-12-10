@@ -58,7 +58,6 @@ module.exports = function (app) {
             AuthorId: req.session.token,
             StoryId: req.body.storyid,
         }).catch(function(err) {
-            console.log("Error: " + err);
             return alert(err.message);
         });
         if(page){
@@ -74,7 +73,6 @@ module.exports = function (app) {
                             content: "Default Content"
                         });
                         toId = childpage.id;
-                        console.log(toId);
                     }
                     else {
                         toId = children[i].ToPageId;
@@ -86,20 +84,19 @@ module.exports = function (app) {
                         FromPageId: page.id,
                         ToPageId: toId
                     }).catch(function(err){
-                        console.log("Error: " + err);
                         return alert(err.message);
                     });
-                    console.log(link.dataValues);
+/*                     console.log(link.dataValues); */
                 }
             }
-            console.log("Created new page");
+/*             console.log("Created new page"); */
             return res.status(200).send({storyId: page.StoryId, pageId: page.id, authorId: page.AuthorId});
         }
     });
 
     // update an existing page
     app.put("/api/page/update/:id", async function(req, res) {
-        console.log("req.body = ", req.body);
+        /* console.log("req.body = ", req.body); */
         var pageToUpdate = await check.pageIsWriteable(req.body.pageid, req.session.token, req.body.storyid)
         if (pageToUpdate) {
             pageToUpdate.update({
@@ -112,11 +109,10 @@ module.exports = function (app) {
                 isOrphaned: req.body.isOrphaned,
                 contentFinished: req.body.contentFinished
             }).catch(function(err) {
-                console.log(err);
                 return alert(err.message);
             });
             var children = JSON.parse(req.body.children);
-            console.log("children = ", children)
+            /* console.log("children = ", children) */
             if (children) {
                 var childLinks = [];
                 for (var i = 0; i < children.length; i++) {
@@ -140,10 +136,10 @@ module.exports = function (app) {
                         FromPageId: pageToUpdate.id,
                         ToPageId: toId
                     }).catch(function(err){
-                        console.log("Error: " + err);
+/*                         console.log("Error: " + err); */
                         return alert(err.message);
                     });
-                    console.log(link);
+/*                     console.log(link); */
                     childLinks.push(link);
                 }
                 pageToUpdate.setChildLinks(childLinks);
@@ -162,7 +158,7 @@ module.exports = function (app) {
     app.delete("/api/page/delete/:id", async function(req, res) {
         if(check.pageIsWriteable(req.body.pageid, req.session.token, req.body.storyid)) {
             var deletedPage = await dbMethods.deletePage(req.body.pageid).catch(function(err) {
-                console.log(err);
+                /* console.log(err); */
                 return alert(err.message);
             });
             if (deletedPage) {
@@ -187,14 +183,12 @@ module.exports = function (app) {
         });
         }
         else if (toPublish==="false") {
-            console.log("Unpublishing");
             dbMethods.unpublishStory(req.body.storyId, req.session.token).then(
                 function(unpublishingResult) {
                     return res.json(unpublishingResult);
                 },
                 function(err) {
                     res.sendStatus(getError.statusCode(err));
-            /*         return res.json({success: false, error: [err.message]}); */
                 }
             );
         }
@@ -216,14 +210,14 @@ module.exports = function (app) {
         // testRet will be the tag object that matches the search, if one exists.
         // if none exist, it will be null
         var testRet = await dbMethods.tagExists(req.body.tagName).catch(function (err) {
-            console.log(err);
+            /* console.log(err); */
         });
         if (testRet === null) {
             db.Tag.create({ tagName: req.body.tagName }).then(function (result) {
                 // result will be instance of Tag, a tag object
                 return res.status(200).send(result);
             }).catch(function (err) {
-                console.log(err);
+               /*  console.log(err); */
             });
         }
         else {
@@ -261,7 +255,6 @@ module.exports = function (app) {
     // update story info route
     app.put("/api/story/update/:id", async function (req, res) {
         var theStory = await check.storyIsWriteable(req.params.id, req.session.token).catch(function (err) {
-            console.log(err);
             return alert(err.message);
         });
         if (theStory) {
@@ -295,8 +288,6 @@ module.exports = function (app) {
         }
     });
     app.post("/api/story/create/", async function (req, res) {
-        console.log("Body: ", req.body);
-
         var authID = req.session.token;
         var theStory = await db.Story.create({
             title: req.body.title,
@@ -310,19 +301,16 @@ module.exports = function (app) {
             isFinished: req.body.isFinished,
             doneByDefault: req.body.doneByDefault
         }).catch(function (err) {
-            console.log(err);
             var storyError = new Error(err.message);
             return res.render("404", getError.messageTemplate(storyError));
         });
         theStory.setAuthor(authID).catch(function (err) {
-            console.log(err);
             var storyError = new Error(err.message);
             return res.render("404", getError.messageTemplate(storyError));
         });
         if (req.body.tags) {
             var tagsArr = req.body.tags.split(",");
             theStory.setTags(tagsArr, { where: { StoryId: theStory.id } }).catch(function (err) {
-                console.log(err);
                 var storyError = new Error(err.message);
                 return res.render("404", getError.messageTemplate(storyError));
             });
@@ -334,7 +322,6 @@ module.exports = function (app) {
         var theStory = await check.storyIsWriteable(req.params.id, req.session.token);
         var numLinks = await db.Link.destroy({where: {StoryId: req.params.id}});
         var numPages = await db.Page.destroy({where: {StoryId: req.params.id}});
-        console.log("Links: ", numLinks, "Pages", numPages);
         await theStory.destroy();
         return res.sendStatus(200).send(numLinks, numPages);
     });
