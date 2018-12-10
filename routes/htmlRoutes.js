@@ -248,6 +248,9 @@ module.exports = function (app) {
     //When a writer first creates a new story, we will show them a blank form for their
     //story's settings. Once they 'save' it, we'll create a new db entry if everything is valid :)
     app.get("/story/create", function (req, res) {
+        if(!req.session.token){
+            return res.redirect("/");
+        }
         async function create () {
             var tags = await dbMethods.allTags().catch(function(err) {
                 var storyError = new Error(err.message);
@@ -403,6 +406,24 @@ module.exports = function (app) {
                 //if an error occurred with the page load, go ahead and show the user
                 res.render("404", getError.messageTemplate(err));
             });
+    });
+
+    app.get("/story/all", function(req, res) {
+        if(req.session.token){
+            dbMethods.findUser(req.session.token).then(function(user){
+                dbMethods.seeAllUserStories(req.session.token).then(function(stories){
+                    res.render("index", {
+                        loggedIn: true,
+                        seeMyStories: true,
+                        user,
+                        stories: stories
+                    });
+                });
+            });
+        }
+        else{
+            res.redirect("/");
+        }
     });
 
     // Render 404 page for any unmatched routes

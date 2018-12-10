@@ -5,14 +5,14 @@ module.exports = function (sequelize, DataTypes) {
         title: {
             type: DataTypes.STRING,
             allowNull: false,
-            validtate: {
+            validate: {
                 len: [1, 100]
             }
         },
         content: {
             type: DataTypes.TEXT,
             allowNull: false,
-            validtate: {
+            validate: {
                 len: [1, 5000]
             }
         },

@@ -5,7 +5,7 @@ module.exports = function(sequelize, DataTypes) {
         linkName: {
             type: DataTypes.STRING,
             allowNull: false,
-            validtate: {
+            validate: {
                 len: [1, 100]
             }
         }

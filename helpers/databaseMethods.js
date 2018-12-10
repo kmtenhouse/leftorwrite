@@ -18,16 +18,16 @@ var dbMethods = {
     topFiveTags: function () {
         return db.sequelize.query("select Tags.id, Tags.TagName, COUNT(Stories.id) as num_stories from Tags left join StoryTag on StoryTag.TagId = Tags.id left join Stories on StoryTag.StoryId = Stories.id where Stories.isPublic = 1 and Stories.isFinished = 1 group by Tags.id order by num_stories desc limit 5;",
             { type: db.Sequelize.QueryTypes.SELECT }).then(
-                function (dbTags) {
-                    return dbTags;
-                });
+            function (dbTags) {
+                return dbTags;
+            });
     },
     allTags: function () {
         return db.sequelize.query("select Tags.id, Tags.TagName, COUNT(Stories.id) as num_stories from Tags left join StoryTag on StoryTag.TagId = Tags.id left join Stories on StoryTag.StoryId = Stories.id group by Tags.id order by num_stories desc;",
             { type: db.Sequelize.QueryTypes.SELECT }).then(
-                function (dbTags) {
-                    return dbTags;
-                });
+            function (dbTags) {
+                return dbTags;
+            });
     },
     findUser: function (userId) {
         return db.User.findOne({
@@ -260,9 +260,9 @@ var dbMethods = {
                                 return reject(new Error("Generic Error"));
                             }
                         },
-                            function (err) { //if there was a db error, reject with an error
-                                return reject(err);
-                            }
+                        function (err) { //if there was a db error, reject with an error
+                            return reject(err);
+                        }
                         );
                     }
                     else {
@@ -318,6 +318,16 @@ var dbMethods = {
     createMultipleLinks: function (linkObjArray) {
         return db.Link.bulkCreate(linkObjArray).then(function (newLinks) {
             return newLinks;
+        });
+    },
+    seeAllUserStories: function(userId) {
+        return db.Story.findAll({
+            where: {
+                AuthorId: userId
+            },
+            order: [["title", "ASC"]]
+        }).then(function(dbStories){
+            return dbStories;
         });
     }
 };
