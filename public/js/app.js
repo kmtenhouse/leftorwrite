@@ -54,22 +54,20 @@ function createPageObj(linksArr) {
     var ifStart = $("#titleHeader").data("start"); // boolean if this is a start page, set in the handlebars
     var ifEnd = $("#end").hasClass("active"); // should return a boolean, but the front end isn't built yet
     var ifTBC = $("#tbc").hasClass("active"); // same as the end button
-    // .lenth returns number of items (with this class)
-    var ifLinked = false; // not sure if this syntax works, trying to get a boolean
-    var links = $(".link-text");
-    if(links.length > 0 || ifEnd || ifTBC){
+    var ifLinked = false; 
+    if(linksArr.length > 0){
         ifLinked = true;
     }
     var parentLinks = $("#titleHeader").data("incoming"); // should return the id(s) of the incoming links
+    console.log(parentLinks);
     if (parentLinks) {
         var parentLinksArr = parentLinks.split(",");
+        // need the pop because of the way I did the page in handlebars. It's messy.
         parentLinksArr.pop();
-        // console.log("parentLinksArr = ", parentLinksArr);
         var ifOrphaned = parentLinksArr.length===0;
-        // console.log(ifOrphaned);
     }
     else {
-        ifOrphaned = false;
+        ifOrphaned = true;
     }
     var contentFinished = true; // using this temporarily, eventually will be set by author.
     var pageObj = {
@@ -246,7 +244,6 @@ $(document).on("click", "#end", function (event) {
     if (!$(this).hasClass("disabled")) {
         $(this).toggleClass("active");
         $("#continue, #choices, #tbc").toggleClass("disabled");
-        // savePage();
     }
 });
 // same as end for tbc
@@ -255,7 +252,6 @@ $(document).on("click", "#tbc", function (event) {
     if (!$(this).hasClass("disabled")) {
         $(this).toggleClass("active");
         $("#continue, #choices, #end").toggleClass("disabled");
-        // savePage();
     }
 });
 // uses the delete route, and will also need to remove all links from all decendants
