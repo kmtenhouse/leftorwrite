@@ -59,11 +59,11 @@
                     {{/unless}}
                     <div class="row page-buttons-row mx-1">
                         <button class="btn custom-primary-btn col-12 col-md-2 my-3" id="savePage" aria-describedby="save page button">Save Page</button>
-                        <button class="btn page-btn col-3 col-md-2 pr-4{{#if isLinked}} disabled{{/if}}"  id="continue" aria-describedby="save page button">Cont.</button>
-                        <button class="btn page-btn col-3 col-md-2 p-0{{#if isLinked}} active{{/if}}{{#if isEnding}} disabled{{/if}}{{#if isTBC}} disabled{{/if}}" id="choices" aria-describedby="save page button">Choices</button>
+                        <button class="btn page-btn col-3 col-md-2 pr-4{{#if isLinked}} disabled{{/if}}{{#if isEnding}} disabled{{/if}}{{#if isTBC}} disabled{{/if}}{{#unless isStart}}{{#if isOrphaned}} disabled{{/if}}{{/unless}}"  id="continue" aria-describedby="save page button">Cont.</button>
+                        <button class="btn page-btn col-3 col-md-2 p-0{{#if isLinked}} active{{/if}}{{#if isEnding}} disabled{{/if}}{{#if isTBC}} disabled{{/if}}{{#unless isStart}}{{#if isOrphaned}} disabled{{/if}}{{/unless}}" id="choices" aria-describedby="save page button">Choices</button>
                         {{#unless isStart}}
-                            <button class="btn page-btn col-3 col-md-2{{#if isEnding}} active{{/if}}{{#unless isEnding}} disabled{{/unless}}" id="end" aria-describedby="save page button">End</button>
-                            <button class="btn page-btn col-3 col-md-2{{#if isTBC}} active{{/if}}{{#unless isTBC}} disabled{{/unless}}" id="tbc" aria-describedby="save page button">TBC</button>
+                            <button class="btn page-btn col-3 col-md-2{{#if isEnding}} active{{/if}}{{#if isLinked}} disabled{{/if}}{{#if isTBC}} disabled{{/if}}" id="end" aria-describedby="save page button">End</button>
+                            <button class="btn page-btn col-3 col-md-2{{#if isTBC}} active{{/if}}{{#if isLinked}} disabled{{/if}}{{#if isEnding}} disabled{{/if}}" id="tbc" aria-describedby="save page button">TBC</button>
                             {{#if id}}
                                 <button class="btn custom-primary-btn col-12 col-md-2 my-3" id="deletePage">Delete Page</button>
                             {{/if}}
