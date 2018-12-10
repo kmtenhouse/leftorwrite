@@ -233,7 +233,10 @@ $(document).on("click", "#saveTag", function () {
 
 // DELETE ROUTE
 $(document).on("click", "#deleteStory", function () {
-    event.preventDefault();
+    $("#deleteStoryModal").modal("show");
+});
+
+$(document).on("click", "#confirmDelete", function(){
     var id = $("#storyTitle").data("id");
     if (id !== "") {
         $.ajax("/api/story/" + id, {
@@ -250,7 +253,7 @@ $(document).on("click", "#deleteStory", function () {
             type: "GET"
         });
     }
-});
+})
 
 // OTHER BUTTONS 
 // links to other pages 

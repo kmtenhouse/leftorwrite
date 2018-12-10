@@ -87,6 +87,26 @@
         </div>
     </div>
 </div>
+{{!-- modal to confirm delete story --}}
+<div class="modal fade" id="deleteStoryModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteStory">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Are you sure?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h6>Please confirm that you want to delete this story! <br> All pages and content within story will be deleted and cannot be recovered!</h6>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Footer containing credits (will eventually be on every page) -->
 <footer>
