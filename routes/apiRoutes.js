@@ -142,20 +142,13 @@ module.exports = function (app) {
                         FromPageId: pageToUpdate.id,
                         ToPageId: toId
                     }).catch(function(err){
-/*                         console.log("Error: " + err); */
                         return alert(err.message);
                     });
-/*                     console.log(link); */
                     childLinks.push(link);
                 }
                 pageToUpdate.setChildLinks(childLinks);
             }
-            if(childpage){
-                return res.status(200).send({storyId: pageToUpdate.StoryId, toPageId: childpage.id});
-            }
-            else{
-                return res.sendStatus(200);
-            }
+            return res.status(200).send({storyId: pageToUpdate.StoryId, toPageId: childpage.id});
         }
     });
 
@@ -179,14 +172,14 @@ module.exports = function (app) {
     app.put("/api/story/publish/", function (req, res) {
         var toPublish = req.body.isPublic;
         if(toPublish==="true") {
-        dbMethods.publishStory(req.body.storyId, req.session.token).then(function(publishingResult) {
+            dbMethods.publishStory(req.body.storyId, req.session.token).then(function(publishingResult) {
             //send info about the result back to the front end
             //NOTE: this will either be a success, or a failure 
             //front end gets to decide what to do with it
-            return res.json(publishingResult); 
-        }, function(err) { //trap outright rejections for malformed urls, etc
-            res.sendStatus(getError.statusCode(err));
-        });
+                return res.json(publishingResult); 
+            }, function(err) { //trap outright rejections for malformed urls, etc
+                res.sendStatus(getError.statusCode(err));
+            });
         }
         else if (toPublish==="false") {
             dbMethods.unpublishStory(req.body.storyId, req.session.token).then(
