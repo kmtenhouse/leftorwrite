@@ -248,6 +248,9 @@ module.exports = function (app) {
     //When a writer first creates a new story, we will show them a blank form for their
     //story's settings. Once they 'save' it, we'll create a new db entry if everything is valid :)
     app.get("/story/create", function (req, res) {
+        if(!req.session.token){
+            return res.redirect("/");
+        }
         async function create () {
             var tags = await dbMethods.allTags().catch(function(err) {
                 var storyError = new Error(err.message);
@@ -417,6 +420,9 @@ module.exports = function (app) {
                     });
                 });
             });
+        }
+        else{
+            res.redirect("/");
         }
     });
 
