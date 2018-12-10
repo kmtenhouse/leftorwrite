@@ -272,5 +272,3 @@ $(document).on("click", ".close", function () {
     $(this).parent().parent().parent().remove();
     $("#add-link-btn").prop("disabled", false);
 });
-
-// NOTE TO SELF: disable end and tbc on start page
