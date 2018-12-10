@@ -15,12 +15,12 @@ $("#newUsernameForm").on("submit", function(event){
                 }).then(function(){
                     $("#newUsername").html(newUsername);
                     $("#updateUsernameModal").modal("show");
-                    console.log("changed username!");
+                    /* console.log("changed username!"); */
                 });
             }
             else{
                 $("#errorModal").modal("show");
-                console.log("Username already exists!");
+/*                 console.log("Username already exists!"); */
             }
         });
     }
@@ -45,8 +45,8 @@ $(".scroll-to").on("click", function(e){
 // save changes after edit
 // save page function
 function createPageObj(linksArr) {
-    console.log("inside createPageObj function ");
-    console.log("linksArr = ", linksArr);
+   /*  console.log("inside createPageObj function ");
+    console.log("linksArr = ", linksArr); */
     var id = $("#authorNotes").data("page-id"); // will be page id
     var pageTitle = $("#authorNotes").val().trim(); // will be author quick notes
     var pageContent = $("#pageContent").val().trim(); // page content, we need to add a return fixer here
@@ -59,7 +59,7 @@ function createPageObj(linksArr) {
         ifLinked = true;
     }
     var parentLinks = $("#titleHeader").data("incoming"); // should return the id(s) of the incoming links
-    console.log(parentLinks);
+    /* console.log(parentLinks); */
     if (parentLinks) {
         var parentLinksArr = parentLinks.split(",");
         // need the pop because of the way I did the page in handlebars. It's messy.
@@ -83,7 +83,7 @@ function createPageObj(linksArr) {
         pageid: id,
         children: JSON.stringify(linksArr)
     };
-    console.log("pageObj = ", pageObj);
+/*     console.log("pageObj = ", pageObj); */
     return pageObj;
 }
 // Create links object
@@ -98,7 +98,7 @@ function createLinks() {
         }
         linksArray.push($(links[i]).val());
         toPageArray.push($(links[i]).siblings(".input-group-append").children(".link-page-dropdown").val());
-        console.log("toPageArray = ", toPageArray);
+        /* console.log("toPageArray = ", toPageArray); */
         var linkObj = {
             linkName: linksArray[i],
             ToPageId: toPageArray[i]
@@ -111,8 +111,8 @@ function createLinks() {
 // Create page
 function savePage(pageObj, clickedContinue){
     // console.log("");
-    console.log("pageObj = ", pageObj);
-    console.log(clickedContinue);
+  /*   console.log("pageObj = ", pageObj);
+    console.log(clickedContinue); */
     if($("#authorNotes").data("page-id") === ""){
         return $.ajax("/api/page/create/", {
             type: "POST",
@@ -172,7 +172,7 @@ $(document).on("click", "#savePage", async function (event) {
     event.preventDefault();
     var links = createLinks();
     var pageObj = createPageObj(links);
-    console.log(pageObj);
+    /* console.log(pageObj); */
     savePage(pageObj);
 });
 
@@ -200,13 +200,13 @@ $(document).on("click", "#choices", function (event) {
         type: "GET"
     }).then(function(pages){
         newBlankLink(pages).then(function(newlink){
-            console.log(newlink);
+            /* console.log(newlink); */
             if (!that.hasClass("disabled")) {
                 that.toggleClass("active");
                 $("#continue, #end, #tbc").toggleClass("disabled");
                 $("#link-editor").toggle(1000);
                 if (that.hasClass("active")) {
-                    console.log("append new links");
+/*                     console.log("append new links"); */
                     $("#link-list").append(newlink);
         
                 }

@@ -168,8 +168,6 @@ $(document).on("click", "#saveChanges", function (event) {
             type: "POST",
             data: storyObj
         }).then(function (result, status) {
-            console.log(status);
-            console.log(result);
             if (status === "success") {
                 window.location = "/story/settings/" + result.id;
             }
@@ -210,10 +208,6 @@ $(document).on("click", "#saveTag", function () {
             }
         }).then(function (result, status) {
             //if we succeeded in adding the tag, we'll add it to the tag list, check it, and close the modal
-            if (status === "success") {
-                console.log("success");
-                console.log(result);
-            }
             // add the new tag to the list without refreshing the page
             var successfulTagListItem = $("<li class=\"list-group-item\">");
             var successfulTagHolder = $("<div class=\"form-check\">");

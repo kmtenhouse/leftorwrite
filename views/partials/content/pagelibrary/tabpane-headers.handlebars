@@ -4,9 +4,9 @@
     </div>
     <div class="col-12 col-md-3 col-xl-2 py-2 pr-1">
         {{#unless storyIsPublic}}
-        <a class="btn custom-alert-btn publish-btn text-white" data-story-id="{{storyId}}"href="#">Publish Story</a>
+        <a class="btn custom-alert-btn publish-btn text-white" data-publish-status="unpublished" data-story-id="{{storyId}}"href="#">Publish Story</a>
         {{else}}
-         <a class="btn btn-success disabled" data-story-id="{{storyId}}"href="#">Your Story is LIVE!</a>
+         <a class="btn btn-success publish-btn" data-publish-status="published" data-story-id="{{storyId}}"href="#">Your Story is LIVE!</a>
         {{/unless}}
     </div>
 </div>

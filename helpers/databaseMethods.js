@@ -18,16 +18,16 @@ var dbMethods = {
     topFiveTags: function () {
         return db.sequelize.query("select Tags.id, Tags.TagName, COUNT(Stories.id) as num_stories from Tags left join StoryTag on StoryTag.TagId = Tags.id left join Stories on StoryTag.StoryId = Stories.id where Stories.isPublic = 1 and Stories.isFinished = 1 group by Tags.id order by num_stories desc limit 5;",
             { type: db.Sequelize.QueryTypes.SELECT }).then(
-            function (dbTags) {
-                return dbTags;
-            });
+                function (dbTags) {
+                    return dbTags;
+                });
     },
     allTags: function () {
         return db.sequelize.query("select Tags.id, Tags.TagName, COUNT(Stories.id) as num_stories from Tags left join StoryTag on StoryTag.TagId = Tags.id left join Stories on StoryTag.StoryId = Stories.id group by Tags.id order by num_stories desc;",
             { type: db.Sequelize.QueryTypes.SELECT }).then(
-            function (dbTags) {
-                return dbTags;
-            });
+                function (dbTags) {
+                    return dbTags;
+                });
     },
     findUser: function (userId) {
         return db.User.findOne({
@@ -58,7 +58,7 @@ var dbMethods = {
             return dbFirstPage;
         });
     },
-    findAllPagesInStory: function(authorId, storyId){
+    findAllPagesInStory: function (authorId, storyId) {
         return db.Page.findAll({
             where: {
                 AuthorId: authorId,
@@ -66,7 +66,7 @@ var dbMethods = {
             },
             attributes: ["id", "title"],
             order: [["isOrphaned", "DESC"]]
-        }).then(function(allPages){
+        }).then(function (allPages) {
             return allPages;
         });
     },
@@ -85,18 +85,18 @@ var dbMethods = {
         });
     },
     // Theresa added, not tested yet.
-    findPageParent:function(authorId, storyId, toPageId) {
+    findPageParent: function (authorId, storyId, toPageId) {
         return db.Link.findAll({
             where: {
                 AuthorId: authorId,
                 StoryId: storyId,
                 ToPageId: toPageId
             }
-        }).then(function(dbLinks){
+        }).then(function (dbLinks) {
             return dbLinks;
         });
     },
-    findAllTagsAndStoriesCount: function() {
+    findAllTagsAndStoriesCount: function () {
         return db.Tag.findAll({
             group: ["Tag.id"],
             includeIgnoreAttributes: false,
@@ -185,16 +185,15 @@ var dbMethods = {
             return stories;
         });
     },
-    createNewPage: function(pageObj) {
-        console.log(pageObj);
-        return db.Page.create(pageObj).then(function(newPage){
+    createNewPage: function (pageObj) {
+        return db.Page.create(pageObj).then(function (newPage) {
             return newPage;
         });
     },
-    createMultiplePages: function(pageObjArray) {
-        return db.Page.bulkCreate(pageObjArray).then(function(newPages){
+    createMultiplePages: function (pageObjArray) {
+        return db.Page.bulkCreate(pageObjArray).then(function (newPages) {
             var newPagesId = [];
-            for(var i = 0; i < newPages.length; i++){
+            for (var i = 0; i < newPages.length; i++) {
                 var id = newPages[i].id;
                 newPagesId.push(id);
             }
@@ -202,7 +201,7 @@ var dbMethods = {
         });
     },
     // Theresa created, not tested yet
-    updatePage: function(pageObj, pageid) {
+    updatePage: function (pageObj, pageid) {
         return db.Page.update({
             title: pageObj.title,
             content: pageObj.content,
@@ -212,21 +211,21 @@ var dbMethods = {
             isLinked: pageObj.isLinked,
             isOrphaned: pageObj.isOrphaned,
             contentFinished: pageObj.contentFinished
-        },{
-            where: {
-                id: pageid
-            }
-        });
+        }, {
+                where: {
+                    id: pageid
+                }
+            });
     },
     // Theresa created, not tested yet
-    deletePage: function(pageid) {
+    deletePage: function (pageid) {
         return db.Page.destroy({
             where: {
                 id: pageid
             }
         });
     },
-    findAllPublicStories: function(){
+    findAllPublicStories: function () {
         return db.Story.findAll({
             where: {
                 isPublic: true,
@@ -248,23 +247,22 @@ var dbMethods = {
             //do the async thing
             check.storyCanBePublished(storyId, authorId).then(
                 function (testResults) {
-                    console.log("Received test results");
                     //let's see what we got back from the test results, and return info 
                     //about succeeded (or failed)
-                    //we SUCCEEDED if we got the story we asked for, it has at least 2 valid pages, and no invalid pages
-                    if (testResults[0].id === parseInt(storyId) && testResults[1] > 1 && testResults[2] === 0 && testResults[3] === 0) {
+                    //we SUCCEEDED if the story we asked for is writeable and it doesn't have any invalid pages
+                    if (testResults[0].id === parseInt(storyId) && testResults[1] === 0 && testResults[2] === 0 && testResults[3]===1) {
                         //attempt to actually update the story now
-                        db.Story.update({isPublic: true, isFinished: true},{where: {id: testResults[0].id}}).then(function(updateResults) {
-                            if(updateResults) { //if the update worked, we'll resolve with a success!
+                        db.Story.update({ isPublic: true, isFinished: true }, { where: { id: testResults[0].id } }).then(function (updateResults) {
+                            if (updateResults) { //if the update worked, we'll resolve with a success!
                                 return resolve({ success: true });
                             }
                             else { //otherwise if there was some kind of error, reject with an error
                                 return reject(new Error("Generic Error"));
                             }
                         },
-                        function(err) { //if there was a db error, reject with an error
-                            return reject(err); 
-                        }
+                            function (err) { //if there was a db error, reject with an error
+                                return reject(err);
+                            }
                         );
                     }
                     else {
@@ -272,41 +270,53 @@ var dbMethods = {
                         //note: we are not rejecting these exactly, we are resolving with info about what the user needs to correct (because there could be multiple issues to address)
                         var errorObj = {
                             success: false,
-                            storyTooShort: false,
-                            unlinkedPages: false,
-                            unfinishedPages: false
+                            errors: []
                         };
-                        if(testResults[1]<2) {
-                            errorObj.storyTooShort = true;
+                        if (testResults[1] > 0) {
+                            errorObj.errors.push("Unlinked pages");
                         }
-                        if(testResults[2]>0) {
-                            errorObj.this.unlinkedPages = true;
+                        if (testResults[2] > 0) {
+                            errorObj.errors.push("Unfinished pages");
                         }
-                        if(testResults[3]>0) {
-                            errorObj.this.unfinishedPages = true;
+                        if (testResults[3] !== 1) {
+                            errorObj.errors.push("No start page");
                         }
-                        return resolve(errorObj);
+                        return resolve(errorObj); //note: we are RESOLVING this because we do actually want the front-end to get feedback
                     }
 
                 },
                 function (err) {
                     //or if our publish tests failed, then we just return that error
-                    console.log("Failed test results");
-                    console.log(err.message);
                     return reject(err);
                 }
             );
         });
-
-
     },
-    createNewLink: function(linkObj){
-        return db.Link.create(linkObj).then(function(newLink){
+    //function to UNPUBLISH a story from the db
+    //only requires that the owner has write access
+    unpublishStory: function (storyId, authorId) {
+        return new Promise(function (resolve, reject) {
+            check.storyIsWriteable(storyId, authorId).then(
+                function (storyResult) {
+                    //if the story is writeable we'll go ahead and try to update it
+                    db.Story.update({ isPublic: false, isFinished: false }, { where: { id: storyResult.id } }).then(
+                        function (updateResult) {
+                            return resolve({ success: true }); //hooray, we succeeded!
+                        });
+                },
+                function (err) {
+                    return reject(err); //otherwise, we did not succeed
+                }
+            );
+        });
+    },
+    createNewLink: function (linkObj) {
+        return db.Link.create(linkObj).then(function (newLink) {
             return newLink;
         });
     },
-    createMultipleLinks: function(linkObjArray){
-        return db.Link.bulkCreate(linkObjArray).then(function(newLinks){
+    createMultipleLinks: function (linkObjArray) {
+        return db.Link.bulkCreate(linkObjArray).then(function (newLinks) {
             return newLinks;
         });
     }
