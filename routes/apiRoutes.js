@@ -312,24 +312,12 @@ module.exports = function (app) {
         return res.status(200).send({ id: theStory.id });
     });
     app.delete("/api/story/:id", async function (req, res) {
+        // This needs error handling
         var theStory = await check.storyIsWriteable(req.params.id, req.session.token);
-        var numDeletedTagAssoc = await theStory.setTags([]);
-        var numDeletedPages = await db.Page.destroy({ where: { StoryId: req.params.id } });
-        console.log("Deleted Pages: ", numDeletedPages);
-        theStory.destroy({ where: { id: req.params.id } }).catch(function (err) {
-            console.log("The error returned after delete is ", err);
-            var storyError = new Error(err.message);
-            return res.render("404", getError.messageTemplate(storyError));
-        }).then(function (result) {
-            if (result.dataValues.id === parseInt(req.params.id)) {
-                console.log("DELETE SUCCEEDED");
-                return res.sendStatus(200);
-            }
-            else {
-                var storyError = new Error("Story Not Found");
-                return res.status(404).render("404", getError.messageTemplate(storyError)).end();
-            }
-        });
-
+        var numLinks = await db.Link.destroy({where: {StoryId: req.params.id}});
+        var numPages = await db.Page.destroy({where: {StoryId: req.params.id}});
+        console.log("Links: ", numLinks, "Pages", numPages);
+        await theStory.destroy();
+        return res.sendStatus(200).send(numLinks, numPages);
     });
 };
