@@ -68,13 +68,13 @@ a:hover {
 }
 
 /* Separate each section with a border */
-section {
+.splash {
   border-bottom: 5px solid #44BBA4;
   min-height: 80vh;
 }
 
-/* Implement a splash image for the main section */
-.splash {
+/* Implement a  image for the main section */
+.for-newbies {
   background-image: url('../images/open-notebook-xs.jpg');
   background-size: cover;
   min-height: 90vh;
@@ -111,7 +111,6 @@ section {
   border: none;
 }
 
-
 /* Footer colors */
 footer {
   background-color: #272727;
@@ -123,23 +122,7 @@ footer {
   overflow-y: scroll;
 }
 
-/* Media query changes for when our screen grows above a mobile size */
-@media only screen and (min-width: 760px) {
-  .splash { 
-    background-image: url('../images/open-notebook-med.jpeg');
-  }
 
-/* Implement a splash for the about-readers section*/
-  .for-writers {
-    background-image: url('../images/planning-med.jpg');
-   }
-
-  .headline {
-    font-size: 3.5rem;
-    font-weight: 300;
-    line-height: 1.2;
-  }
-}
 
 /* Dashboard Classes */
 
@@ -210,4 +193,22 @@ footer {
 /* Tag Page Classes */
 .tag-stories {
   max-width: 15rem;
+}
+
+/* Media query changes for when our screen grows above a mobile size */
+@media only screen and (min-width: 760px) {
+  .for-newbies { 
+    background-image: url('../images/open-notebook-med.jpeg');
+  }
+
+/* Implement a splash for the about-readers section*/
+  .for-writers {
+    background-image: url('../images/planning-med.jpg');
+   }
+
+  .headline {
+    font-size: 3.5rem;
+    font-weight: 300;
+    line-height: 1.2;
+  }
 }

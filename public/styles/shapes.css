@@ -4,3 +4,26 @@
   display: inline-block;
   margin: 0 1em 1em 0;
 }
+
+.page-icon-container {
+  border-radius: 25px;
+  border: 1px solid rgba(175, 227, 192, 255);
+}
+
+.regular-page:hover, .start-page:hover {
+  background-color: rgba(175, 227, 192, 255);
+}
+
+.ending-page:hover {
+  background-color: #c5a4e6;
+  border: 1px solid #c5a4e6;
+}
+
+.tbc-page:hover {
+  background-color: #e7b9e0;
+  border: 1px solid #e7b9e0;
+}
+
+.regular-page:hover a, .start-page:hover a, .ending-page:hover a, .tbc-page:hover a {
+  color: #272727;
+}

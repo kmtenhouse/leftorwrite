@@ -5,7 +5,7 @@ var validators = {
     //NOTE: we could either expect a string OR an integer here
     //It will be VALID if the item CAN successfully be parsed by parseInt
     //We still have to do that parsing 
-    isvalidid: function (idToTest) {
+    isValidId: function (idToTest) {
         //We expect a string from the front end -- anything else is automatically invalid
         //(For example, objects)
         if ((typeof (idToTest) !== "string") && (typeof (idToTest) !== "number")) {
@@ -32,7 +32,7 @@ var validators = {
             //Do the async job -- in this case look up the story by its id
             //first, we see if it's even a valid id in the first place
             //if not, we immediately reject the promise
-            if (!validators.isvalidid(storyId)) {
+            if (!validators.isValidId(storyId)) {
                 return reject(new Error("Invalid Story Id"));
             }
             //since the id format is valid, go ahead and parse the id into an integer...
@@ -64,10 +64,10 @@ var validators = {
         return new Promise(function (resolve, reject) {
             //first, let's check that the storyId and authorId are remotely valid
             //if not, we immediately reject the promise
-            if (!validators.isvalidid(storyId)) {
+            if (!validators.isValidId(storyId)) {
                 return reject(new Error("Invalid Story Id"));
             }
-            if (!validators.isvalidid(authorId)) {
+            if (!validators.isValidId(authorId)) {
                 return reject(new Error("Invalid Author Id"));
             }
             //since the ids are reasonable, we now perform a query to find this story 
@@ -100,11 +100,11 @@ var validators = {
             //first, validate the format of the pageid itself (and storyid, if provided)
             //if it's not valid, reject immediately
             if (storyId) {
-                if (!validators.isvalidid(storyId)) {
+                if (!validators.isValidId(storyId)) {
                     return reject(new Error("Invalid Story Id"));
                 }
             }
-            if (!validators.isvalidid(pageId)) {
+            if (!validators.isValidId(pageId)) {
                 return reject(new Error("Invalid Page Id"));
             }
             //since it's valid, go ahead and set up our search options
@@ -152,16 +152,16 @@ var validators = {
         return new Promise(function (resolve, reject) {
             //first, let's check that the pageId, authorId, and storyId (if provided) are remotely valid
             //if not, we immediately reject the promise
-            if (!validators.isvalidid(authorId)) {
+            if (!validators.isValidId(authorId)) {
                 return reject(new Error("Invalid Author Id"));
             }
 
             if (storyId) { //only run this validation if a story id was provided
-                if (!validators.isvalidid(storyId)) {
+                if (!validators.isValidId(storyId)) {
                     return reject(new Error("Invalid Story Id"));
                 }
             }
-            if (!validators.isvalidid(pageId)) {
+            if (!validators.isValidId(pageId)) {
                 return reject(new Error("Invalid Page Id"));
             }
 
@@ -209,26 +209,19 @@ var validators = {
         var authorHasWritePrivs = validators.storyIsWriteable(storyId, authorId);
         //we want this query to return a story result and not an error
  
-        //2) the story includes at least 2 valid pages - content finished, not dangling pages, not orphaned
-        var minimumValidPages = db.Page.count({
-            where: {
-                isOrphaned: false,
-                isLinked: true,
-                contentFinished: true,
-                StoryId: storyId
-            } //we want this query to return a count of 2 (or more)
-        });
-
-        //3) they have no unlinked ('dangling') pages (that are not orphaned)
+        //2) they have no unlinked pages (pages without outgoing links)
+        //NOTE: this does not include end/tbc pages, as they don't have outgoing links
         var countOfUnlinkedPages = db.Page.count({
             where: {
                 isOrphaned: false,
                 isLinked: false,
+                isEnding: false,
+                isTBC: false,
                 StoryId: storyId
             } //we want this query to return a count of 0
         });
 
-        //4) all the content is 'finished' (that are not orphaned)
+        //3) all the content is 'finished' (that are not orphaned)
         //(this should be 0)
         var countofUnfinishedPages = db.Page.count({
             where: {
@@ -238,9 +231,18 @@ var validators = {
             }
         });  //we want this query to return a count of 0
         
-        //kick off all these individual tests, and then let us do something after they have completed :)
+        //4) story has to have at least one page (a start page)
+        var hasStartPage = db.Page.count({
+            where: {
+                isOrphaned: false,
+                contentFinished: true,
+                isStart: true,
+                StoryId: storyId
+            }
+        });  //we want this query to return a count of 0
 
-        return Promise.all([authorHasWritePrivs, minimumValidPages, countOfUnlinkedPages, countofUnfinishedPages]);
+        //kick off all these individual tests, and then let us do something after they have completed :)
+        return Promise.all([authorHasWritePrivs, countOfUnlinkedPages, countofUnfinishedPages, hasStartPage]);
     }
 };
 

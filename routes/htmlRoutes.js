@@ -16,7 +16,6 @@ module.exports = function (app) {
     app.get("/", function (req, res) {
         // Renders the dashboard if a user is signed in
         if (req.session.token) {
-            console.log(req.session.token);
             res.cookie("token", req.session.token);
             // Finds the most recently updated stories of the User
             dbMethods.findUser(req.session.token).then(function(user){
@@ -165,7 +164,7 @@ module.exports = function (app) {
     });
 
     app.get("/tags/:tagid", function (req, res) {
-        if (!check.isvalidid(req.params.tagid)) {
+        if (!check.isValidId(req.params.tagid)) {
             //if this is not a valid tag id, return an error that we can't read the story
             var tagError = new Error("Invalid Tag Id");
             return res.render("404", getError.messageTemplate(tagError));
@@ -210,7 +209,7 @@ module.exports = function (app) {
         if(req.session.token){
             loggedIn = true;
         }
-        if(!check.isvalidid(authorId)){
+        if(!check.isValidId(authorId)){
             var authorError = new Error("Found Invalid Author Id");
             return res.render("404", getError.messageTemplate(authorError));
         }
@@ -251,7 +250,6 @@ module.exports = function (app) {
     app.get("/story/create", function (req, res) {
         async function create () {
             var tags = await dbMethods.allTags().catch(function(err) {
-                console.log(err);
                 var storyError = new Error(err.message);
                 return res.render("404", getError.messageTemplate(storyError));
             });
@@ -267,7 +265,7 @@ module.exports = function (app) {
 
     //EDIT STORY (SETTINGS)
     app.get("/story/settings/:storyid", function (req, res) {
-        if (!check.isvalidid(req.params.storyid)) {
+        if (!check.isValidId(req.params.storyid)) {
             //if this is not a valid story id, return an error that we can't read the story
             var storyError = new Error("Invalid Story Id");
             return res.render("404", getError.messageTemplate(storyError));
@@ -277,18 +275,15 @@ module.exports = function (app) {
         async function update () {
             var authorID = req.session.token;
             var theStory = await check.storyIsWriteable(storyId, authorID).catch(function(err) {
-                console.log(err);
                 var storyError = new Error(err.message);
                 return res.render("404", getError.messageTemplate(storyError));
             });
             if (theStory) {
                 var tags = await dbMethods.allTags().catch(function(err) {
-                    console.log(err);
                     var storyError = new Error(err.message);
                     return res.render("404", getError.messageTemplate(storyError));
                 });
                 var storytags = await theStory.getTags({through: {StoryId: storyId}}).catch(function(err) {
-                    console.log(err);
                     var storyError = new Error(err.message);
                     return res.render("404", getError.messageTemplate(storyError));
                 });
@@ -320,7 +315,6 @@ module.exports = function (app) {
 
     app.get("/story/pagelibrary/:storyid", function (req, res) {
         //first, check if the token & storyid are legit - then go ahead and load the library
-        console.log(req.params.storyid);
         check.storyIsWriteable(req.params.storyid, req.session.token).
             then(function (storyResult) {
             //Hooray!  this story is legit. Run a query to grab its pages
@@ -338,7 +332,6 @@ module.exports = function (app) {
                         title: storyResult.title,
                         pages: allpages
                     };
-                    console.log(hbsObj.storyId + " public " + hbsObj.storyIsPublic);
                     //Now render the page
                     res.render("pagelibrary", hbsObj);
                 });

@@ -175,14 +175,32 @@ module.exports = function (app) {
     //We only call this when we want to validate and publish a story 
     //TO DO - make an UNPUBLISH route for revoking public access to your story
     app.put("/api/story/publish/", function (req, res) {
-        dbMethods.publishStory(req.body.storyId, req.session.token).then(function(result) {
+        var toPublish = req.body.isPublic;
+        if(toPublish==="true") {
+        dbMethods.publishStory(req.body.storyId, req.session.token).then(function(publishingResult) {
             //send info about the result back to the front end
             //NOTE: this will either be a success, or a failure 
             //front end gets to decide what to do with it
-            res.json(result); 
+            return res.json(publishingResult); 
         }, function(err) { //trap outright rejections for malformed urls, etc
-            res.sendStatus(getError.statusCode(err)); 
+            res.sendStatus(getError.statusCode(err));
         });
+        }
+        else if (toPublish==="false") {
+            console.log("Unpublishing");
+            dbMethods.unpublishStory(req.body.storyId, req.session.token).then(
+                function(unpublishingResult) {
+                    return res.json(unpublishingResult);
+                },
+                function(err) {
+                    res.sendStatus(getError.statusCode(err));
+            /*         return res.json({success: false, error: [err.message]}); */
+                }
+            );
+        }
+        else {
+            res.sendStatus(400);
+        }
     });
 
     //TAGS API

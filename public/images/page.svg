@@ -14,7 +14,7 @@
    viewBox="0 0 31.003094 41.58643"
    height="41.58643mm"
    width="31.003094mm"
-   sodipodi:docname="linked_page.svg"
+   sodipodi:docname="page.svg"
    inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <sodipodi:namedview
      pagecolor="#ffffff"
@@ -30,7 +30,7 @@
      id="namedview833"
      showgrid="false"
      inkscape:zoom="2.6975947"
-     inkscape:cx="58.588524"
+     inkscape:cx="-4.61593"
      inkscape:cy="78.588528"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
@@ -63,7 +63,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
