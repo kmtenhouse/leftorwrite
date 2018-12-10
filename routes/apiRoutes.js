@@ -67,11 +67,15 @@ module.exports = function (app) {
                 for (var i = 0; i < children.length; i++) {
                     var toId = 0;
                     if (children[i].ToPageId === "blank") {
+                        var pagetitle = children[i].linkName;
+                        if (pagetitle === "Continue") {
+                            pagetitle = "Continue from " + page.title;
+                        }
                         var childpage = await dbMethods.createNewPage({
                             AuthorId: req.session.token,
                             StoryId: req.body.storyid,
-                            title: "Default Title",
-                            content: "Default Content"
+                            title: pagetitle,
+                            content: "And then?"
                         });
                         toId = childpage.id;
                         console.log(toId);
@@ -93,7 +97,7 @@ module.exports = function (app) {
                 }
             }
             console.log("Created new page");
-            return res.status(200).send({storyId: page.StoryId, pageId: page.id, authorId: page.AuthorId});
+            return res.status(200).send({storyId: page.StoryId, pageId: page.id, toPageId: toId, authorId: page.AuthorId});
         }
     });
 
