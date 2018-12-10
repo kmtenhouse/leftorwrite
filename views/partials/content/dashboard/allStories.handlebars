@@ -1,0 +1,17 @@
+<div class="container mx-auto my-5">
+    <nav class="navbar border-bottom border-success mb-3">
+        <span class="navbar-brand"><h3>{{user.displayName}}'s Stories</h3></span>
+    </nav>
+    <div class="list-group">
+        {{#each stories}}
+            <a href="/story/pagelibrary/{{id}}" class="list-group-item list-group-item-action flex-column align-items-start my-2 border-success">
+                <div class="d-flex w-100 justify-content-start align-items-center">
+                    <!-- Image -->
+                    <img class="img-fluid story-img p-2 d-none d-sm-block" src="../images/script.svg" alt="Story">
+                    <!-- Story Title -->
+                    <h5 class="p-2">{{title}}</h5>
+                </div>
+            </a>
+        {{/each}}
+    </div>
+</div>

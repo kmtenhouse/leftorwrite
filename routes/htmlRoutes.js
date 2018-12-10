@@ -405,6 +405,21 @@ module.exports = function (app) {
             });
     });
 
+    app.get("/story/all", function(req, res) {
+        if(req.session.token){
+            dbMethods.findUser(req.session.token).then(function(user){
+                dbMethods.seeAllUserStories(req.session.token).then(function(stories){
+                    res.render("index", {
+                        loggedIn: true,
+                        seeMyStories: true,
+                        user,
+                        stories: stories
+                    });
+                });
+            });
+        }
+    });
+
     // Render 404 page for any unmatched routes
     app.get("*", function (req, res) {
         var err = new Error("Generic Error");
