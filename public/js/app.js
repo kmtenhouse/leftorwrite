@@ -67,7 +67,12 @@ function createPageObj(linksArr) {
         var ifOrphaned = parentLinksArr.length===0;
     }
     else {
-        ifOrphaned = true;
+        if (ifStart) {
+            ifOrphaned = false;
+        }
+        else {
+            ifOrphaned = true;
+        }
     }
     var contentFinished = true; // using this temporarily, eventually will be set by author.
     var pageObj = {
