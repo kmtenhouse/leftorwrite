@@ -9,7 +9,7 @@ module.exports = function (sequelize, DataTypes) {
         displayName: {
             type: DataTypes.STRING,
             allowNull: false,
-            validtate: {
+            validate: {
                 len: [3, 50]
             }
         }
