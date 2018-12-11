@@ -42,11 +42,14 @@ $(".scroll-to").on("click", function(e){
 
 
 // PAGE CREATE AND EDIT FUNCTIONALITY
+// VARIABLES:
+var specialCharTest = new RegExp(/[^- !',.0-9a-z]+|[ -!',.]{2,}/i);
+// message for links popover 
+var linkMustBe = "Links must be 1-100 characters with only letters, numbers, spaces, and punctuaction characters: ,.-!' . Dashes, spaces and punctuation characters cannot repeat.";
+
 // save changes after edit
 // save page function
 function createPageObj(linksArr) {
-   /*  console.log("inside createPageObj function ");
-    console.log("linksArr = ", linksArr); */
     var id = $("#authorNotes").data("page-id"); // will be page id
     var pageTitle = $("#authorNotes").val().trim(); // will be author quick notes
     var pageContent = $("#pageContent").val().trim(); // page content, we need to add a return fixer here
@@ -88,8 +91,26 @@ function createPageObj(linksArr) {
         pageid: id,
         children: JSON.stringify(linksArr)
     };
-/*     console.log("pageObj = ", pageObj); */
     return pageObj;
+}
+
+// test input
+function badInput(string, min, max) {
+    var containsSpecial = specialCharTest.test(string);
+    if (!(string.length < min || string.length > max || containsSpecial === true)) {
+        return false;
+    }
+    return true;
+}
+// open popover function
+function openPopover(location, message) {
+    // if not dispose, text won't change (needed for tags)
+    $(location).popover("dispose");
+    $(location).popover({
+        content: message,
+        placement: "top"
+    });
+    $(location).popover("show");
 }
 // Create links object
 function createLinks() {
@@ -101,7 +122,13 @@ function createLinks() {
         if($(links[i]).val().length === 0){
             $(links[i]).val("Continue");
         }
-        linksArray.push($(links[i]).val());
+        else {
+            var containsBad = badInput($(links[i]).val().trim(), 1, 100);
+            if (containsBad) {
+                return openPopover(".link-text", linkMustBe);
+            }
+        }
+        linksArray.push($(links[i]).val().trim());
         toPageArray.push($(links[i]).siblings(".input-group-append").children(".link-page-dropdown").val());
         /* console.log("toPageArray = ", toPageArray); */
         var linkObj = {
@@ -176,9 +203,10 @@ async function newBlankLink(pagesArray) {
 $(document).on("click", "#savePage", async function (event) { 
     event.preventDefault();
     var links = createLinks();
-    var pageObj = createPageObj(links);
-    /* console.log(pageObj); */
-    savePage(pageObj);
+    if (links) {
+        var pageObj = createPageObj(links);
+        savePage(pageObj);
+    }
 });
 
 // continue will also save a page, and create a "continue" link with a new blank page on the other end
@@ -201,21 +229,23 @@ $(document).on("click", "#choices", function (event) {
     event.preventDefault(); 
     var that = $(this);
     var storyId = $("#titleHeader").data("story-id");
+    // get all pages in the story to display the dropdown
     $.ajax("/api/story/" + storyId + "/allpages", {
         type: "GET"
     }).then(function(pages){
+        // create a blank link input
         newBlankLink(pages).then(function(newlink){
-            /* console.log(newlink); */
+            // toggle the other buttons
             if (!that.hasClass("disabled")) {
                 that.toggleClass("active");
                 $("#continue, #end, #tbc").toggleClass("disabled");
                 $("#link-editor").toggle(1000);
                 if (that.hasClass("active")) {
-/*                     console.log("append new links"); */
                     $("#link-list").append(newlink);
         
                 }
                 else {
+                    // closing the link editor empties the list
                     $("#link-list").empty();
                     $("#add-link-btn").prop("disabled", false);
                 }
