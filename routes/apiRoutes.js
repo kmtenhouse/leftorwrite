@@ -303,13 +303,13 @@ module.exports = function (app) {
             var storyError = new Error(err.message);
             return res.render("404", getError.messageTemplate(storyError));
         });
-        theStory.setAuthor(authID).catch(function (err) {
+        await theStory.setAuthor(authID).catch(function (err) {
             var storyError = new Error(err.message);
             return res.render("404", getError.messageTemplate(storyError));
         });
         if (req.body.tags) {
             var tagsArr = req.body.tags.split(",");
-            theStory.setTags(tagsArr, { where: { StoryId: theStory.id } }).catch(function (err) {
+            await theStory.setTags(tagsArr, { where: { StoryId: theStory.id } }).catch(function (err) {
                 var storyError = new Error(err.message);
                 return res.render("404", getError.messageTemplate(storyError));
             });
