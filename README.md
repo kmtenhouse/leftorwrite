@@ -36,3 +36,4 @@ This is what the readers sees when they start reading a story. The continue butt
 ![leftorwrite5](https://user-images.githubusercontent.com/36722674/49974148-d12e2780-feec-11e8-9fae-daa496e90890.png)
 
 Pages further into the story may have multiple buttons linking to new pages, as seen below.
+![leftorwrite6](https://user-images.githubusercontent.com/36722674/49976002-24a47380-fef5-11e8-8606-4c0b1c23d3ad.png)
