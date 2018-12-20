@@ -191,7 +191,7 @@ module.exports = function (app) {
     });
 
     app.get("/authors", function (req, res) {
-        dbMethods.findAllUsers().then(function(users){
+        dbMethods.findAllPublicAuthors().then(function(users){
             var loggedIn = false;
             if(req.session.token){
                 loggedIn = true;
@@ -201,6 +201,12 @@ module.exports = function (app) {
                 seeAuthors: true,
                 authors: users
             });
+        });
+    });
+
+    app.get("/test/authors/", function(req,res) {
+        dbMethods.findAllPublicAuthors().then(function(users) {
+            res.json(users);
         });
     });
 
@@ -215,6 +221,7 @@ module.exports = function (app) {
             return res.render("404", getError.messageTemplate(authorError));
         }
         dbMethods.findUser(authorId).then(function(author){
+            console.log("Looking for stories by " + authorId);
             dbMethods.findAllUserStories(authorId).then(function(stories){
                 if(stories.length === 0){
                     var nullError = new Error("No Stories Found");
@@ -362,7 +369,7 @@ module.exports = function (app) {
                 //1) determine if this is the first page in the story (if so, it defaults to the start of the story)
                 //2) if not, it will become an orphaned page by default
                 //(TO-DO) actually send this object to the 'create page' form ;)
-               // res.send(typeof(storyResult));
+                // res.send(typeof(storyResult));
                 var hbsObj = {
                     id: storyResult.id,
                     title: storyResult.title

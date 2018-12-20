@@ -161,6 +161,20 @@ var dbMethods = {
             return stories;
         });
     },
+    findAllPublicAuthors: function() {
+        return db.User.findAll(
+            /* {
+                attributes: { 
+                    include: [[db.Sequelize.fn("COUNT", db.Sequelize.col("stories.id")), "storyCount"]] 
+                },
+                include: [{
+                    model: db.Story,
+                    as: "Author", 
+                    attributes: []
+                }]
+            } */
+        );
+    },
     findAllPublicStories: function () {
         return db.Story.findAll({
             where: {
