@@ -1,0 +1,39 @@
+<div class="row mx-1 mb-4 rounded" id="link-editor"{{#unless isLinked}} style="display:none;"{{/unless}}>
+    <div class="col-12 pr-1">
+        <div class="form-row m-1 m-md-3 px-0">
+            <label id="linkHelp" class="form-text">Links direct readers to the next page. You can make up to three.</label> 
+            <div class="input-group col-12 px-0 mx-0" id="link-list">
+                {{#if ChildLinks}}
+                    {{#each ChildLinks}}
+                        <div class="form-row col-12 mb-3 px-0 link-row">
+                            <input class="form-control col-12 col-md-7 link-text" id="link-{{id}}" data-link-id="{{id}}" type="text" maxlength="100" value="{{linkName}}" placeholder="Link text -  what your readers will see." aria-label="Link text -  what your readers will see.">
+                            <div class="row col-12 col-md-5 pr-0 mr-0 input-group-append">
+                                <select class="form-control input-group-text col-8 link-page-dropdown">
+                                    <option value="blank">New Blank Page</option>
+                                    {{#each ../StoryPages}}
+                                        {{#unless (equals ../../id id)}}
+                                            <option value="{{id}}"{{#if (equals ../ToPageId id)}} selected {{/if}}>{{title}}</option>
+                                        {{/unless}}
+                                    {{/each}}
+                                </select>
+                                <span class="input-group-text col-2">
+                                    <button type="button" class="close mx-auto" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </span>
+                                <span class="input-group-text col-2 p-0">
+                                    <a href="/story/write/{{../StoryId}}/pages/{{ToPageId}}" class="btn btn-sm mx-auto next-page" aria-label="Next Page">
+                                        <span aria-hidden="true">&rarr;</span>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    {{/each}}
+                {{/if}}
+            </div>  
+            <div class="mb-3">
+                <button class="btn px-5 mx-auto text-white" id="add-link-btn">Add New Link</button>
+            </div> 
+        </div>
+    </div>
+</div>

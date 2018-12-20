@@ -9,16 +9,15 @@ module.exports = function (sequelize, DataTypes) {
         displayName: {
             type: DataTypes.STRING,
             allowNull: false,
-            validtate: {
+            validate: {
                 len: [3, 50]
             }
         }
     });
-  /*   User.associate = function(models) {
-        User.hasMany(models.Story);
-        User.hasMany(models.Page);
-        User.hasMany(models.Link);
-    }; */
-
+    User.associate = function(models) {
+        User.hasMany(models.Story, {as: "Stories", foreignKey: "AuthorId"});
+        User.hasMany(models.Page, {as: "Pages", foreignKey: "AuthorId"});
+        User.hasMany(models.Link, {as: "Links", foreignKey: "AuthorId"});
+    };
     return User;
 };

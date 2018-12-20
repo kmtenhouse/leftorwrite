@@ -1,10 +1,9 @@
-<div class="px-3 col-2 page-icon-container">
-   <a href="#"> {{!-- This is where the link to edit a page goes --}}
-       <figure class="ml-auto mr-auto">
-           <img class="page-icon" src="/images/{{#unless this.isLinked}}unlinked-{{/unless}}{{#unless this.contentFinished}}unfinished-{{/unless}}{{#if this.isStart}}start-{{/if}}{{#if this.isEnding}}ending-{{/if}}{{#if this.isTBC}}tbc-{{/if}}page.svg">
-           <figcaption>{{#if this.isStart}}First Page: {{/if}}{{#if this.isEnding}}Ending: {{/if}}{{#if
-               this.isTBC}}TBC: {{/if}}{{this.title}}</figcaption>
-       </figure>
-   </a>
+<div class="col-12 col-md-6 col-lg-4 py-2">
+    <div class="px-3 py-3 page-icon-container {{#if this.isStart}}start-page{{/if}}{{#if this.isEnding}}ending-page{{/if}}{{#if this.isTBC}}tbc-page{{/if}}{{#unless this.isEnding}}{{#unless this.isTBC}}{{#unless this.isStart}}regular-page{{/unless}}{{/unless}}{{/unless}} clearfix">
+    <a href="/story/write/{{this.StoryId}}/pages/{{this.id}}"> {{!-- This is where the link to edit a page goes --}}
+        <img class="page-icon float-left" src="/images/{{#unless this.isEnding}}{{#unless this.isTBC}}{{#unless this.isLinked}}unlinked-{{/unless}}{{/unless}}{{/unless}}{{#unless this.contentFinished}}unfinished-{{/unless}}{{#if this.isStart}}start-{{/if}}{{#if this.isEnding}}ending-{{/if}}{{#if this.isTBC}}tbc-{{/if}}page.svg">
+        <h6>{{#if this.isStart}}First Page: {{/if}}{{#if this.isEnding}}Ending: {{/if}}{{#if
+            this.isTBC}}TBC: {{/if}}{{this.title}}</h6>
+    </a>
+    </div>
 </div>
-

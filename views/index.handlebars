@@ -1,7 +1,6 @@
 <!-- Header will appear on every page-->
 <header class="header">
     <div class="container-fluid px-3">
-        <!-- Nav will eventually have logic to render differently depending on when the user is logged in -->
         <nav class="navbar navbar-expand-lg custom-nav">
             {{#if loggedIn}}
                 {{> navbar/logged-in}}
@@ -26,6 +25,8 @@
     {{> content/authors/authorStories}}
 {{else if seeAllStories}}
     {{> content/readStory/allStories}}
+{{else if seeMyStories}}
+    {{> content/dashboard/allStories}}
 {{else if loggedIn}}
     {{> content/dashboard/dashboard}}
 {{else}}
@@ -37,22 +38,7 @@
     <footer>
         <div class="container">
             <div class="row pt-3">
-                <div class="col-12 col-md-4 mr-auto">
-                    <aside>
-                        <h5>About Us</h5>
-                        <ul class="list-unstyled">
-                            <li>
-                                Jover Lee
-                            </li>
-                            <li>
-                                Theresa Bankman
-                            </li>
-                            <li>
-                                Tassa Tenhouse
-                            </li>
-                        </ul>
-                    </aside>
-                </div>
+                {{>footer/aboutus}}
                 <div class="col-12 col-md-4 ml-auto">
                     <aside>
                         <h5>Credits</h5>

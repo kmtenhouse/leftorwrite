@@ -5,16 +5,16 @@ module.exports = function(sequelize, DataTypes) {
         linkName: {
             type: DataTypes.STRING,
             allowNull: false,
-            validtate: {
+            validate: {
                 len: [1, 100]
             }
         }
     });
     Link.associate = function(models) {
-        Link.belongsTo(models.User, {as: "Author"});
-        Link.belongsTo(models.Story, {as: "Story"});
-        Link.belongsTo(models.Page, {as: "FromPage"});
-        Link.belongsTo(models.Page, {as: "ToPage"});
+        Link.belongsTo(models.User, {as: "Author", sourceKey: "id"});
+        Link.belongsTo(models.Story, {as: "Story", sourceKey: "id"});
+        Link.belongsTo(models.Page, {as: "FromPage", sourceKey: "id"});
+        Link.belongsTo(models.Page, {as: "ToPage", sourceKey: "id"});
     };
     return Link;
 };

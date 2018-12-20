@@ -16,7 +16,6 @@ module.exports = function (app) {
     app.get("/", function (req, res) {
         // Renders the dashboard if a user is signed in
         if (req.session.token) {
-            console.log(req.session.token);
             res.cookie("token", req.session.token);
             // Finds the most recently updated stories of the User
             dbMethods.findUser(req.session.token).then(function(user){
@@ -165,7 +164,7 @@ module.exports = function (app) {
     });
 
     app.get("/tags/:tagid", function (req, res) {
-        if (!check.isvalidid(req.params.tagid)) {
+        if (!check.isValidId(req.params.tagid)) {
             //if this is not a valid tag id, return an error that we can't read the story
             var tagError = new Error("Invalid Tag Id");
             return res.render("404", getError.messageTemplate(tagError));
@@ -216,7 +215,7 @@ module.exports = function (app) {
         if(req.session.token){
             loggedIn = true;
         }
-        if(!check.isvalidid(authorId)){
+        if(!check.isValidId(authorId)){
             var authorError = new Error("Found Invalid Author Id");
             return res.render("404", getError.messageTemplate(authorError));
         }
@@ -256,9 +255,11 @@ module.exports = function (app) {
     //When a writer first creates a new story, we will show them a blank form for their
     //story's settings. Once they 'save' it, we'll create a new db entry if everything is valid :)
     app.get("/story/create", function (req, res) {
+        if(!req.session.token){
+            return res.redirect("/");
+        }
         async function create () {
             var tags = await dbMethods.allTags().catch(function(err) {
-                console.log(err);
                 var storyError = new Error(err.message);
                 return res.render("404", getError.messageTemplate(storyError));
             });
@@ -274,7 +275,7 @@ module.exports = function (app) {
 
     //EDIT STORY (SETTINGS)
     app.get("/story/settings/:storyid", function (req, res) {
-        if (!check.isvalidid(req.params.storyid)) {
+        if (!check.isValidId(req.params.storyid)) {
             //if this is not a valid story id, return an error that we can't read the story
             var storyError = new Error("Invalid Story Id");
             return res.render("404", getError.messageTemplate(storyError));
@@ -284,18 +285,15 @@ module.exports = function (app) {
         async function update () {
             var authorID = req.session.token;
             var theStory = await check.storyIsWriteable(storyId, authorID).catch(function(err) {
-                console.log(err);
                 var storyError = new Error(err.message);
                 return res.render("404", getError.messageTemplate(storyError));
             });
             if (theStory) {
                 var tags = await dbMethods.allTags().catch(function(err) {
-                    console.log(err);
                     var storyError = new Error(err.message);
                     return res.render("404", getError.messageTemplate(storyError));
                 });
                 var storytags = await theStory.getTags({through: {StoryId: storyId}}).catch(function(err) {
-                    console.log(err);
                     var storyError = new Error(err.message);
                     return res.render("404", getError.messageTemplate(storyError));
                 });
@@ -327,7 +325,6 @@ module.exports = function (app) {
 
     app.get("/story/pagelibrary/:storyid", function (req, res) {
         //first, check if the token & storyid are legit - then go ahead and load the library
-        console.log(req.params.storyid);
         check.storyIsWriteable(req.params.storyid, req.session.token).
             then(function (storyResult) {
             //Hooray!  this story is legit. Run a query to grab its pages
@@ -345,10 +342,8 @@ module.exports = function (app) {
                         title: storyResult.title,
                         pages: allpages
                     };
-                    console.log(hbsObj.storyId + " public " + hbsObj.storyIsPublic);
                     //Now render the page
                     res.render("pagelibrary", hbsObj);
-    
                 });
             },
             function (err) { //otherwise, if an error occurred: show the right 404 page
@@ -359,22 +354,35 @@ module.exports = function (app) {
 
     //WRITE PAGES 
     //Create a new (orphaned) page -- displays a form to add a brand new page to an existing story
-    app.get("/story/write/:storyid/pages/", function(req,res) {
+    app.get("/story/write/:storyid/pages", function(req,res) {
         //first, check that the existing story is writeable by whoever is trying to access
         check.storyIsWriteable(req.params.storyid, req.session.token).then(
             function(storyResult) {
                 //otherwise, the story exists and the person logged in has permissions to write to it!  we can show them the create form :)
-
-                //the logic we'll need to do is 
-                //1) determine if this is the first page in the story (if so, it defaults to the start of the story)
-                //2) if not, it will become an orphaned page by default
-                //(TO-DO) actually send this object to the 'create page' form ;)
-                // res.send(typeof(storyResult));
-                var hbsObj = {
-                    id: storyResult.id,
-                    title: storyResult.title
-                };
-                res.render("createpage", hbsObj);
+                // search for a start page for this story
+                var storyToFind = storyResult.id;
+                db.Page.findAll({
+                    where: {
+                        StoryId: storyToFind,
+                        isStart: true
+                    }
+                }).then(function(startpage) {
+                    // this page object is formatted very specifically for page rendering
+                    var page = {};
+                    if (startpage[0]) {
+                        page.StoryId = storyToFind;
+                        page.StoryTitle = storyResult.title;
+                        page.isStart = false;
+                    }
+                    else {
+                        page.StoryId = storyToFind;
+                        page.StoryTitle = storyResult.title;
+                        page.isStart = true;
+                    }
+                    //Now render the page
+                    res.render("createpage", page);
+                    // res.json(page);
+                });
             }, 
             function(error) {
                 //otherwise, send the appropriate 404 page
@@ -382,19 +390,47 @@ module.exports = function (app) {
             });
     });
 
+    // Theresa: This will need to return the incoming and outgoing links for the page as well, if they exist
     //Edit an existing page
     app.get("/story/write/:storyid/pages/:pageid", function (req, res) {
         //check if the page is editable
         check.pageIsWriteable(req.params.pageid, req.session.token, req.params.storyid).then(
-            function(pageResult){
+            async function(pageResult){
                 //if we got a page, render the write form and populate it with the data we already have
-                //(TO-DO)
-                res.json(pageResult);
+                var childLinks = await pageResult.getChildLinks();
+                var parentLinks = await pageResult.getParentLinks();
+                var storyPages = await dbMethods.findAllPagesInStory(pageResult.AuthorId, pageResult.StoryId);
+                // this page object is formatted very specifically for page rendering
+                var page = pageResult.dataValues;
+                page.StoryTitle = page.Story.dataValues.title;
+                page.ChildLinks = childLinks;
+                page.ParentLinks = parentLinks;
+                page.StoryPages = storyPages;
+                // res.json(page);
+                res.render("createpage", page);
             }, 
             function(err) {
                 //if an error occurred with the page load, go ahead and show the user
                 res.render("404", getError.messageTemplate(err));
             });
+    });
+
+    app.get("/story/all", function(req, res) {
+        if(req.session.token){
+            dbMethods.findUser(req.session.token).then(function(user){
+                dbMethods.seeAllUserStories(req.session.token).then(function(stories){
+                    res.render("index", {
+                        loggedIn: true,
+                        seeMyStories: true,
+                        user,
+                        stories: stories
+                    });
+                });
+            });
+        }
+        else{
+            res.redirect("/");
+        }
     });
 
     // Render 404 page for any unmatched routes

@@ -5,14 +5,14 @@ module.exports = function (sequelize, DataTypes) {
         title: {
             type: DataTypes.STRING,
             allowNull: false,
-            validtate: {
+            validate: {
                 len: [1, 100]
             }
         },
         content: {
             type: DataTypes.TEXT,
             allowNull: false,
-            validtate: {
+            validate: {
                 len: [1, 5000]
             }
         },
@@ -44,6 +44,8 @@ module.exports = function (sequelize, DataTypes) {
     Page.associate = function (models) {
         Page.belongsTo(models.User, { as: "Author" });
         Page.belongsTo(models.Story, { as: "Story" });
+        Page.hasMany(models.Link, {as: "ParentLinks", foreignKey: "ToPageId"});
+        Page.hasMany(models.Link, {as: "ChildLinks", foreignKey: "FromPageId"})
     };
     return Page;
 };

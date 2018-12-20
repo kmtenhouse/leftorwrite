@@ -68,13 +68,21 @@ a:hover {
 }
 
 /* Separate each section with a border */
-section {
+.splash {
   border-bottom: 5px solid #44BBA4;
+  min-height: 80vh;
 }
 
-/* Implement a splash image for the main section */
-.splash {
+/* Implement a  image for the main section */
+.for-newbies {
   background-image: url('../images/open-notebook-xs.jpg');
+  background-size: cover;
+  min-height: 90vh;
+}
+
+/* Implement a splash for the about-readers section*/
+.for-writers {
+  background-image: url('../images/planning-xs.jpg');
   background-size: cover;
   min-height: 90vh;
 }
@@ -82,7 +90,11 @@ section {
 /* Provide a neutral background for other sections */
 .neutral {
   background-color: #E7E5DF;
-  min-height: 60vh;
+}
+
+/* Provide a grey background for cards */
+.grey-bg {
+  background-color: #c3c2c2;
 }
 
 /* Icons for the main page */
@@ -99,7 +111,6 @@ section {
   border: none;
 }
 
-
 /* Footer colors */
 footer {
   background-color: #272727;
@@ -111,18 +122,7 @@ footer {
   overflow-y: scroll;
 }
 
-/* Media query changes for when our screen grows above a mobile size */
-@media only screen and (min-width: 760px) {
-  .splash { 
-    background-image: url('../images/open-notebook-med.jpeg');
-  }
 
-  .headline {
-    font-size: 3.5rem;
-    font-weight: 300;
-    line-height: 1.2;
-  }
-}
 
 /* Dashboard Classes */
 
@@ -135,14 +135,43 @@ footer {
   border-radius: 12px;
 }
 
-/* CSS for page icons */
-/* Default page is a rectangle */
+.page-btn {
+  height: 5em;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: white;
+  font-size: 1em;
+  text-shadow: 0 0 5px #ffffff;
+}
 
-/* First page is a half moon (round part facing top) */
+#continue {
+  background-image: url(/images/continue.svg);
+}
+  
+#choices {
+  background-image: url(/images/choicepoint.svg);
+}
+  
+#end {
+  background-image: url(/images/end.svg);
+}
+  
+#tbc {
+  background-image: url(/images/tbc.svg);
+}
 
-/* Ending is a half moon (round part facing bottom) */
+#authorNotes, #pageContent {
+  overflow: scroll;
+}
 
-/* TBC is a star */
+#link-editor {
+  background-color: #cec9c1;
+}
+
+#add-link-btn {
+  background-color: #56A3A6
+}
 
 /* Log In Page */
 #login-page {
@@ -164,4 +193,22 @@ footer {
 /* Tag Page Classes */
 .tag-stories {
   max-width: 15rem;
+}
+
+/* Media query changes for when our screen grows above a mobile size */
+@media only screen and (min-width: 760px) {
+  .for-newbies { 
+    background-image: url('../images/open-notebook-med.jpeg');
+  }
+
+/* Implement a splash for the about-readers section*/
+  .for-writers {
+    background-image: url('../images/planning-med.jpg');
+   }
+
+  .headline {
+    font-size: 3.5rem;
+    font-weight: 300;
+    line-height: 1.2;
+  }
 }

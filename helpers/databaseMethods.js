@@ -16,14 +16,14 @@ var dbMethods = {
         });
     },
     topFiveTags: function () {
-        return db.sequelize.query("select tags.id, tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id where stories.isPublic = 1 and stories.isFinished = 1 group by tags.id order by num_stories desc limit 5;",
+        return db.sequelize.query("select Tags.id, Tags.TagName, COUNT(Stories.id) as num_stories from Tags left join StoryTag on StoryTag.TagId = Tags.id left join Stories on StoryTag.StoryId = Stories.id where Stories.isPublic = 1 and Stories.isFinished = 1 group by Tags.id order by num_stories desc limit 5;",
             { type: db.Sequelize.QueryTypes.SELECT }).then(
             function (dbTags) {
                 return dbTags;
             });
     },
     allTags: function () {
-        return db.sequelize.query("select tags.id, tags.TagName, COUNT(stories.id) as num_stories from tags left join storytag on storytag.TagId = tags.id left join stories on storytag.StoryId = stories.id group by tags.id order by num_stories desc;",
+        return db.sequelize.query("select Tags.id, Tags.TagName, COUNT(Stories.id) as num_stories from Tags left join StoryTag on StoryTag.TagId = Tags.id left join Stories on StoryTag.StoryId = Stories.id group by Tags.id order by num_stories desc;",
             { type: db.Sequelize.QueryTypes.SELECT }).then(
             function (dbTags) {
                 return dbTags;
@@ -58,6 +58,18 @@ var dbMethods = {
             return dbFirstPage;
         });
     },
+    findAllPagesInStory: function (authorId, storyId) {
+        return db.Page.findAll({
+            where: {
+                AuthorId: authorId,
+                StoryId: storyId
+            },
+            attributes: ["id", "title"],
+            order: [["isOrphaned", "DESC"]]
+        }).then(function (allPages) {
+            return allPages;
+        });
+    },
     findPageLinks: function (authorId, storyId, fromPageId) {
         return db.Link.findAll({
             where: {
@@ -68,6 +80,18 @@ var dbMethods = {
             order: [
                 [db.sequelize.fn("length", db.sequelize.col("linkName")), "ASC"]
             ]
+        }).then(function (dbLinks) {
+            return dbLinks;
+        });
+    },
+    // Theresa added, not tested yet.
+    findPageParent: function (authorId, storyId, toPageId) {
+        return db.Link.findAll({
+            where: {
+                AuthorId: authorId,
+                StoryId: storyId,
+                ToPageId: toPageId
+            }
         }).then(function (dbLinks) {
             return dbLinks;
         });
@@ -86,9 +110,9 @@ var dbMethods = {
             attributes: [
                 "id",
                 "TagName",
-                [db.sequelize.fn("COUNT", db.sequelize.col("stories.id")), "num_stories"],
+                [db.sequelize.fn("COUNT", db.sequelize.col("Stories.id")), "num_stories"],
             ],
-            order: [[db.sequelize.fn("COUNT", db.sequelize.col("stories.id")), "DESC"]]
+            order: [[db.sequelize.fn("COUNT", db.sequelize.col("Stories.id")), "DESC"]]
         }).then(function (result) {
             return result;
         });
@@ -161,19 +185,45 @@ var dbMethods = {
             return stories;
         });
     },
-    findAllPublicAuthors: function() {
-        return db.User.findAll(
-            /* {
-                attributes: { 
-                    include: [[db.Sequelize.fn("COUNT", db.Sequelize.col("stories.id")), "storyCount"]] 
-                },
-                include: [{
-                    model: db.Story,
-                    as: "Author", 
-                    attributes: []
-                }]
-            } */
-        );
+    createNewPage: function (pageObj) {
+        return db.Page.create(pageObj).then(function (newPage) {
+            return newPage;
+        });
+    },
+    createMultiplePages: function (pageObjArray) {
+        return db.Page.bulkCreate(pageObjArray).then(function (newPages) {
+            var newPagesId = [];
+            for (var i = 0; i < newPages.length; i++) {
+                var id = newPages[i].id;
+                newPagesId.push(id);
+            }
+            return newPagesId;
+        });
+    },
+    // Theresa created, not tested yet
+    updatePage: function (pageObj, pageid) {
+        return db.Page.update({
+            title: pageObj.title,
+            content: pageObj.content,
+            isStart: pageObj.isStart,
+            isTBC: pageObj.isTBC,
+            isEnding: pageObj.isEnding,
+            isLinked: pageObj.isLinked,
+            isOrphaned: pageObj.isOrphaned,
+            contentFinished: pageObj.contentFinished
+        }, {
+                where: {
+                    id: pageid
+                }
+            });
+    },
+    // Theresa created, not tested yet
+    deletePage: function (pageid) {
+        return db.Page.destroy({
+            where: {
+                id: pageid
+            }
+        });
     },
     findAllPublicStories: function () {
         return db.Story.findAll({
@@ -197,22 +247,21 @@ var dbMethods = {
             //do the async thing
             check.storyCanBePublished(storyId, authorId).then(
                 function (testResults) {
-                    console.log("Received test results");
                     //let's see what we got back from the test results, and return info 
                     //about succeeded (or failed)
-                    //we SUCCEEDED if we got the story we asked for, it has at least 2 valid pages, and no invalid pages
-                    if (testResults[0].id === parseInt(storyId) && testResults[1] > 1 && testResults[2] === 0 && testResults[3] === 0) {
+                    //we SUCCEEDED if the story we asked for is writeable and it doesn't have any invalid pages
+                    if (testResults[0].id === parseInt(storyId) && testResults[1] === 0 && testResults[2] === 0 && testResults[3]===1) {
                         //attempt to actually update the story now
-                        db.Story.update({isPublic: true, isFinished: true},{where: {id: testResults[0].id}}).then(function(updateResults) {
-                            if(updateResults) { //if the update worked, we'll resolve with a success!
+                        db.Story.update({ isPublic: true, isFinished: true }, { where: { id: testResults[0].id } }).then(function (updateResults) {
+                            if (updateResults) { //if the update worked, we'll resolve with a success!
                                 return resolve({ success: true });
                             }
                             else { //otherwise if there was some kind of error, reject with an error
                                 return reject(new Error("Generic Error"));
                             }
                         },
-                        function(err) { //if there was a db error, reject with an error
-                            return reject(err); 
+                        function (err) { //if there was a db error, reject with an error
+                            return reject(err);
                         }
                         );
                     }
@@ -221,33 +270,65 @@ var dbMethods = {
                         //note: we are not rejecting these exactly, we are resolving with info about what the user needs to correct (because there could be multiple issues to address)
                         var errorObj = {
                             success: false,
-                            storyTooShort: false,
-                            unlinkedPages: false,
-                            unfinishedPages: false
+                            errors: []
                         };
-                        if(testResults[1]<2) {
-                            errorObj.storyTooShort = true;
+                        if (testResults[1] > 0) {
+                            errorObj.errors.push("Unlinked pages");
                         }
-                        if(testResults[2]>0) {
-                            errorObj.this.unlinkedPages = true;
+                        if (testResults[2] > 0) {
+                            errorObj.errors.push("Unfinished pages");
                         }
-                        if(testResults[3]>0) {
-                            errorObj.this.unfinishedPages = true;
+                        if (testResults[3] !== 1) {
+                            errorObj.errors.push("No start page");
                         }
-                        return resolve(errorObj);
+                        return resolve(errorObj); //note: we are RESOLVING this because we do actually want the front-end to get feedback
                     }
 
                 },
                 function (err) {
                     //or if our publish tests failed, then we just return that error
-                    console.log("Failed test results");
-                    console.log(err.message);
                     return reject(err);
                 }
             );
         });
-
-
+    },
+    //function to UNPUBLISH a story from the db
+    //only requires that the owner has write access
+    unpublishStory: function (storyId, authorId) {
+        return new Promise(function (resolve, reject) {
+            check.storyIsWriteable(storyId, authorId).then(
+                function (storyResult) {
+                    //if the story is writeable we'll go ahead and try to update it
+                    db.Story.update({ isPublic: false, isFinished: false }, { where: { id: storyResult.id } }).then(
+                        function (updateResult) {
+                            return resolve({ success: true }); //hooray, we succeeded!
+                        });
+                },
+                function (err) {
+                    return reject(err); //otherwise, we did not succeed
+                }
+            );
+        });
+    },
+    createNewLink: function (linkObj) {
+        return db.Link.create(linkObj).then(function (newLink) {
+            return newLink;
+        });
+    },
+    createMultipleLinks: function (linkObjArray) {
+        return db.Link.bulkCreate(linkObjArray).then(function (newLinks) {
+            return newLinks;
+        });
+    },
+    seeAllUserStories: function(userId) {
+        return db.Story.findAll({
+            where: {
+                AuthorId: userId
+            },
+            order: [["title", "ASC"]]
+        }).then(function(dbStories){
+            return dbStories;
+        });
     }
 };
 

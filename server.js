@@ -22,23 +22,37 @@ app.engine(
     exphbs({
         defaultLayout: "main",
         helpers: {
-            checkWarnings: function(a,b,c,d,e,f){
-                if(!a && !b && !c && !d && !e && !f){
+            checkWarnings: function (a, b, c, d, e, f) {
+                if (!a && !b && !c && !d && !e && !f) {
                     return true;
                 }
                 return false;
             },
-            greaterThanZero: function(number){
-                if(number > 0){
+            greaterThanZero: function (number) {
+                if (number > 0) {
                     return true;
                 }
                 return false;
             },
-            equalsOne: function(number){
-                if(number === 1){
+            equalsOne: function (number) {
+                if (number === 1) {
                     return true;
                 }
                 return false;
+            },
+            equals: function (a, b) {
+                if (a === b) {
+                    return true;
+                }
+                return false;
+            },
+            everyNthItem: function (index, mod, block) {
+                if ((parseInt(index)+1) % (mod) === 0) {
+                    return block.fn(this);
+                }
+                else {
+                    return block.inverse(this);
+                }
             }
         }
     })

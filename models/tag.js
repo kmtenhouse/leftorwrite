@@ -5,7 +5,7 @@ module.exports = function(sequelize, DataTypes) {
         tagName: {
             type: DataTypes.STRING,
             allowNull: false,
-            validtate: {
+            validate: {
                 len: [2, 50]
             }
         }

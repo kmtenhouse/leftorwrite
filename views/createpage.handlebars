@@ -9,27 +9,66 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-12 pt-3 pb-1">
+        <div class="col-12 col-md-8 pt-3 pb-1">
             <h2>Add a Page</h2>
+        </div>
+        <div class="col-12 col-md-4 pt-md-3 pb-1">
+            <a class="btn custom-primary-btn w-100 text-white" href="/story/pagelibrary/{{StoryId}}">Return to Story Overview</a>
         </div>
         <div class="col-12 py-1">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">{{title}} - New Page</h5>
+                    <h5 class="card-title" id="titleHeader" data-story-id="{{StoryId}}" 
+                        {{#if isStart}}
+                            data-start="true"
+                        {{else}}
+                            data-start="false"
+                        {{/if}}
+                        {{#if ParentLinks}}
+                            data-incoming="{{#each ParentLinks}}{{FromPageId}},{{/each}}"
+                        {{/if}}
+                    >{{StoryTitle}} - 
+                        {{#if isStart}}
+                            Start Page
+                        {{else}}
+                            {{#if id}}
+                                Edit Page
+                            {{else}}
+                                New Page
+                            {{/if}}
+                        {{/if}}
+                    </h5>
                     <form>
-                        <div class="form-group">
-                            <label for="storyTitle">Author Notes:</label>
-                            <input class="form-control" type="text" placeholder="A few words so you'll remember what this page is about ;)">
-                            <small id="titleHelp" class="form-text text-muted">This section is just for your reference -
-                                your readers won't see it!</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="storyContent">Page content:</label>
-
-                            <textarea class="form-control" id="storyContent" rows="8" placeholder="What's going to happen next?"></textarea>
+                        <div class="form-row">
+                            <div class="form-group col-12 col-md-3">
+                                <label for="authorNotes">Author Notes:</label>
+                                <textarea class="form-control border-secondary" id="authorNotes" rows="5" data-page-id="{{id}}" maxlength="100" placeholder="A few words to help you remember what this page is about. So make them memorable.">{{title}}</textarea>
+                                <small id="titleHelp" class="form-text text-muted">The Author Notes section is just for your reference -
+                                    your readers won't see it! <br> Author Notes allows 100 characters, Page Content allows 5000.</small>
+                            </div>
+                            <div class="form-group col-12 col-md-9">
+                                <label for="pageContent">Page Content:</label>
+                                <textarea class="form-control border-secondary" id="pageContent" rows="12" maxlength="5000" placeholder="What's going to happen next?">{{content}}</textarea>
+                            </div>
                         </div>
                     </form>
-                    <a href="#" class="btn custom-primary-btn">Save Page</a>
+                    {{#unless isEnding}}
+                        {{#unless isTBC}}
+                            {{>content/pageEdit/linksEdit}}
+                        {{/unless}}
+                    {{/unless}}
+                    <div class="row page-buttons-row mx-1">
+                        <button class="btn custom-primary-btn col-12 col-md-2 my-3" id="savePage" aria-describedby="save page button">Save Page</button>
+                        <button class="btn page-btn col-3 col-md-2 pr-4{{#if isLinked}} disabled{{/if}}{{#if isEnding}} disabled{{/if}}{{#if isTBC}} disabled{{/if}}{{#unless isStart}}{{#if isOrphaned}} disabled{{/if}}{{/unless}}"  id="continue" aria-describedby="save page button">Cont.</button>
+                        <button class="btn page-btn col-3 col-md-2 p-0{{#if isLinked}} active{{/if}}{{#if isEnding}} disabled{{/if}}{{#if isTBC}} disabled{{/if}}{{#unless isStart}}{{#if isOrphaned}} disabled{{/if}}{{/unless}}" id="choices" aria-describedby="save page button">Choices</button>
+                        {{#unless isStart}}
+                            <button class="btn page-btn col-3 col-md-2{{#if isEnding}} active{{/if}}{{#if isLinked}} disabled{{/if}}{{#if isTBC}} disabled{{/if}}" id="end" aria-describedby="save page button">End</button>
+                            <button class="btn page-btn col-3 col-md-2{{#if isTBC}} active{{/if}}{{#if isLinked}} disabled{{/if}}{{#if isEnding}} disabled{{/if}}" id="tbc" aria-describedby="save page button">TBC</button>
+                            {{#if id}}
+                                <button class="btn custom-primary-btn col-12 col-md-2 my-3" id="deletePage">Delete Page</button>
+                            {{/if}}
+                        {{/unless}}
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,21 +1,28 @@
 // VARIABLES
 // Regular expression to test input
 // contains at least one special character, or repeating spaces/dashes
-var specialCharTest = new RegExp(/[^- 0-9a-z]+|[ -]{2,}/i);
+var specialCharTest = new RegExp(/[^- !',.0-9a-z]+|[ -!',.]{2,}/i);
+var tagPuctRestrictTest = new RegExp(/[!,.]/g);
 
 // message for the story title popover
-var titleMustBe = "Titles must be 2-100 characters with only letters, numbers, dashes and spaces. Dashes and spaces cannot repeat.";
+var titleMustBe = "Titles must be 2-100 characters with only letters, numbers, spaces, and punctuaction characters: ,.-!' . Dashes, spaces and punctuation characters cannot repeat.";
 // messages for the tag popover
-var tagsMustBe = "Tags must be 2-50 characters with only letters, numbers, dashes and spaces. Dashes and spaces cannot repeat.";
+var tagsMustBe = "Tags must be 2-50 characters with only letters, numbers, dashes, apostrophes and spaces. Dashes, apostrophes and spaces cannot repeat.";
 var tagAlreadyExists = "That tag already exists. If you can't find it using the searchbar, try saving your changes and refreshing the page.";
 
 // multiuse functions
 // test string from input against regex returns true if string is invalid
-function badInputTest(string, min, max) {
+function badInput(string, type, min, max) {
     var containsSpecial = specialCharTest.test(string);
-    if (string.length < min || string.length > max || containsSpecial === true) {
-        return true;
+    if (!(string.length < min || string.length > max || containsSpecial === true)) {
+        if (type === "tag") {
+            return tagPuctRestrictTest.test(string);
+        }
+        else {
+            return false;
+        }
     }
+    return true;
 }
 // open popover function
 function openPopover(location, message) {
@@ -127,7 +134,7 @@ $(document).on("click", "#saveChanges", function (event) {
     var id = $("#storyTitle").data("id");
     var title = $("#storyTitle").val().trim();
     if (title !== "") {
-        if (badInputTest(title, 2, 100)) {
+        if (badInput(title, "title", 2, 100)) {
             $(window).scrollTop(0);
             return openPopover("#storyTitle", titleMustBe);
         }
@@ -161,8 +168,6 @@ $(document).on("click", "#saveChanges", function (event) {
             type: "POST",
             data: storyObj
         }).then(function (result, status) {
-            console.log(status);
-            console.log(result);
             if (status === "success") {
                 window.location = "/story/settings/" + result.id;
             }
@@ -183,7 +188,7 @@ $(document).on("click", "#saveChanges", function (event) {
 $(document).on("click", "#saveTag", function () {
     event.preventDefault();
     var newtag = $("#newTagInput").val().trim();
-    if (badInputTest(newtag, 2, 50)) {
+    if (badInput(newtag, "tag", 2, 50)) {
         openPopover("#newTagInput", tagsMustBe);
     }
     else {
@@ -203,10 +208,6 @@ $(document).on("click", "#saveTag", function () {
             }
         }).then(function (result, status) {
             //if we succeeded in adding the tag, we'll add it to the tag list, check it, and close the modal
-            if (status === "success") {
-                console.log("success");
-                console.log(result);
-            }
             // add the new tag to the list without refreshing the page
             var successfulTagListItem = $("<li class=\"list-group-item\">");
             var successfulTagHolder = $("<div class=\"form-check\">");
@@ -232,7 +233,10 @@ $(document).on("click", "#saveTag", function () {
 
 // DELETE ROUTE
 $(document).on("click", "#deleteStory", function () {
-    event.preventDefault();
+    $("#deleteStoryModal").modal("show");
+});
+
+$(document).on("click", "#confirmDelete", function(){
     var id = $("#storyTitle").data("id");
     if (id !== "") {
         $.ajax("/api/story/" + id, {
@@ -249,7 +253,7 @@ $(document).on("click", "#deleteStory", function () {
             type: "GET"
         });
     }
-});
+})
 
 // OTHER BUTTONS 
 // links to other pages 
