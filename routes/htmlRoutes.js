@@ -190,7 +190,7 @@ module.exports = function (app) {
     });
 
     app.get("/authors", function (req, res) {
-        dbMethods.findAllUsers().then(function(users){
+        dbMethods.findAllPublicAuthors().then(function(users){
             var loggedIn = false;
             if(req.session.token){
                 loggedIn = true;
@@ -200,6 +200,12 @@ module.exports = function (app) {
                 seeAuthors: true,
                 authors: users
             });
+        });
+    });
+
+    app.get("/test/authors/", function(req,res) {
+        dbMethods.findAllPublicAuthors().then(function(users) {
+            res.json(users);
         });
     });
 
@@ -214,6 +220,7 @@ module.exports = function (app) {
             return res.render("404", getError.messageTemplate(authorError));
         }
         dbMethods.findUser(authorId).then(function(author){
+            console.log("Looking for stories by " + authorId);
             dbMethods.findAllUserStories(authorId).then(function(stories){
                 if(stories.length === 0){
                     var nullError = new Error("No Stories Found");
