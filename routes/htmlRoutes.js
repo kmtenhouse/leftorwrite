@@ -190,7 +190,7 @@ module.exports = function (app) {
     });
 
     app.get("/authors", function (req, res) {
-        dbMethods.findAllPublicAuthors().then(function(users){
+        dbMethods.findAllUsers().then(function(users){
             var loggedIn = false;
             if(req.session.token){
                 loggedIn = true;

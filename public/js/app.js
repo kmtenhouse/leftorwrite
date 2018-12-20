@@ -263,6 +263,7 @@ $(document).on("click", "#tbc", function (event) {
 // ideally has confirm modal
 $(document).on("click", "#deletePage", function (event) {
     event.preventDefault(); 
+    $("#deletePageModal").modal("show");
 });
 
 $(document).change("select[class=\"link-page-dropdown\"]", function(){
