@@ -13,15 +13,17 @@ body {
 
 footer {
   flex-shrink: 0;
+  background-color: #272727;
+  color: white;
 }
 
 /* Link colors */
 a {
-  color: #36723f;
+  color: #44BBA4;
 }
 
 a:hover {
-  text-decoration: none;
+  color: #44BBA4;
 }
 
 /* Custom nav pills and buttons */
@@ -111,17 +113,10 @@ a:hover {
   border: none;
 }
 
-/* Footer colors */
-footer {
-  background-color: #272727;
-  color: white;
-}
-
 #tagList {
   max-height: 16em;
   overflow-y: scroll;
 }
-
 
 
 /* Dashboard Classes */

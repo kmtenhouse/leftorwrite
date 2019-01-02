@@ -29,28 +29,10 @@
     {{> content/dashboard/allStories}}
 {{else if loggedIn}}
     {{> content/dashboard/dashboard}}
-{{else}}
+{{else if homepage}}
     {{> content/intro}}
 {{/if}}
 
 <div class="spacer"></div>
-  <!-- Footer containing credits on every page -->
-    <footer>
-        <div class="container">
-            <div class="row pt-3">
-                {{>footer/aboutus}}
-                <div class="col-12 col-md-4 ml-auto">
-                    <aside>
-                        <h5>Credits</h5>
-                        <ul class="list-unstyled">
-                            {{#if loggedIn}}
-                            {{> footer/dashboard-footer}}
-                            {{else}}
-                            {{> footer/intro-footer}}
-                            {{/if}}
-                        </ul>
-                    </aside>
-                </div>
-            </div>
-        </div>
-    </footer>
+<!-- Footer containing credits on every page -->
+{{> footer/footer}}

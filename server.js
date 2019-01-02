@@ -53,6 +53,14 @@ app.engine(
                 else {
                     return block.inverse(this);
                 }
+            },
+            ifAny: function(a, b, c, d, e, f, block) {
+                if(a || b || c || d || e || f){
+                    return block.fn(this);
+                }
+                else {
+                    return block.inverse(this);
+                }
             }
         }
     })

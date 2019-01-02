@@ -43,7 +43,8 @@ module.exports = function (app) {
         else {
             res.cookie("token", "");
             res.render("index", {
-                loggedIn: false
+                loggedIn: false,
+                homepage: true
             });
         }
     });
