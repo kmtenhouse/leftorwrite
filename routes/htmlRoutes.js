@@ -342,13 +342,15 @@ module.exports = function (app) {
                     //if we had a successful page lookup, create a handlebars object
                     //note: make sure to include some story info like title and story id
                     var hbsObj = {
+                        loggedIn: true,
+                        pageLibrary: true,
                         storyId: storyResult.id,
                         storyIsPublic: storyResult.isPublic,
                         title: storyResult.title,
                         pages: allpages
                     };
                     //Now render the page
-                    res.render("pagelibrary", hbsObj);
+                    res.render("index", hbsObj);
                 });
             },
             function (err) { //otherwise, if an error occurred: show the right 404 page

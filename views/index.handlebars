@@ -31,6 +31,8 @@
     {{> content/storySettings/story}}
 {{else if createPage}}
     {{> content/pageEdit/createPage}}
+{{else if pageLibrary}}
+    {{> content/pageLibrary/pageLibrary}}
 {{else if loggedIn}}
     {{> content/dashboard/dashboard}}
 {{else if homepage}}
@@ -40,3 +42,5 @@
 <div class="spacer"></div>
 <!-- Footer containing credits on every page -->
 {{> footer/footer}}
+
+{{> scriptTags/scripts}}
