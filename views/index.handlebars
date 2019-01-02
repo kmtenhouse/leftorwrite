@@ -27,6 +27,8 @@
     {{> content/readStory/allStories}}
 {{else if seeMyStories}}
     {{> content/dashboard/allStories}}
+{{else if storySettings}}
+    {{> content/storySettings/story}}
 {{else if loggedIn}}
     {{> content/dashboard/dashboard}}
 {{else if homepage}}

@@ -1,14 +1,3 @@
-<!-- Header (will appear on every page) -->
-<header class="header">
-    <div class="container-fluid px-3">
-        {{!-- navbar --}}
-        <!-- Nav (will eventually have logic to render differently depending on when the user is logged in) -->
-        <nav class="navbar navbar-expand-lg custom-nav">
-            {{> navbar/logged-in}}
-        </nav>
-
-    </div>
-</header>
 <div class="container py-3">
     <div class="row">
         <div class="col-12 d-flex flex-column">
@@ -17,7 +6,7 @@
                 <div class="form-group">
                     {{!-- story title --}}
                     <input type="title" class="form-control form-control-lg" id="storyTitle" aria-describedby="titleHelp"
-                        placeholder="Story Title" data-id="{{story.id}}" value="{{story.title}}">
+                        placeholder="Story Title" data-id="{{retObj.story.id}}" value="{{retObj.story.title}}">
                     <small id="titleHelp" class="form-text text-muted">Your title should be unique among your
                         stories, but don't worry about getting the perfect title right now. You can edit it at any time.</small>
                 </div>
@@ -25,7 +14,7 @@
                     {{!-- warnings check list --}}
                     <div class="form-group col-sm-6 col-md-4">
                         <div class="btn-group-vertical btn-group-toggle w-100" data-toggle="buttons" role="group" aria-label="content warnings buttons">
-                            {{>content/storysettings/warningbuttons}}
+                            {{> content/storySettings/warningbuttons}}
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-8">
@@ -48,14 +37,14 @@
                                 </p>
                             </div>
                             <div class="form-group col-md-7 mt-3">
-                                {{> content/storysettings/tagslist}}
+                                {{> content/storySettings/tagslist}}
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
                 {{!-- buttons for saving, overall settings and navigating to page views --}}
-                {{>content/storysettings/storybuttons}}
+                {{> content/storySettings/storybuttons}}
         </div>
     </div>
 </div>
@@ -107,6 +96,3 @@
         </div>
     </div>
 </div>
-
-<!-- Footer containing credits -->
-{{> footer/footer}}

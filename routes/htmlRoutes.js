@@ -269,7 +269,11 @@ module.exports = function (app) {
                 warn: helpList.warnings,
                 storybuttons: helpList.storybuttons
             };
-            res.render("story", retObj);
+            res.render("index", {
+                loggedIn: true,
+                storySettings: true,
+                retObj
+            });
         }
         create();
     });
@@ -302,7 +306,11 @@ module.exports = function (app) {
                 helpList.warningsMatch(theStory.dataValues);
                 retObj.warn = helpList.warnings;
                 retObj.storybuttons = helpList.storybuttons;
-                res.render("story", retObj);
+                res.render("index", {
+                    loggedIn: true,
+                    storySettings: true,
+                    retObj
+                });
             }
         }
         update();
