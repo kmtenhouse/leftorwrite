@@ -1,0 +1,47 @@
+{{!-- modal for tag creation --}}
+<div class="modal fade" id="createTagModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add a brand new tag!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="newTagInput" aria-describedby="tagHelp"
+                            placeholder="Enter your tag">
+                        <small id="tagHelp" class="form-text text-muted">Tags must be unique. Tags should be genres and general themes, like comedy or horror.</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn custom-primary-btn" id="saveTag">Save Tag</button>
+            </div>
+        </div>
+    </div>
+</div>
+{{!-- modal to confirm delete story --}}
+<div class="modal fade" id="deleteStoryModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteStory">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Are you sure?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h6>Please confirm that you want to delete this story! <br> All pages and content within story will be deleted and cannot be recovered!</h6>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

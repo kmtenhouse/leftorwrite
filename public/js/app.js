@@ -1,5 +1,12 @@
 var usernameRegex = /^(?!_)(?!.*__)[\w+|\w+ ?\w+]{3,50}(?<!_\s)$/;
 
+function showDynamicModal(headerMsg, bodyMsg, buttonMsg) {
+    $("#dynamicModalLabel").text(headerMsg);
+    $("#dynamicModalBody").text(bodyMsg);
+    $("#dynamicModalCloseBtn").text(buttonMsg);
+    $("#dynamicModal").modal("show");
+}
+
 $("#newUsernameForm").on("submit", function(event){
     event.preventDefault();
     var newUsername = $("#username-input").val().trim();
@@ -19,8 +26,7 @@ $("#newUsernameForm").on("submit", function(event){
                 });
             }
             else{
-                $("#errorModal").modal("show");
-/*                 console.log("Username already exists!"); */
+                showDynamicModal("Username already taken!", "The username you choose is already used by another user, please try again!", "Close");
             }
         });
     }
@@ -263,7 +269,7 @@ $(document).on("click", "#tbc", function (event) {
 // ideally has confirm modal
 $(document).on("click", "#deletePage", function (event) {
     event.preventDefault(); 
-    $("#deletePageModal").modal("show");
+    showDynamicModal("Delete Page Feature Unavailable", "The delete page feature is currently unavailable. It will be added in the near future!", "Close");
 });
 
 $(document).change("select[class=\"link-page-dropdown\"]", function(){
