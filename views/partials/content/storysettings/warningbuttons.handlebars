@@ -8,7 +8,7 @@
     {{/each}}
 {{else}} --}}
     {{!-- This block sorts which warnings are true and should be shown as active --}}
-    {{#each retObj.warn}}
+    {{#each warn}}
         {{#if yes}}
             <label class="btn btn-warning content-warning active" id="{{id}}">
                 <inputtype="checkbox" autocomplete="on"> {{text}}

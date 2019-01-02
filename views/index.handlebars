@@ -29,6 +29,8 @@
     {{> content/dashboard/allStories}}
 {{else if storySettings}}
     {{> content/storySettings/story}}
+{{else if createPage}}
+    {{> content/pageEdit/createPage}}
 {{else if loggedIn}}
     {{> content/dashboard/dashboard}}
 {{else if homepage}}

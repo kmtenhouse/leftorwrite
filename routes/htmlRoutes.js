@@ -267,13 +267,11 @@ module.exports = function (app) {
             var retObj = {
                 tags: tags,
                 warn: helpList.warnings,
-                storybuttons: helpList.storybuttons
-            };
-            res.render("index", {
+                storybuttons: helpList.storybuttons,
                 loggedIn: true,
-                storySettings: true,
-                retObj
-            });
+                storySettings: true
+            };
+            res.render("index", retObj);
         }
         create();
     });
@@ -306,11 +304,9 @@ module.exports = function (app) {
                 helpList.warningsMatch(theStory.dataValues);
                 retObj.warn = helpList.warnings;
                 retObj.storybuttons = helpList.storybuttons;
-                res.render("index", {
-                    loggedIn: true,
-                    storySettings: true,
-                    retObj
-                });
+                retObj.loggedIn = true;
+                retObj.storySettings = true;
+                res.render("index", retObj);
             }
         }
         update();
@@ -377,7 +373,10 @@ module.exports = function (app) {
                     }
                 }).then(function(startpage) {
                     // this page object is formatted very specifically for page rendering
-                    var page = {};
+                    var page = {
+                        loggedIn: true,
+                        createPage: true
+                    };
                     if (startpage[0]) {
                         page.StoryId = storyToFind;
                         page.StoryTitle = storyResult.title;
@@ -389,7 +388,7 @@ module.exports = function (app) {
                         page.isStart = true;
                     }
                     //Now render the page
-                    res.render("createpage", page);
+                    res.render("index", page);
                     // res.json(page);
                 });
             }, 
@@ -415,8 +414,10 @@ module.exports = function (app) {
                 page.ChildLinks = childLinks;
                 page.ParentLinks = parentLinks;
                 page.StoryPages = storyPages;
+                page.loggedIn = true;
+                page.createPage = true;
                 // res.json(page);
-                res.render("createpage", page);
+                res.render("index", page);
             }, 
             function(err) {
                 //if an error occurred with the page load, go ahead and show the user
