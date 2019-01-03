@@ -1,0 +1,36 @@
+<footer>
+    <div class="container">
+        <div class="row pt-3">
+            <div class="col-12 col-md-4 mr-auto">
+                <aside>
+                    <h5>About Us</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="https://github.com/joverlee521">Jover Lee</a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/konatess">Theresa Benkman</a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/kmtenhouse">Tassa Tenhouse</a>
+                        </li>
+                    </ul>
+                </aside>
+            </div>
+            {{#ifAny seeTaggedStories seeAuthorStories seeAllStories seeMyStories loggedIn homepage}}
+            <div class="col-12 col-md-4 ml-auto">
+                <aside>
+                    <h5>Credits</h5>
+                    <ul class="list-unstyled">
+                        {{#unless homepage}}
+                        {{> footer/dashboard-footer}}
+                        {{else}}
+                        {{> footer/intro-footer}}
+                        {{/unless}}
+                    </ul>
+                </aside>
+            </div>
+            {{/ifAny}}
+        </div>
+    </div>
+</footer>

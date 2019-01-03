@@ -1,10 +1,3 @@
-function showDynamicModal(headerMsg, bodyMsg, buttonMsg) {
-    $("#dynamicModalLabel").text(headerMsg);
-    $("#dynamicModalBody").text(bodyMsg);
-    $("#dynamicModalCloseBtn").text(buttonMsg);
-    $("#dynamicModal").modal("show");
-}
-
 function publishStory(myStoryId) {
     //takes in a story id and attempts to publish the story!
     $.ajax({

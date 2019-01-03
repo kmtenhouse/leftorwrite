@@ -1,12 +1,3 @@
-<!-- Header -->
-<header class="header">
-    <div class="container-fluid px-3">
-        <nav class="navbar navbar-expand-lg custom-nav">
-            {{> navbar/logged-in}}
-        </nav>
-    </div>
-</header>
-
 <div class="container my-3">
     <div class="row pt-3">
         <div class="col-12 col-md-9">
@@ -45,7 +36,7 @@
             <div class="card-body">
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="inuse" role="tabpanel" aria-labelledby="inuse-tab">
-                        {{>content/pagelibrary/tabpane-headers header="All Pages Currently In Use"}}
+                        {{>content/pageLibrary/tabpane-headers header="All Pages Currently In Use"}}
                         <div class="row py-3">
                             {{#unless pages.length}}
                             <div class="col-2">
@@ -62,16 +53,16 @@
                             These pages CAN be finished or unfinished --}}
                             {{#each pages}}
                             {{#unless this.isOrphaned}}
-                            {{>content/pagelibrary/pagestyling}}
+                            {{>content/pageLibrary/pagestyling}}
                             {{/unless}}
                             {{/each}}
                             {{else}}
-                            {{>content/pagelibrary/nopages}}
+                            {{>content/pageLibrary/nopages}}
                             {{/if}}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="unlinkedpages" role="tabpanel" aria-labelledby="unlinked-tab">
-                        {{>content/pagelibrary/tabpane-headers header="Unlinked Pages"}}
+                        {{>content/pageLibrary/tabpane-headers header="Unlinked Pages"}}
                         <div class="row py-3">
                             {{#if pages.length}}
                             {{!-- Load all the pages that are currently unlinked (not orphaned, also not linked)
@@ -79,17 +70,17 @@
                             {{#each pages}}
                             {{#unless this.isOrphaned}}
                             {{#unless this.isLinked}}
-                            {{>content/pagelibrary/pagestyling}}
+                            {{>content/pageLibrary/pagestyling}}
                             {{/unless}}
                             {{/unless}}
                             {{/each}}
                             {{else}}
-                            {{>content/pagelibrary/nopages}}
+                            {{>content/pageLibrary/nopages}}
                             {{/if}}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="unfinishedpages" role="tabpanel" aria-labelledby="unfinished-tab">
-                        {{>content/pagelibrary/tabpane-headers header="Unfinished Writing"}}
+                        {{>content/pageLibrary/tabpane-headers header="Unfinished Writing"}}
                         <div class="row py-3">
                             {{#if pages.length}}
                             {{!-- Load all the pages that are currently unfinished
@@ -97,17 +88,17 @@
                             {{#each pages}}
                             {{#unless this.isOrphaned}}
                             {{#unless this.contentFinished}}
-                            {{>content/pagelibrary/pagestyling}}
+                            {{>content/pageLibrary/pagestyling}}
                             {{/unless}}
                             {{/unless}}
                             {{/each}}
                             {{else}}
-                            {{>content/pagelibrary/nopages}}
+                            {{>content/pageLibrary/nopages}}
                             {{/if}}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="endings" role="tabpanel" aria-labelledby="endings-tab">
-                        {{>content/pagelibrary/tabpane-headers header="Endings and TBC"}}
+                        {{>content/pageLibrary/tabpane-headers header="Endings and TBC"}}
                         <div class="row py-3">
                             {{#if pages.length}}
                             {{!-- Load all the pages that are endings (not orphaned, and tbc or ending)
@@ -115,20 +106,20 @@
                             {{#each pages}}
                             {{#unless this.isOrphaned}}
                             {{#if this.isEnding}}
-                            {{>content/pagelibrary/pagestyling}}
+                            {{>content/pageLibrary/pagestyling}}
                             {{/if}}
                             {{#if this.isTBC}}
-                            {{>content/pagelibrary/pagestyling}}
+                            {{>content/pageLibrary/pagestyling}}
                             {{/if}}
                             {{/unless}}
                             {{/each}}
                             {{else}}
-                            {{>content/pagelibrary/nopages}}
+                            {{>content/pageLibrary/nopages}}
                             {{/if}}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="orphanedpages" role="tabpanel" aria-labelledby="orphan-tab">
-                        {{>content/pagelibrary/tabpane-headers header="Orphaned Pages"}}
+                        {{>content/pageLibrary/tabpane-headers header="Orphaned Pages"}}
                         <div class="row py-3">
                             {{!-- We can always add an orphaned page --}}
                             <div class="col-2">
@@ -144,11 +135,11 @@
                             These pages CAN be finished or unfinished --}}
                             {{#each pages}}
                             {{#if this.isOrphaned}}
-                            {{>content/pagelibrary/pagestyling}}
+                            {{>content/pageLibrary/pagestyling}}
                             {{/if}}
                             {{/each}}
                             {{else}}
-                            {{>content/pagelibrary/nopages}}
+                            {{>content/pageLibrary/nopages}}
                             {{/if}}
                         </div>
                     </div>
@@ -156,33 +147,4 @@
             </div>
         </div>
     </div>
-</div>
-
-<div class="spacer"></div>
-<footer>
-    <div class="container">
-        <div class="row pt-3">
-            {{>footer/aboutus}}
-        </div>
-    </div>
-</footer>
-
-<!-- Modal -->
-<div class="modal fade" id="dynamicModal" tabindex="-1" role="dialog" aria-labelledby="dynamicModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="dynamicModalLabel"></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" id="dynamicModalBody">
-        
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="dynamicModalCloseBtn">Okay, I got it!</button>
-      </div>
-    </div>
-  </div>
 </div>

@@ -43,7 +43,8 @@ module.exports = function (app) {
         else {
             res.cookie("token", "");
             res.render("index", {
-                loggedIn: false
+                loggedIn: false,
+                homepage: true
             });
         }
     });
@@ -266,9 +267,11 @@ module.exports = function (app) {
             var retObj = {
                 tags: tags,
                 warn: helpList.warnings,
-                storybuttons: helpList.storybuttons
+                storybuttons: helpList.storybuttons,
+                loggedIn: true,
+                storySettings: true
             };
-            res.render("story", retObj);
+            res.render("index", retObj);
         }
         create();
     });
@@ -301,7 +304,9 @@ module.exports = function (app) {
                 helpList.warningsMatch(theStory.dataValues);
                 retObj.warn = helpList.warnings;
                 retObj.storybuttons = helpList.storybuttons;
-                res.render("story", retObj);
+                retObj.loggedIn = true;
+                retObj.storySettings = true;
+                res.render("index", retObj);
             }
         }
         update();
@@ -337,13 +342,15 @@ module.exports = function (app) {
                     //if we had a successful page lookup, create a handlebars object
                     //note: make sure to include some story info like title and story id
                     var hbsObj = {
+                        loggedIn: true,
+                        pageLibrary: true,
                         storyId: storyResult.id,
                         storyIsPublic: storyResult.isPublic,
                         title: storyResult.title,
                         pages: allpages
                     };
                     //Now render the page
-                    res.render("pagelibrary", hbsObj);
+                    res.render("index", hbsObj);
                 });
             },
             function (err) { //otherwise, if an error occurred: show the right 404 page
@@ -368,7 +375,10 @@ module.exports = function (app) {
                     }
                 }).then(function(startpage) {
                     // this page object is formatted very specifically for page rendering
-                    var page = {};
+                    var page = {
+                        loggedIn: true,
+                        createPage: true
+                    };
                     if (startpage[0]) {
                         page.StoryId = storyToFind;
                         page.StoryTitle = storyResult.title;
@@ -380,7 +390,7 @@ module.exports = function (app) {
                         page.isStart = true;
                     }
                     //Now render the page
-                    res.render("createpage", page);
+                    res.render("index", page);
                     // res.json(page);
                 });
             }, 
@@ -406,8 +416,10 @@ module.exports = function (app) {
                 page.ChildLinks = childLinks;
                 page.ParentLinks = parentLinks;
                 page.StoryPages = storyPages;
+                page.loggedIn = true;
+                page.createPage = true;
                 // res.json(page);
-                res.render("createpage", page);
+                res.render("index", page);
             }, 
             function(err) {
                 //if an error occurred with the page load, go ahead and show the user
