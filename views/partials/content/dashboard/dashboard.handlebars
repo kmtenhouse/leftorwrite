@@ -5,17 +5,24 @@
             <h3>{{user.displayName}}'s Recently Edited Stories</h3>
             <a href="/story/create/" class="btn btn-danger">Create New Story</a>
         </nav>
-        <!-- Recently Edited Stories -->
-        <div class="list-group">
-            {{#each stories}}
-                {{> content/dashboard/dashboard-story}}
-            {{/each}}
-        </div>
-        <div class="row my-2 justify-content-center">
-            <div class="col-3 text-center">
-                <a href="/story/all" class="btn btn-success">See All Stories</a>
+        {{#if stories}}
+            <!-- Recently Edited Stories -->
+            <div class="list-group">
+                {{#each stories}}
+                    {{> content/dashboard/dashboard-story}}
+                {{/each}}
             </div>
-        </div>
+            <div class="row my-2 justify-content-center">
+                <div class="col-3 text-center">
+                    <a href="/story/all" class="btn btn-success">See All Stories</a>
+                </div>
+            </div>
+        {{else}}
+            <!-- Alert user they don't have any stories -->
+            <div class="text-center my-5">
+                <h4>You don't have any stories! Try creating one!</h4>
+            </div>
+        {{/if}}
     </div>
     <div class="container mb-5 mx-auto">
         <nav class="navbar mb-5 border-bottom border-success pt-4">

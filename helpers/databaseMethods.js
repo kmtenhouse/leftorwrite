@@ -70,20 +70,6 @@ var dbMethods = {
             return allPages;
         });
     },
-    findPageLinks: function (authorId, storyId, fromPageId) {
-        return db.Link.findAll({
-            where: {
-                AuthorId: authorId,
-                StoryId: storyId,
-                FromPageId: fromPageId
-            },
-            order: [
-                [db.sequelize.fn("length", db.sequelize.col("linkName")), "ASC"]
-            ]
-        }).then(function (dbLinks) {
-            return dbLinks;
-        });
-    },
     // Theresa added, not tested yet.
     findPageParent: function (authorId, storyId, toPageId) {
         return db.Link.findAll({
@@ -169,8 +155,16 @@ var dbMethods = {
             return count;
         });
     },
-    findAllUsers: function () {
-        return db.User.findAll().then(function (dbUser) {
+    findAllPublishedUsers: function () {
+        return db.User.findAll({
+            include: [{
+                model: db.Story, as: "Stories",
+                where: {
+                    "isPublic": true,
+                    "isFinished": true
+                }
+            }],   
+        }).then(function (dbUser) {
             return dbUser;
         });
     },
