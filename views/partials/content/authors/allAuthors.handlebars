@@ -4,9 +4,9 @@
     </div>
     <div class="card">
         <div class="card-body">
-            <div class="row flex-wrap">
+            <div class="row justify-content-around">
                 {{#each authors}}
-                    <div class="col text-center m-3">
+                    <div class="col-sm-12 col-md-4 col-lg-3 text-center m-3">
                         <a href="/authors/{{id}}" class="btn btn-success"><i class="fas fa-user"></i> &nbsp; {{displayName}}</a>
                     </div>
                 {{/each}}
