@@ -12,9 +12,9 @@
 </header>
 
 {{#if readStory}}
-    {{> content/readStory/storyMain}}
+    {{> content/readstory/storyMain}}
 {{else if readPage}}
-    {{> content/readStory/page}}
+    {{> content/readstory/page}}
 {{else if seeTags}}
     {{> content/tags/allTags}}
 {{else if seeTaggedStories}}
@@ -24,15 +24,15 @@
 {{else if seeAuthorStories}}
     {{> content/authors/authorStories}}
 {{else if seeAllStories}}
-    {{> content/readStory/allStories}}
+    {{> content/readstory/allStories}}
 {{else if seeMyStories}}
     {{> content/dashboard/allStories}}
 {{else if storySettings}}
-    {{> content/storySettings/story}}
+    {{> content/storysettings/story}}
 {{else if createPage}}
-    {{> content/pageEdit/createPage}}
+    {{> content/pageedit/createPage}}
 {{else if pageLibrary}}
-    {{> content/pageLibrary/pageLibrary}}
+    {{> content/pagelibrary/pageLibrary}}
 {{else if loggedIn}}
     {{> content/dashboard/dashboard}}
 {{else if homepage}}
@@ -45,4 +45,4 @@
 
 {{> modals/dynamicModal}}
 
-{{> scriptTags/scripts}}
+{{> scripttags/scripts}}
