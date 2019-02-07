@@ -1,6 +1,6 @@
 {
   "development": {
-    "username": "dev",
+    "username": "root",
     "password": null,
     "database": "testdb",
     "host": "localhost",
@@ -8,7 +8,7 @@
     "logging": false
   },
   "test": {
-    "username": "test",
+    "username": "root",
     "password": null,
     "database": "testdb",
     "host": "localhost",
