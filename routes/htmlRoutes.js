@@ -17,27 +17,25 @@ module.exports = function (app) {
         // Renders the dashboard if a user is signed in
         if (req.session.token) {
             res.cookie("token", req.session.token);
-            // Finds the most recently updated stories of the User
-            dbMethods.findUser(req.session.token).then(function(user){
-                dbMethods.findRecentUserStories(user.id).then(function (dbStory) {
-                    // Finds the top 5 tags 
-                    dbMethods.topFiveTags().then(function(dbTags){
-                        // Change updatedAt to time difference from now in days
-                        for(var i = 0; i < dbStory.length; i++){
-                            var now = moment();
-                            var lastUpdate = dbStory[i].dataValues.updatedAt;
-                            var difference = (now.diff(lastUpdate, "days"));
-                            dbStory[i].dataValues.updatedAt = difference;
-                        }
-                        res.render("index", {
-                            loggedIn: true,
-                            user,
-                            stories: dbStory,
-                            tags: dbTags
-                        });
-                    });
+            var userId = req.session.token;
+            (async () => {
+                // Returns user, recent user stories, and popular tags
+                let [user, dbStories, dbTags] = await Promise.all([dbMethods.findUser(userId), dbMethods.findRecentUserStories(userId), dbMethods.topFiveTags()]);
+                if(dbStories.length > 0){
+                    for(var i = 0; i < dbStories.length; i++){
+                        var now = moment();
+                        var lastUpdate = dbStories[i].dataValues.updatedAt;
+                        var difference = (now.diff(lastUpdate, "days"));
+                        dbStories[i].dataValues.updatedAt = difference;
+                    }
+                }
+                res.render("index", {
+                    loggedIn: true,
+                    user,
+                    stories: dbStories,
+                    tags: dbTags
                 });
-            });
+            })();
         }
         // Renders homepage if not signed in
         else {
@@ -66,7 +64,7 @@ module.exports = function (app) {
                     var newMessage = "";
                     if(count > 1){
                         displayMessage = true;
-                        newMessage = "This username is already in use by another user! Please choose another username!";
+                        newMessage = "Your default username is already in use by another user! Please choose another username!";
                     }
                     res.render("newUser", {
                         user: dbUser,
@@ -94,23 +92,20 @@ module.exports = function (app) {
             loggedIn = true;
         }
         check.storyIsReadable(storyId).then(function(dbStory){
-            dbMethods.findUser(dbStory.AuthorId).then(function(author){
-                dbMethods.findFirstPage(author.id, storyId).then(function(firstPage){
-                    dbMethods.findPageLinks(author.id, storyId, firstPage.id).then(function(links){
-                        dbMethods.findStoryTags(storyId).then(function(tags){
-                            res.render("index", {
-                                loggedIn: loggedIn,
-                                readStory: true,
-                                dbStory,
-                                author,
-                                firstPage,
-                                links: links,
-                                tags: tags
-                            });
-                        });
-                    });
+            let authorId = dbStory.AuthorId;
+            (async() => {
+                let[author, firstPage, tags] = await Promise.all([dbMethods.findUser(authorId), dbMethods.findFirstPage(authorId, storyId), dbMethods.findStoryTags(storyId)]);
+                let links = await firstPage.getChildLinks();
+                res.render("index", {
+                    loggedIn: loggedIn,
+                    readStory: true,
+                    dbStory,
+                    author,
+                    firstPage,
+                    links: links,
+                    tags: tags
                 });
-            });
+            })();
         }), function(err){
             res.render("404", getError.messageTemplate(err));
         };
@@ -129,22 +124,22 @@ module.exports = function (app) {
         }
         check.pageIsReadable(pageId).then(function(page){
             var dbStory = page.Story;
+            var authorId = dbStory.AuthorId;
             // If they are trying to go to the start page, it will redirect to the main story page
             if(page.isStart){
                 return res.redirect("/story/read/" + dbStory.id);
             }
-            dbMethods.findUser(dbStory.AuthorId).then(function(author){
-                dbMethods.findPageLinks(author.id, dbStory.id, page.id).then(function(links){
-                    res.render("index", {
-                        loggedIn: loggedIn,
-                        readPage: true,
-                        dbStory,
-                        author,
-                        page,
-                        links: links
-                    });
+            (async() => {
+                let [author, links] = await Promise.all([dbMethods.findUser(authorId), page.getChildLinks()]);
+                res.render("index", {
+                    loggedIn: loggedIn,
+                    readPage: true,
+                    dbStory,
+                    author,
+                    page,
+                    links: links
                 });
-            });
+            })();
         }, function(err){
             res.render("404", getError.messageTemplate(err));
         });
@@ -191,7 +186,7 @@ module.exports = function (app) {
     });
 
     app.get("/authors", function (req, res) {
-        dbMethods.findAllUsers().then(function(users){
+        dbMethods.findAllPublishedUsers().then(function(users){
             var loggedIn = false;
             if(req.session.token){
                 loggedIn = true;
@@ -201,12 +196,6 @@ module.exports = function (app) {
                 seeAuthors: true,
                 authors: users
             });
-        });
-    });
-
-    app.get("/test/authors/", function(req,res) {
-        dbMethods.findAllPublicAuthors().then(function(users) {
-            res.json(users);
         });
     });
 

@@ -36,7 +36,7 @@
             <div class="card-body">
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="inuse" role="tabpanel" aria-labelledby="inuse-tab">
-                        {{>content/pageLibrary/tabpane-headers header="All Pages Currently In Use"}}
+                        {{>subcontent/pagelibrary/tabpane-headers header="All Pages Currently In Use"}}
                         <div class="row py-3">
                             {{#unless pages.length}}
                             <div class="col-2">
@@ -53,16 +53,16 @@
                             These pages CAN be finished or unfinished --}}
                             {{#each pages}}
                             {{#unless this.isOrphaned}}
-                            {{>content/pageLibrary/pagestyling}}
+                            {{>subcontent/pagelibrary/pageStyling}}
                             {{/unless}}
                             {{/each}}
                             {{else}}
-                            {{>content/pageLibrary/nopages}}
+                            {{>subcontent/pagelibrary/noPages}}
                             {{/if}}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="unlinkedpages" role="tabpanel" aria-labelledby="unlinked-tab">
-                        {{>content/pageLibrary/tabpane-headers header="Unlinked Pages"}}
+                        {{>subcontent/pagelibrary/tabpane-headers header="Unlinked Pages"}}
                         <div class="row py-3">
                             {{#if pages.length}}
                             {{!-- Load all the pages that are currently unlinked (not orphaned, also not linked)
@@ -70,17 +70,17 @@
                             {{#each pages}}
                             {{#unless this.isOrphaned}}
                             {{#unless this.isLinked}}
-                            {{>content/pageLibrary/pagestyling}}
+                            {{>subcontent/pagelibrary/pageStyling}}
                             {{/unless}}
                             {{/unless}}
                             {{/each}}
                             {{else}}
-                            {{>content/pageLibrary/nopages}}
+                            {{>subcontent/pagelibrary/noPages}}
                             {{/if}}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="unfinishedpages" role="tabpanel" aria-labelledby="unfinished-tab">
-                        {{>content/pageLibrary/tabpane-headers header="Unfinished Writing"}}
+                        {{>subcontent/pagelibrary/tabpane-headers header="Unfinished Writing"}}
                         <div class="row py-3">
                             {{#if pages.length}}
                             {{!-- Load all the pages that are currently unfinished
@@ -88,17 +88,17 @@
                             {{#each pages}}
                             {{#unless this.isOrphaned}}
                             {{#unless this.contentFinished}}
-                            {{>content/pageLibrary/pagestyling}}
+                            {{>subcontent/pagelibrary/pageStyling}}
                             {{/unless}}
                             {{/unless}}
                             {{/each}}
                             {{else}}
-                            {{>content/pageLibrary/nopages}}
+                            {{>subcontent/pagelibrary/noPages}}
                             {{/if}}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="endings" role="tabpanel" aria-labelledby="endings-tab">
-                        {{>content/pageLibrary/tabpane-headers header="Endings and TBC"}}
+                        {{>subcontent/pagelibrary/tabpane-headers header="Endings and TBC"}}
                         <div class="row py-3">
                             {{#if pages.length}}
                             {{!-- Load all the pages that are endings (not orphaned, and tbc or ending)
@@ -106,20 +106,20 @@
                             {{#each pages}}
                             {{#unless this.isOrphaned}}
                             {{#if this.isEnding}}
-                            {{>content/pageLibrary/pagestyling}}
+                            {{>subcontent/pagelibrary/pageStyling}}
                             {{/if}}
                             {{#if this.isTBC}}
-                            {{>content/pageLibrary/pagestyling}}
+                            {{>subcontent/pagelibrary/pageStyling}}
                             {{/if}}
                             {{/unless}}
                             {{/each}}
                             {{else}}
-                            {{>content/pageLibrary/nopages}}
+                            {{>subcontent/pagelibrary/noPages}}
                             {{/if}}
                         </div>
                     </div>
                     <div class="tab-pane fade" id="orphanedpages" role="tabpanel" aria-labelledby="orphan-tab">
-                        {{>content/pageLibrary/tabpane-headers header="Orphaned Pages"}}
+                        {{>subcontent/pagelibrary/tabpane-headers header="Orphaned Pages"}}
                         <div class="row py-3">
                             {{!-- We can always add an orphaned page --}}
                             <div class="col-2">
@@ -135,11 +135,11 @@
                             These pages CAN be finished or unfinished --}}
                             {{#each pages}}
                             {{#if this.isOrphaned}}
-                            {{>content/pageLibrary/pagestyling}}
+                            {{>subcontent/pagelibrary/pageStyling}}
                             {{/if}}
                             {{/each}}
                             {{else}}
-                            {{>content/pageLibrary/nopages}}
+                            {{>subcontent/pagelibrary/noPages}}
                             {{/if}}
                         </div>
                     </div>

@@ -12,31 +12,31 @@
 </header>
 
 {{#if readStory}}
-    {{> content/readStory/storyMain}}
+    {{> subcontent/readstory/storyMain}}
 {{else if readPage}}
-    {{> content/readStory/page}}
+    {{> subcontent/readstory/page}}
 {{else if seeTags}}
-    {{> content/tags/allTags}}
+    {{> subcontent/tags/allTags}}
 {{else if seeTaggedStories}}
-    {{> content/tags/taggedStories}}
+    {{> subcontent/tags/taggedStories}}
 {{else if seeAuthors}}
-    {{> content/authors/allAuthors}}
+    {{> subcontent/authors/allAuthors}}
 {{else if seeAuthorStories}}
-    {{> content/authors/authorStories}}
+    {{> subcontent/authors/authorStories}}
 {{else if seeAllStories}}
-    {{> content/readStory/allStories}}
+    {{> subcontent/readstory/allStories}}
 {{else if seeMyStories}}
-    {{> content/dashboard/allStories}}
+    {{> subcontent/dashboard/allStories}}
 {{else if storySettings}}
-    {{> content/storySettings/story}}
+    {{> subcontent/storysettings/story}}
 {{else if createPage}}
-    {{> content/pageEdit/createPage}}
+    {{> subcontent/pageedit/createPage}}
 {{else if pageLibrary}}
-    {{> content/pageLibrary/pageLibrary}}
+    {{> subcontent/pagelibrary/pageLibrary}}
 {{else if loggedIn}}
-    {{> content/dashboard/dashboard}}
+    {{> subcontent/dashboard/dashboard}}
 {{else if homepage}}
-    {{> content/intro}}
+    {{> subcontent/intro}}
 {{/if}}
 
 <div class="spacer"></div>
@@ -45,4 +45,4 @@
 
 {{> modals/dynamicModal}}
 
-{{> scriptTags/scripts}}
+{{> scripts/scripts}}
