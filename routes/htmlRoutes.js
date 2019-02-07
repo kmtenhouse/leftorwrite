@@ -21,8 +21,8 @@ module.exports = function (app) {
             (async () => {
                 // Returns user, recent user stories, and popular tags
                 let [user, dbStories, dbTags] = await Promise.all([dbMethods.findUser(userId), dbMethods.findRecentUserStories(userId), dbMethods.topFiveTags()]);
-                if(dbStories.length > 0){
-                    for(var i = 0; i < dbStories.length; i++){
+                if (dbStories.length > 0) {
+                    for (var i = 0; i < dbStories.length; i++) {
                         var now = moment();
                         var lastUpdate = dbStories[i].dataValues.updatedAt;
                         var difference = (now.diff(lastUpdate, "days"));
@@ -48,8 +48,8 @@ module.exports = function (app) {
     });
 
     // Loads log-in page
-    app.get("/login", function(req, res){
-        if(req.session.token){
+    app.get("/login", function (req, res) {
+        if (req.session.token) {
             return res.redirect("/");
         }
         res.render("login");
@@ -58,11 +58,11 @@ module.exports = function (app) {
     // Loads new user page that allows user to change username
     app.get("/newUser", function (req, res) {
         if (req.session.token) {
-            dbMethods.findUser(req.session.token).then(function(dbUser){
-                dbMethods.checkUsernames(dbUser.displayName).then(function(count){
+            dbMethods.findUser(req.session.token).then(function (dbUser) {
+                dbMethods.checkUsernames(dbUser.displayName).then(function (count) {
                     var displayMessage = false;
                     var newMessage = "";
-                    if(count > 1){
+                    if (count > 1) {
                         displayMessage = true;
                         newMessage = "Your default username is already in use by another user! Please choose another username!";
                     }
@@ -88,25 +88,29 @@ module.exports = function (app) {
     app.get("/story/read/:storyid", function (req, res) {
         var storyId = req.params.storyid;
         var loggedIn = false;
-        if(req.session.token){
+        if (req.session.token) {
             loggedIn = true;
         }
-        check.storyIsReadable(storyId).then(function(dbStory){
+        check.storyIsReadable(storyId).then(function (dbStory) {
             let authorId = dbStory.AuthorId;
-            (async() => {
-                let[author, firstPage, tags] = await Promise.all([dbMethods.findUser(authorId), dbMethods.findFirstPage(authorId, storyId), dbMethods.findStoryTags(storyId)]);
+            (async () => {
+                let [author, firstPage, tags] = await Promise.all([dbMethods.findUser(authorId), dbMethods.findFirstPage(authorId, storyId), dbMethods.findStoryTags(storyId)]);
                 let links = await firstPage.getChildLinks();
+                //Split the page contents into an array on whitespace so that we can make paragraphs
+                const splitParagraphs = firstPage.dataValues.content.split(/[\n\r]+/);
+
                 res.render("index", {
                     loggedIn: loggedIn,
                     readStory: true,
                     dbStory,
                     author,
                     firstPage,
+                    paragraphs: splitParagraphs,
                     links: links,
                     tags: tags
                 });
             })();
-        }), function(err){
+        }), function (err) {
             res.render("404", getError.messageTemplate(err));
         };
     });
@@ -119,38 +123,41 @@ module.exports = function (app) {
     app.get("/story/read/:storyid/page/:pageid", function (req, res) {
         var pageId = req.params.pageid;
         var loggedIn = false;
-        if(req.session.token){
+        if (req.session.token) {
             loggedIn = true;
         }
-        check.pageIsReadable(pageId).then(function(page){
+        check.pageIsReadable(pageId).then(function (page) {
             var dbStory = page.Story;
             var authorId = dbStory.AuthorId;
             // If they are trying to go to the start page, it will redirect to the main story page
-            if(page.isStart){
+            if (page.isStart) {
                 return res.redirect("/story/read/" + dbStory.id);
             }
-            (async() => {
+            (async () => {
                 let [author, links] = await Promise.all([dbMethods.findUser(authorId), page.getChildLinks()]);
+                //Split the page contents into an array on whitespace so that we can make paragraphs
+                const paragraphs = page.dataValues.content.split(/[\n\r]+/);
                 res.render("index", {
                     loggedIn: loggedIn,
                     readPage: true,
                     dbStory,
                     author,
                     page,
+                    paragraphs,
                     links: links
                 });
             })();
-        }, function(err){
+        }, function (err) {
             res.render("404", getError.messageTemplate(err));
         });
     });
 
     app.get("/tags", function (req, res) {
         var loggedIn = false;
-        if(req.session.token){
+        if (req.session.token) {
             loggedIn = true;
         }
-        dbMethods.findAllTagsAndStoriesCount().then(function(tags){
+        dbMethods.findAllTagsAndStoriesCount().then(function (tags) {
             res.render("index", {
                 loggedIn: loggedIn,
                 seeTags: true,
@@ -168,11 +175,11 @@ module.exports = function (app) {
         //otherwise, go ahead and parse the id and proceed!
         var tagId = parseInt(req.params.tagid);
         var loggedIn = false;
-        if(req.session.token){
+        if (req.session.token) {
             loggedIn = true;
         }
-        dbMethods.findTaggedStories(tagId).then(function(result){
-            if(result === null){
+        dbMethods.findTaggedStories(tagId).then(function (result) {
+            if (result === null) {
                 var tagError = new Error("Invalid Tag Id");
                 return res.render("404", getError.messageTemplate(tagError));
             }
@@ -186,9 +193,9 @@ module.exports = function (app) {
     });
 
     app.get("/authors", function (req, res) {
-        dbMethods.findAllPublishedUsers().then(function(users){
+        dbMethods.findAllPublishedUsers().then(function (users) {
             var loggedIn = false;
-            if(req.session.token){
+            if (req.session.token) {
                 loggedIn = true;
             }
             res.render("index", {
@@ -199,20 +206,20 @@ module.exports = function (app) {
         });
     });
 
-    app.get("/authors/:authorid", function(req,res){
+    app.get("/authors/:authorid", function (req, res) {
         var authorId = req.params.authorid;
         var loggedIn = false;
-        if(req.session.token){
+        if (req.session.token) {
             loggedIn = true;
         }
-        if(!check.isValidId(authorId)){
+        if (!check.isValidId(authorId)) {
             var authorError = new Error("Found Invalid Author Id");
             return res.render("404", getError.messageTemplate(authorError));
         }
-        dbMethods.findUser(authorId).then(function(author){
+        dbMethods.findUser(authorId).then(function (author) {
             console.log("Looking for stories by " + authorId);
-            dbMethods.findAllUserStories(authorId).then(function(stories){
-                if(stories.length === 0){
+            dbMethods.findAllUserStories(authorId).then(function (stories) {
+                if (stories.length === 0) {
                     var nullError = new Error("No Stories Found");
                     return res.render("404", getError.messageTemplate(nullError));
                 }
@@ -226,12 +233,12 @@ module.exports = function (app) {
         });
     });
 
-    app.get("/stories", function(req, res){
+    app.get("/stories", function (req, res) {
         var loggedIn = false;
-        if(req.session.token){
+        if (req.session.token) {
             loggedIn = true;
         }
-        dbMethods.findAllPublicStories().then(function(stories){
+        dbMethods.findAllPublicStories().then(function (stories) {
             res.render("index", {
                 loggedIn: loggedIn,
                 seeAllStories: true,
@@ -245,11 +252,11 @@ module.exports = function (app) {
     //When a writer first creates a new story, we will show them a blank form for their
     //story's settings. Once they 'save' it, we'll create a new db entry if everything is valid :)
     app.get("/story/create", function (req, res) {
-        if(!req.session.token){
+        if (!req.session.token) {
             return res.redirect("/");
         }
-        async function create () {
-            var tags = await dbMethods.allTags().catch(function(err) {
+        async function create() {
+            var tags = await dbMethods.allTags().catch(function (err) {
                 var storyError = new Error(err.message);
                 return res.render("404", getError.messageTemplate(storyError));
             });
@@ -274,18 +281,18 @@ module.exports = function (app) {
         }
         //otherwise, go ahead and parse the id and proceed!
         var storyId = parseInt(req.params.storyid);
-        async function update () {
+        async function update() {
             var authorID = req.session.token;
-            var theStory = await check.storyIsWriteable(storyId, authorID).catch(function(err) {
+            var theStory = await check.storyIsWriteable(storyId, authorID).catch(function (err) {
                 var storyError = new Error(err.message);
                 return res.render("404", getError.messageTemplate(storyError));
             });
             if (theStory) {
-                var tags = await dbMethods.allTags().catch(function(err) {
+                var tags = await dbMethods.allTags().catch(function (err) {
                     var storyError = new Error(err.message);
                     return res.render("404", getError.messageTemplate(storyError));
                 });
-                var storytags = await theStory.getTags({through: {StoryId: storyId}}).catch(function(err) {
+                var storytags = await theStory.getTags({ through: { StoryId: storyId } }).catch(function (err) {
                     var storyError = new Error(err.message);
                     return res.render("404", getError.messageTemplate(storyError));
                 });
@@ -306,7 +313,7 @@ module.exports = function (app) {
     app.get("/story/overview/:storyid", function (req, res) {
         //(LONG TERM: will be a tree view)
         //Right now: redirects to the page library
-        res.redirect("/story/pagelibrary/"+req.params.storyid);
+        res.redirect("/story/pagelibrary/" + req.params.storyid);
     });
 
     //For consistency's sake, let's redirect the user to the overview page
@@ -314,20 +321,20 @@ module.exports = function (app) {
     app.get("/story/write/:storyid", function (req, res) {
         //(LONG TERM: will redirect to the tree view)
         //Right now: redirects to the page library
-        res.redirect("/story/pagelibrary/"+req.params.storyid);
+        res.redirect("/story/pagelibrary/" + req.params.storyid);
     });
 
     app.get("/story/pagelibrary/:storyid", function (req, res) {
         //first, check if the token & storyid are legit - then go ahead and load the library
         check.storyIsWriteable(req.params.storyid, req.session.token).
             then(function (storyResult) {
-            //Hooray!  this story is legit. Run a query to grab its pages
+                //Hooray!  this story is legit. Run a query to grab its pages
                 var storyToFind = storyResult.id;
                 db.Page.findAll({
                     where: {
                         StoryId: storyToFind
                     }
-                }).then(function(allpages) {
+                }).then(function (allpages) {
                     //if we had a successful page lookup, create a handlebars object
                     //note: make sure to include some story info like title and story id
                     var hbsObj = {
@@ -342,18 +349,18 @@ module.exports = function (app) {
                     res.render("index", hbsObj);
                 });
             },
-            function (err) { //otherwise, if an error occurred: show the right 404 page
-                //render a 404 page with whatever info we customized 
-                return res.render("404", getError.messageTemplate(err));
-            });
+                function (err) { //otherwise, if an error occurred: show the right 404 page
+                    //render a 404 page with whatever info we customized 
+                    return res.render("404", getError.messageTemplate(err));
+                });
     });
 
     //WRITE PAGES 
     //Create a new (orphaned) page -- displays a form to add a brand new page to an existing story
-    app.get("/story/write/:storyid/pages", function(req,res) {
+    app.get("/story/write/:storyid/pages", function (req, res) {
         //first, check that the existing story is writeable by whoever is trying to access
         check.storyIsWriteable(req.params.storyid, req.session.token).then(
-            function(storyResult) {
+            function (storyResult) {
                 //otherwise, the story exists and the person logged in has permissions to write to it!  we can show them the create form :)
                 // search for a start page for this story
                 var storyToFind = storyResult.id;
@@ -362,7 +369,7 @@ module.exports = function (app) {
                         StoryId: storyToFind,
                         isStart: true
                     }
-                }).then(function(startpage) {
+                }).then(function (startpage) {
                     // this page object is formatted very specifically for page rendering
                     var page = {
                         loggedIn: true,
@@ -382,8 +389,8 @@ module.exports = function (app) {
                     res.render("index", page);
                     // res.json(page);
                 });
-            }, 
-            function(error) {
+            },
+            function (error) {
                 //otherwise, send the appropriate 404 page
                 res.render("404", getError.messageTemplate(error));
             });
@@ -394,7 +401,7 @@ module.exports = function (app) {
     app.get("/story/write/:storyid/pages/:pageid", function (req, res) {
         //check if the page is editable
         check.pageIsWriteable(req.params.pageid, req.session.token, req.params.storyid).then(
-            async function(pageResult){
+            async function (pageResult) {
                 //if we got a page, render the write form and populate it with the data we already have
                 var childLinks = await pageResult.getChildLinks();
                 var parentLinks = await pageResult.getParentLinks();
@@ -409,17 +416,17 @@ module.exports = function (app) {
                 page.createPage = true;
                 // res.json(page);
                 res.render("index", page);
-            }, 
-            function(err) {
+            },
+            function (err) {
                 //if an error occurred with the page load, go ahead and show the user
                 res.render("404", getError.messageTemplate(err));
             });
     });
 
-    app.get("/story/all", function(req, res) {
-        if(req.session.token){
-            dbMethods.findUser(req.session.token).then(function(user){
-                dbMethods.seeAllUserStories(req.session.token).then(function(stories){
+    app.get("/story/all", function (req, res) {
+        if (req.session.token) {
+            dbMethods.findUser(req.session.token).then(function (user) {
+                dbMethods.seeAllUserStories(req.session.token).then(function (stories) {
                     res.render("index", {
                         loggedIn: true,
                         seeMyStories: true,
@@ -429,7 +436,7 @@ module.exports = function (app) {
                 });
             });
         }
-        else{
+        else {
             res.redirect("/");
         }
     });

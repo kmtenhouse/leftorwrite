@@ -15,7 +15,13 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
+                    {{#if paragraphs}}
+                        {{#each paragraphs}}
+                            <p>{{this}}</p>
+                        {{/each}}
+                    {{else}}
                     <p>{{firstPage.content}}</p>
+                    {{/if}}
                 </div>
                 <div class="card-footer">
                     {{#each links}}

@@ -9,7 +9,13 @@
             </div>
         </div>
         <div class="card-body">
-            <p>{{page.content}}</p>
+                    {{#if paragraphs}}
+                        {{#each paragraphs}}
+                            <p>{{this}}</p>
+                        {{/each}}
+                    {{else}}
+                    <p>{{page.content}}</p>
+                    {{/if}}
         </div>
         <div class="card-footer">
             {{#if page.isEnding}}
